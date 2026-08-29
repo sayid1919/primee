@@ -15,8 +15,7 @@ from primee.core.result_types import SkillResult, VaultWrite
 
 SKILL_NAME = "plan"
 MAX_PRIORITIES = 3
-CANDIDATES_PATH = "plans/candidates.md"
-PLAN_PREFIX = "plans"
+DEFAULT_CANDIDATES_PAGE = "wiki/plan-candidates"
 
 REQUIRED_FIELDS = ("title", "reason", "expected_outcome", "completion_condition")
 
@@ -31,9 +30,6 @@ def run(context: SkillContext) -> SkillResult:
             "'day' must look like 2026-08-27.",
         )
 
-    plan_path = f"{PLAN_PREFIX}/{day}.md"
-    overwrite = bool(context.input("overwrite", False))
-
     candidates, source, warnings = _collect_candidates(context)
     valid, rejected = _validate(candidates)
 
@@ -47,7 +43,6 @@ def run(context: SkillContext) -> SkillResult:
     structured: dict[str, Any] = {
         "day": day,
         "generated_at": context.now_iso(),
-        "plan_path": plan_path,
         "candidate_source": source,
         "candidate_count": len(candidates),
         "usable_candidate_count": len(valid),
@@ -61,8 +56,8 @@ def run(context: SkillContext) -> SkillResult:
             ErrorCode.INSUFFICIENT_INFORMATION,
             "Primee needs candidate actions that each carry a title, a reason, an "
             "expected outcome and a completion condition. It will not invent "
-            f"priorities. Add them to '{CANDIDATES_PATH}' in your Vault or pass "
-            "them as the 'candidates' input.",
+            f"priorities. Add them to '{_candidates_page(context)}' in your Vault "
+            "or pass them as the 'candidates' input.",
             structured_data=structured,
             warnings=warnings,
         )
@@ -76,22 +71,7 @@ def run(context: SkillContext) -> SkillResult:
             f"{MAX_PRIORITIES}. Primee did not pad the list."
         )
 
-    existing = context.vault.read(plan_path)
-    plan_exists = existing.ok
-    if plan_exists and not overwrite:
-        structured["existing_plan"] = True
-        return SkillResult.fail(
-            SKILL_NAME,
-            f"A plan for {day} already exists.",
-            ErrorCode.VAULT_FILE_EXISTS,
-            f"'{plan_path}' already exists. Re-run with overwrite=true to replace "
-            "it; that needs the 'vault.update' permission and its approval.",
-            structured_data=structured,
-            warnings=warnings,
-        )
-
     document = _render(day, priorities, context.now_iso(), source)
-    operation = "update" if plan_exists else "create"
 
     lines = [f"Top {len(priorities)} priorit{'y' if len(priorities) == 1 else 'ies'} for {day}:"]
     for index, priority in enumerate(priorities, start=1):
@@ -107,13 +87,33 @@ def run(context: SkillContext) -> SkillResult:
         warnings=warnings,
         proposed_vault_writes=[
             VaultWrite(
-                path=plan_path,
-                operation=operation,
+                path="",  # the Vault generates the ISO-dated filename
+                operation="publish_output",
                 content=document,
                 reason=f"Persist the daily plan for {day}.",
+                metadata={
+                    "title": f"Daily plan {day}",
+                    "summary": (
+                        f"{len(priorities)} priorit"
+                        f"{'y' if len(priorities) == 1 else 'ies'} for {day}."
+                    ),
+                    "output_type": "output_plan",
+                    "tags": ["plan", f"day/{day}"],
+                    "status": "final",
+                    "source": "primee plan skill",
+                    # File the plan under the day it is for, not the moment it
+                    # was generated. Frontmatter still records the real time.
+                    "date_hint": day,
+                    "related": [source] if source not in ("input", "none") else [],
+                },
             )
         ],
     )
+
+
+def _candidates_page(context: SkillContext) -> str:
+    page = str(context.input("candidates_page", "") or DEFAULT_CANDIDATES_PAGE).strip()
+    return page[:-3] if page.endswith(".md") else page
 
 
 def _collect_candidates(context: SkillContext) -> tuple[list[dict], str, list[str]]:
@@ -122,18 +122,19 @@ def _collect_candidates(context: SkillContext) -> tuple[list[dict], str, list[st
     if isinstance(supplied, list) and supplied:
         return [item for item in supplied if isinstance(item, dict)], "input", warnings
 
-    read = context.vault.read(CANDIDATES_PATH)
-    if read.ok and read.content:
-        parsed = _parse_candidates_markdown(read.content)
+    page = _candidates_page(context)
+    read = context.vault.read(f"{page}.md")
+    if read.ok:
+        parsed = _parse_candidates_markdown(read.body or read.content or "")
         if parsed:
-            return parsed, CANDIDATES_PATH, warnings
+            return parsed, page, warnings
         warnings.append(
-            f"'{CANDIDATES_PATH}' was read but contained no candidate entries in "
-            "the expected format."
+            f"'{page}' was read but contained no candidate entries in the "
+            "expected '## title' format."
         )
-        return [], CANDIDATES_PATH, warnings
+        return [], page, warnings
     if read.error_code and read.error_code != ErrorCode.VAULT_FILE_MISSING:
-        warnings.append(f"'{CANDIDATES_PATH}' could not be read ({read.error_code}).")
+        warnings.append(f"'{page}' could not be read ({read.error_code}).")
     return [], "none", warnings
 
 
@@ -183,16 +184,9 @@ def _validate(candidates: list[dict]) -> tuple[list[dict], list[dict]]:
 
 
 def _render(day: str, priorities: list[dict], generated_at: str, source: str) -> str:
+    """The Markdown body. Primee Memory writes the frontmatter itself."""
     lines = [
-        "---",
-        "primee_type: daily_plan",
-        f'date: "{day}"',
-        f'generated_at: "{generated_at}"',
-        f'candidate_source: "{source}"',
-        f"priority_count: {len(priorities)}",
-        "---",
-        "",
-        f"# Daily plan - {day}",
+        f"Generated at {generated_at} from candidates in `{source}`.",
         "",
     ]
     for index, priority in enumerate(priorities, start=1):

@@ -45,6 +45,26 @@ class TextRedactionTests(unittest.TestCase):
     def test_hides_the_posix_account_name(self):
         self.assert_hidden("/home/sampleaccount/notes", "sampleaccount")
 
+    def test_hides_well_known_credential_prefixes(self):
+        cases = [
+            ("AKIAIOSFODNN7EXAMPLE", "AKIAIOSFODNN7EXAMPLE"),
+            ("token sk-ant-PLACEHOLDERVALUE1234567", "PLACEHOLDERVALUE1234567"),
+            ("ghp_PLACEHOLDERVALUE1234567890", "PLACEHOLDERVALUE1234567890"),
+            ("xoxb-1234567890-PLACEHOLDER", "xoxb-1234567890-PLACEHOLDER"),
+        ]
+        for text, needle in cases:
+            self.assert_hidden(text, needle)
+
+    def test_vault_filenames_and_page_ids_survive(self):
+        """Redaction must not mangle ordinary Vault paths in summaries or audit."""
+        for kept in (
+            "outputs/2026-08-29-152447-synthetic-kickoff-capture.md",
+            "raw/2026-01-15-090000-kickoff-call-for-the-lighthouse-project.md",
+            "wik-20260115-d672ab041a",
+            "Captured raw note 'raw/2026-08-27-080000-morning-brief-for-today.md'.",
+        ):
+            self.assertEqual(redact_text(kept), kept, msg=kept)
+
     def test_leaves_ordinary_text_alone(self):
         text = "The morning brief has three items and the plan is ready."
         self.assertEqual(redact_text(text), text)

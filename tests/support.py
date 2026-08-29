@@ -48,6 +48,8 @@ def permissive_modes() -> dict:
         "vault.create": "auto",
         "vault.append": "auto",
         "vault.update": "approval",
+        "vault.index": "auto",
+        "vault.init": "approval",
         "connector.metrics.read": "auto",
         "connector.email.read": "auto",
         "connector.calendar.read": "auto",

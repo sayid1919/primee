@@ -12,7 +12,7 @@ from typing import Any
 from primee.connectors.base import CONFIGURED, DENIED
 from primee.core.context import SkillContext
 from primee.core.errors import ErrorCode
-from primee.core.result_types import SkillResult
+from primee.core.result_types import SkillResult, VaultWrite
 
 SKILL_NAME = "inbox"
 MAX_ITEMS = 3
@@ -113,22 +113,80 @@ def run(context: SkillContext) -> SkillResult:
     ]
 
     if not selected:
-        return SkillResult.ok(
-            SKILL_NAME,
-            f"Morning brief for {day}: nothing needs your attention today.",
-            structured_data=structured,
-            warnings=warnings,
+        summary_line = f"Morning brief for {day}: nothing needs your attention today."
+        lines = [summary_line]
+    else:
+        lines = [f"Morning brief for {day} - {len(selected)} item(s) need attention:"]
+        for index, item in enumerate(structured["items"], start=1):
+            when = f" ({item['when']})" if item["when"] else ""
+            lines.append(f"{index}. [{item['kind']}] {item['title']}{when} - {item['reason']}")
+        lines.append("Read-only: Primee has not replied to, moved or changed anything.")
+
+    proposals = []
+    if bool(context.input("store", True)):
+        proposals.append(
+            VaultWrite(
+                path="",  # the Vault generates the ISO-dated filename
+                operation="publish_output",
+                content=_render_brief(day, structured, warnings, context),
+                reason="Keep a dated record of the morning brief.",
+                metadata={
+                    "title": f"Morning brief {day}",
+                    "summary": (
+                        f"{len(selected)} item(s) needed attention on {day}."
+                        if selected
+                        else f"Nothing needed attention on {day}."
+                    ),
+                    "output_type": "output_brief",
+                    "tags": ["inbox", "brief", f"day/{day}"],
+                    "status": "final",
+                    "source": "primee inbox skill",
+                },
+            )
         )
 
-    lines = [f"Morning brief for {day} - {len(selected)} item(s) need attention:"]
-    for index, item in enumerate(structured["items"], start=1):
-        when = f" ({item['when']})" if item["when"] else ""
-        lines.append(f"{index}. [{item['kind']}] {item['title']}{when} - {item['reason']}")
-    lines.append("Read-only: Primee has not replied to, moved or changed anything.")
-
     return SkillResult.ok(
-        SKILL_NAME, "\n".join(lines), structured_data=structured, warnings=warnings
+        SKILL_NAME,
+        "\n".join(lines),
+        structured_data=structured,
+        warnings=warnings,
+        proposed_vault_writes=proposals,
     )
+
+
+def _render_brief(day: str, structured: dict, warnings: list, context) -> str:
+    """The Markdown body of the stored brief. Metadata only, never message bodies."""
+    lines = [
+        f"Prepared by Primee at {context.now_iso()}. Read-only: nothing was sent, "
+        "moved, accepted or declined.",
+        "",
+        "## Needs attention",
+        "",
+    ]
+    if structured["items"]:
+        for index, item in enumerate(structured["items"], start=1):
+            when = f" — {item['when']}" if item["when"] else ""
+            lines.append(f"### {index}. {item['title']}{when}")
+            lines.append("")
+            lines.append(f"- Source: {item['kind']}")
+            lines.append(f"- Why: {item['reason']}")
+            lines.append(f"- Signals: {', '.join(sorted(item['score_breakdown'])) or 'none'}")
+            lines.append("")
+    else:
+        lines.extend(["_Nothing needed attention today._", ""])
+
+    lines.extend(["## Sources", ""])
+    for source in structured["sources"]:
+        lines.append(f"- `{source['kind']}`: {source['status']} ({source['source_id']})")
+    if warnings:
+        lines.extend(["", "## Warnings", ""])
+        lines.extend(f"- {warning}" for warning in warnings)
+    lines.append("")
+    lines.append(
+        "> Message bodies are never read or stored. This brief records only "
+        "subject lines, event titles and the signals that ranked them."
+    )
+    return "\n".join(lines) + "\n"
 
 
 def _score_messages(messages: list[dict], day: str) -> list[dict]:

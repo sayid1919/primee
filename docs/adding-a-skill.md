@@ -99,21 +99,36 @@ def run(context: SkillContext) -> SkillResult:
             "Pass the note with --input text=...",
         )
 
-    path = f"notes/{context.today()}.md"
     return SkillResult.ok(
         SKILL_NAME,
-        f"Prepared a note for {path}.",
-        structured_data={"path": path, "characters": len(text)},
+        "Prepared a raw capture.",
+        structured_data={"characters": len(text)},
         proposed_vault_writes=[
             VaultWrite(
-                path=path,
-                operation="append",
-                content=f"- {context.now_iso()} — {text}\n",
-                reason="Append the note the user dictated.",
+                # Empty: the Vault generates the ISO-dated path itself.
+                path="",
+                operation="create_raw",
+                content=text,
+                reason="Capture the note the user dictated.",
+                metadata={
+                    "title": text.split("\n")[0][:60],
+                    "summary": "A note captured by the notes skill.",
+                    "tags": ["note"],
+                    "source_type": "manual",
+                },
             )
         ],
     )
 ```
+
+For a memory operation (`create_raw`, `amend_raw`, `write_wiki`,
+`publish_output`, `revise_output`) the skill supplies **only** the body and the
+page metadata. `path` must be empty — the result is rejected if it is not — and
+the Vault chooses the filename and writes the frontmatter. That is what stops a
+skill from putting a page in the wrong folder or inventing its metadata.
+
+The plain `create`, `append` and `update` operations remain for files that are
+not pages.
 
 ## Rules a handler must follow
 

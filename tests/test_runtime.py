@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 
 from primee.core.errors import ErrorCode
-from primee.core.runtime import CLARIFICATION_NEEDED, COMPLETED, FAILED
+from primee.core.runtime import CLARIFICATION_NEEDED, COMPLETED, DENIED, FAILED
 
 from .support import (
     AllowAllApprovalGate,
@@ -87,36 +87,60 @@ class PermissionEnforcementTests(TempVaultCase):
         self.assertEqual(write.error_code, ErrorCode.PERMISSION_DENIED)
         self.assertFalse((self.vault_root / "plans").exists())
 
-    def test_write_needing_approval_is_refused_by_the_default_gate(self):
-        runtime = make_runtime(make_config(vault_root=self.vault_root))
-        (self.vault_root / "plans").mkdir()
-        (self.vault_root / "plans" / f"{TODAY}.md").write_text("old plan", encoding="utf-8")
-        outcome = runtime.handle(
-            "daily plan",
-            inputs={"candidates": [_candidate("Ship the landing page")], "overwrite": True},
+    def _create_wiki_page(self, runtime, body="original"):
+        return runtime.handle(
+            "",
+            skill_name="vault",
+            inputs={
+                "operation": "write_wiki",
+                "content": body,
+                "metadata": {
+                    "title": "Topic",
+                    "slug": "topic",
+                    "summary": "A synthetic topic.",
+                },
+            },
         )
-        write = outcome.vault_writes[0]
-        self.assertEqual(write.operation, "update")
-        self.assertFalse(write.performed)
-        self.assertEqual(write.error_code, ErrorCode.APPROVAL_DENIED)
+
+    def test_write_needing_approval_is_refused_by_the_default_gate(self):
+        # vault.update is "approval" in the example policy, and nothing is
+        # approved for this run.
+        runtime = make_runtime(make_config(vault_root=self.vault_root))
+        self._create_wiki_page(runtime)
+        before = (self.vault_root / "wiki" / "topic.md").read_text(encoding="utf-8")
+        outcome = runtime.handle(
+            "",
+            skill_name="vault",
+            inputs={
+                "operation": "update_wiki",
+                "content": "replaced",
+                "metadata": {"title": "Topic", "slug": "topic", "summary": "Changed."},
+            },
+        )
+        self.assertEqual(outcome.status, DENIED)
+        self.assertEqual(outcome.error_code, ErrorCode.APPROVAL_DENIED)
         self.assertEqual(
-            (self.vault_root / "plans" / f"{TODAY}.md").read_text(encoding="utf-8"), "old plan"
+            (self.vault_root / "wiki" / "topic.md").read_text(encoding="utf-8"), before
         )
 
     def test_write_needing_approval_succeeds_once_approved(self):
         runtime = make_runtime(
             make_config(vault_root=self.vault_root), approval_gate=AllowAllApprovalGate()
         )
-        (self.vault_root / "plans").mkdir()
-        (self.vault_root / "plans" / f"{TODAY}.md").write_text("old plan", encoding="utf-8")
+        self._create_wiki_page(runtime)
         outcome = runtime.handle(
-            "daily plan",
-            inputs={"candidates": [_candidate("Ship the landing page")], "overwrite": True},
+            "",
+            skill_name="vault",
+            inputs={
+                "operation": "update_wiki",
+                "content": "replaced by an approved update",
+                "metadata": {"title": "Topic", "slug": "topic", "summary": "Changed."},
+            },
         )
-        self.assertTrue(outcome.vault_writes[0].performed)
+        self.assertEqual(outcome.status, COMPLETED)
         self.assertIn(
-            "Ship the landing page",
-            (self.vault_root / "plans" / f"{TODAY}.md").read_text(encoding="utf-8"),
+            "replaced by an approved update",
+            (self.vault_root / "wiki" / "topic.md").read_text(encoding="utf-8"),
         )
 
     def test_permission_decisions_are_audited_with_their_permission_name(self):
@@ -166,9 +190,11 @@ class VaultGatewayTests(TempVaultCase):
         outcome = runtime.handle("daily plan", inputs={"candidates": [_candidate("A task")]})
         self.assertTrue(outcome.vault_writes[0].performed)
         self.assertEqual(outcome.vault_writes[0].requested_by, "plan")
-        events = [e for e in runtime.audit.events if e.action.startswith("vault.create")]
+        events = [e for e in runtime.audit.events if e.action.startswith("vault.create:")]
         # Two events per write: the permission decision, then the write itself.
+        # The action names the permission checked and the operation performed.
         self.assertEqual([e.outcome for e in events], ["allowed", "written"])
+        self.assertIn("publish_output", events[-1].action)
         self.assertEqual(events[-1].detail["performed_by"], "vault")
 
     def test_audit_records_the_requesting_skill_but_not_the_content(self):

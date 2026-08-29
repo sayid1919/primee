@@ -62,6 +62,18 @@ Step One reads no credential at all, because it ships no real provider.
 ### `[vault]`
 `root` (absolute path, required for any persistence), `max_file_bytes`.
 
+If `root` is empty, Primee falls back to the **`PRIMEE_VAULT_PATH`** environment
+variable. That is the recommended setup: the path lives in your environment
+rather than in a file, so no user name or personal path is ever written down in
+the project.
+
+```powershell
+setx PRIMEE_VAULT_PATH "%USERPROFILE%\Documents\PrimeeVault"
+```
+
+`primee doctor` reports whether the path came from configuration or from the
+environment. An explicit `root` always wins.
+
 ### `[runtime]`
 `dry_run`, `skills_dir` (empty = bundled skills), `state_dir` (empty = OS
 default), `min_route_score`, `ambiguity_margin`.
@@ -103,6 +115,12 @@ invents sources.
 `provider` is `"none"` (default, honest) or `"mock"` (reads a synthetic JSON
 fixture named by `fixture`). An unrecognised provider name is treated as `none`
 rather than as an error, because guessing would be worse.
+
+## The Vault is not configuration
+
+Your Vault holds notes, knowledge and outputs — not settings. It lives outside
+this repository, and `.gitignore` blocks the obvious accidents. See
+[memory.md](memory.md#why-your-real-vault-is-not-in-git).
 
 ## State directory
 

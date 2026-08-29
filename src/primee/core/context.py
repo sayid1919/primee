@@ -22,6 +22,11 @@ class VaultReadResult:
     content: Optional[str] = None
     error_code: Optional[str] = None
     message: str = ""
+    #: For a Markdown page, the body below the frontmatter. For a plain file,
+    #: the same text as ``content``.
+    body: Optional[str] = None
+    #: Validated frontmatter for a Markdown page, empty for a plain file.
+    metadata: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -34,6 +39,7 @@ class VaultAccess:
 
     _reader: Callable[[str], VaultReadResult]
     _lister: Callable[[str], list[str]]
+    _searcher: Optional[Callable[[str, str, str, int], list[dict]]] = None
 
     def read(self, path: str) -> VaultReadResult:
         return self._reader(path)
@@ -44,12 +50,27 @@ class VaultAccess:
     def exists(self, path: str) -> bool:
         return self.read(path).found
 
+    def search(self, mode: str, field: str = "", value: str = "", limit: int = 20) -> list[dict]:
+        """Search the Vault. ``mode`` is one of text, tag, metadata or recent."""
+        if self._searcher is None:
+            return []
+        return self._searcher(mode, field, value, limit)
+
+    def latest_of_type(self, page_type: str) -> Optional[dict]:
+        """The most recently updated page of one type, or ``None``."""
+        hits = self.search("metadata", "type", page_type, limit=1)
+        return hits[0] if hits else None
+
 
 class DeniedVaultAccess(VaultAccess):
     """Placeholder used when a skill did not declare ``vault.read``."""
 
     def __init__(self) -> None:
-        super().__init__(_reader=self._denied, _lister=lambda prefix: [])
+        super().__init__(
+            _reader=self._denied,
+            _lister=lambda prefix: [],
+            _searcher=lambda mode, field, value, limit: [],
+        )
 
     @staticmethod
     def _denied(path: str) -> VaultReadResult:

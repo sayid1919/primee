@@ -1,6 +1,6 @@
 ---
 name: metrics
-version: 1.0.0
+version: 2.0.0
 description: "Summarise explicitly configured numeric series from replaceable read-only connectors."
 triggers:
   - metrics
@@ -21,6 +21,7 @@ exclusions:
   - "what changed"
 required_permissions:
   - connector.metrics.read
+  - vault.create
 inputs:
   - name: period
     type: string
@@ -30,6 +31,10 @@ inputs:
     type: string
     required: false
     description: "Restrict the report to one configured series key."
+  - name: store
+    type: boolean
+    required: false
+    description: "Propose storing the report in outputs/. Defaults to true."
 outputs:
   - name: period
     type: string
@@ -38,9 +43,9 @@ outputs:
   - name: unconfigured
     type: list
 persistence:
-  vault_writes: false
-  path_prefix: ""
-  description: "Metrics is read-only and proposes no Vault writes in Step One."
+  vault_writes: true
+  path_prefix: outputs
+  description: "Proposes one dated report in outputs/; the Vault skill performs the write."
 handler: handler.py:run
 ---
 
@@ -79,16 +84,22 @@ No real account is contacted.
 
 ## What it may write
 
-Nothing. Metrics proposes no Vault writes and no external actions.
+One dated report page in `outputs/`, and only by proposing the write to Primee
+Core, which forwards it to the Vault skill. Metrics never touches the
+filesystem, never chooses the filename, and never writes the frontmatter: the
+Vault does all three. Pass `store=false` to get the report without proposing a
+write.
 
 ## What requires user approval
 
-Nothing in Step One, because the skill has no side effects. Connecting a real
-metrics provider is a separate, explicitly approved step.
+Whatever the permission policy assigns to `vault.create`. Metrics still has no
+external side effects at all. Connecting a real metrics provider is a separate,
+explicitly approved step.
 
 ## What it returns
 
-A standard Primee result whose `structured_data` lists every configured series
+A standard Primee result, plus a proposed `output_report` page for `outputs/`.
+`structured_data` lists every configured series
 with its computed summaries, and separately lists every series whose data source
 was unavailable. Missing numbers are reported as missing. They are never
 estimated, interpolated or invented.

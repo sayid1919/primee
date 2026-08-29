@@ -23,6 +23,13 @@ does not claim more than the code delivers.
 | Message content is never logged | `log_message_bodies` defaults to false, and no code path logs bodies |
 | No shell execution from metadata | `SKILL.md` is parsed by an inert parser; no `subprocess`, no `eval`, no `exec` anywhere |
 | No data transmission | No networking module is imported anywhere in `src/` |
+| No delete operation anywhere | Absent from the catalogue, the service and the storage class |
+| Raw notes immutable | No code path updates or renames a raw note |
+| Final outputs immutable | A revision is a new file; the original is not touched at all |
+| Changelog append-only | An append verifies the existing header first and refuses otherwise |
+| Managed root files protected | `INDEX.md`, `CHANGELOG.md`, `PRIMEE.md` reject every generic write |
+| Skills cannot choose a page path | Memory proposals must carry an empty `path`; the Vault generates it |
+| The real Vault stays out of Git | `.gitignore` plus a test that no repository source is ignored |
 
 `tests/test_independence.py` parses every source file and asserts the last three
 rows mechanically, so a regression fails the suite rather than going unnoticed.
@@ -58,14 +65,28 @@ These are real gaps, stated plainly rather than papered over.
    without Developer Mode or elevation, the symlink tests report `skipped`, not
    `passed`. The junction case is still covered by the `realpath` containment
    check. Verify on your own machine before relying on it.
-6. **No encryption at rest.** The Vault is plain Markdown. Use BitLocker or an
-   encrypted volume if you need that.
+6. **No encryption at rest.** The Vault is plain Markdown. Anyone who can read
+   the folder can read your memory: another user on the machine, a backup
+   service, a sync client, anyone with the disk. Primee encrypts nothing and
+   claims nothing about encryption. Operating-system file permissions and
+   full-disk encryption such as BitLocker are separate layers you must enable
+   yourself; they are not implemented here.
 7. **No multi-user model.** Primee assumes one trusted user on one machine.
 8. **`primee run --approve X` is a blanket grant for that run.** It approves
    every request for permission `X` in that single invocation, not one specific
    file. An interactive per-action prompt is a later step.
 9. **The `[schedule]` section is inert.** Primee installs no scheduler and runs
    nothing on a timer. Those values are read by `doctor` and nothing else.
+10. **Credential detection in Vault content is heuristic.** Primee refuses
+    content that matches known credential shapes, but an unusual format can slip
+    through. The real protection is not putting credentials near Primee at all.
+11. **`.gitignore` is a safety net, not a guarantee.** It blocks the obvious
+    accidents. Keeping your Vault outside the repository is what actually keeps
+    it out of Git; a test asserts that no repository source file is ignored, but
+    nothing can stop a deliberate `git add -f`.
+12. **A rename copies rather than moves.** Because Primee never deletes, a
+    renamed page leaves the original file in place. Removing it is a manual
+    decision for you, in your own file manager.
 
 ## Reporting
 

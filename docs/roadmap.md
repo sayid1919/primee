@@ -1,5 +1,7 @@
 # Roadmap — what is real, what is a placeholder
 
+Covers Steps One and Two.
+
 Step One is a foundation. This page is the honest inventory: what works today,
 what is deliberately a stub, and which later step is meant to fill each gap.
 
@@ -24,9 +26,33 @@ what is deliberately a stub, and which later step is meant to fill each gap.
 - `trends`: real snapshot comparison against the previous Vault snapshot, with
   observation separated from interpretation.
 
+### Step Two — Primee Memory, complete
+
+- A plain Markdown Vault as the authoritative memory: `raw/`, `wiki/`,
+  `outputs/`, `INDEX.md`, `CHANGELOG.md`, `PRIMEE.md`. No database, no vector
+  store, no hosted memory service.
+- Safe initialization with dry-run, refusal of unsafe paths and refusal to
+  initialise over an unrelated non-empty directory.
+- A validated frontmatter schema: required fields, controlled vocabularies,
+  timezone-aware timestamps, stable ids, immutable `created`, type-to-folder
+  matching, rejection of malformed pages with sanitized errors.
+- Raw notes immutable in code; corrections are linked amendments.
+- Outputs with ISO-dated filenames, collision suffixes, and `final`/`shipped`
+  outputs immutable in code; corrections are linked revisions.
+- Wikilinks: forward links, backlinks, dangling and ambiguous detection,
+  duplicate-name detection, link validation, safe renaming that refuses when
+  ambiguous.
+- Deterministic, byte-stable `INDEX.md` rebuilt entirely from the pages.
+- Append-only `CHANGELOG.md` that refuses to append over tampered history.
+- A fixed catalogue of 20 named, permissioned operations, with no generic
+  filesystem write anywhere.
+- Text, tag, metadata and recency search, reading the Markdown directly.
+- All four skills writing through the Vault into `outputs/`.
+- A fictional template Vault, verified by tests to stay valid and impersonal.
+
 ## Placeholders, and why
 
-| Component | State in Step One | Filled by |
+| Component | State now | Filled by |
 | --- | --- | --- |
 | Metrics connector | Interface + not-configured default + fixture mock | A metrics integration step, after you choose a platform |
 | Email connector | Interface + mock, read-only, metadata only | An email integration step |
@@ -34,6 +60,8 @@ what is deliberately a stub, and which later step is meant to fill each gap.
 | Trends connector | Interface + fixture mock, no network at all | A sources step, after you list URLs and feeds |
 | Credential storage | `credential_env` names a variable; nothing is read | The first real connector step |
 | `interpretation` in trends | Always empty, by design | The native Primee intelligence engine |
+| Distilling raw notes into wiki pages | Not automated; a human writes wiki pages | The same engine |
+| Search | Substring matching over the files | A local index, if it ever proves too slow |
 | Router | Deterministic scoring | The same engine, via the `Router` interface |
 | Approval prompt | `--approve` blanket grant per run | An interactive prompt or HUD step |
 
@@ -48,7 +76,10 @@ what is deliberately a stub, and which later step is meant to fill each gap.
 | Missed-job handling | Designed (`propose_once`), not implemented |
 | HUD / Node.js user interface | Not started |
 | Multi-device sync | Deliberately excluded; the architecture does not block it |
-| Encryption at rest | Not present; use BitLocker or an encrypted volume |
+| Encryption at rest | Not present; the Vault is plain text. Use BitLocker or an encrypted volume |
+| Delete or archive in the Vault | Deliberately absent at every layer |
+| Vault backup or sync | Not provided; use your own backup |
+| Changelog rotation or repair | Designed as approval-gated, not implemented |
 
 ## Reserved permissions
 
@@ -64,7 +95,8 @@ Primee step and is not implemented", and an audit event.
 ## Suggested order for later steps
 
 1. **Scheduling** — Windows Task Scheduler, the missed-job policy, a
-   `primee scheduled-run` entry point. No new external surface.
+   `primee scheduled-run` entry point. No new external surface. The daily
+   outputs now have a place to land, so this is the natural next step.
 2. **One real connector** — probably metrics, since it is read-only and low
    risk. Establishes the credential-store pattern for everything after it.
 3. **Email and calendar, read-only** — the morning brief becomes real. Sending

@@ -17,9 +17,24 @@ from .redaction import redact_structure, redact_text
 
 SKILL_NAME_RE = re.compile(r"^[a-z][a-z0-9_]{0,31}$")
 
-#: Vault operations a skill may propose.  Deleting is deliberately absent in
-#: Step One: Primee has no irreversible-delete capability yet.
-VAULT_OPERATIONS = frozenset({"create", "append", "update"})
+#: Vault operations a skill may propose.  Deleting is deliberately absent:
+#: Primee has no irreversible-delete capability at all.
+#:
+#: The first three are plain file operations kept from Step One. The rest are
+#: Primee Memory operations, where the Vault skill derives the path, the
+#: frontmatter and the ISO-dated filename itself, so a skill can never invent
+#: metadata or place a page in the wrong folder.
+FILE_OPERATIONS = frozenset({"create", "append", "update"})
+MEMORY_OPERATIONS = frozenset(
+    {"create_raw", "amend_raw", "write_wiki", "update_wiki", "publish_output", "revise_output"}
+)
+VAULT_OPERATIONS = FILE_OPERATIONS | MEMORY_OPERATIONS
+
+#: Operations whose destination path the Vault skill generates. A skill must
+#: NOT supply a path for these.
+PATH_GENERATED_OPERATIONS = frozenset(
+    {"create_raw", "amend_raw", "publish_output", "revise_output"}
+)
 
 MAX_SUMMARY_LENGTH = 2000
 MAX_WARNINGS = 20
@@ -30,19 +45,33 @@ MAX_CONTENT_BYTES = 512 * 1024
 
 @dataclass(frozen=True)
 class VaultWrite:
-    """A persistent write a skill would like the Vault skill to perform."""
+    """A persistent write a skill would like the Vault skill to perform.
+
+    This is a *proposal*. Primee Core checks the permission, runs the approval
+    gate and then hands it to the Vault skill; a skill never writes anything
+    itself.
+    """
 
     path: str
     operation: str
     content: str
     reason: str = ""
+    metadata: dict = field(default_factory=dict)
 
     def validate(self) -> None:
         if self.operation not in VAULT_OPERATIONS:
             raise ResultValidationError(
                 f"Unsupported vault operation {self.operation!r}."
             )
-        if not isinstance(self.path, str) or not self.path.strip():
+        if not isinstance(self.path, str):
+            raise ResultValidationError("Vault write path must be a string.")
+        if self.operation in PATH_GENERATED_OPERATIONS:
+            if self.path.strip():
+                raise ResultValidationError(
+                    f"Operation {self.operation!r} generates its own dated path; "
+                    "a skill must not supply one."
+                )
+        elif not self.path.strip():
             raise ResultValidationError("Vault write path must be a non-empty string.")
         if not isinstance(self.content, str):
             raise ResultValidationError("Vault write content must be a string.")
@@ -50,18 +79,36 @@ class VaultWrite:
             raise ResultValidationError("Vault write content is too large.")
         if not isinstance(self.reason, str):
             raise ResultValidationError("Vault write reason must be a string.")
+        if not isinstance(self.metadata, dict):
+            raise ResultValidationError("Vault write metadata must be a mapping.")
+        try:
+            json.dumps(self.metadata, ensure_ascii=False)
+        except (TypeError, ValueError) as exc:
+            raise ResultValidationError(
+                "Vault write metadata must be JSON serialisable."
+            ) from exc
+        if self.operation in MEMORY_OPERATIONS:
+            for required in ("title", "summary"):
+                if not str(self.metadata.get(required, "")).strip():
+                    raise ResultValidationError(
+                        f"Memory operation {self.operation!r} requires a "
+                        f"non-empty {required!r} in its metadata."
+                    )
 
     @property
     def permission(self) -> str:
-        return f"vault.{self.operation}"
+        from .vault_operations import permission_for
+
+        return permission_for(self.operation) or "vault.update"
 
     def describe(self) -> dict:
-        """A summary safe for logs: metadata only, never the file content."""
+        """A summary safe for logs: metadata only, never the page content."""
         return {
-            "path": self.path,
+            "path": self.path or "(generated)",
             "operation": self.operation,
             "content_bytes": len(self.content.encode("utf-8")),
             "reason": redact_text(self.reason),
+            "title": redact_text(str(self.metadata.get("title", ""))),
         }
 
 

@@ -1,7 +1,8 @@
-# Primee — Step One
+# Primee — Steps One and Two
 
 Primee is a local-first personal operating system. This repository contains
-**Step One**: the skill foundation. It runs on a plain Python installation, on
+**Step One** (the skill foundation) and **Step Two** (Primee Memory: a plain
+Markdown Vault). It runs on a plain Python installation, on
 one Windows machine, with no network access and no hosted AI service.
 
 ## Independence
@@ -20,6 +21,17 @@ exclusions and a transparent score. There is no model in the loop.
 `tests/test_independence.py` enforces all of the above by parsing every source
 file, and `primee doctor` reports `hosted_ai_dependencies: []`.
 
+## What Step Two adds
+
+Primee Memory: a plain Markdown Vault of `raw/`, `wiki/` and `outputs/`, with a
+validated frontmatter schema, wikilinks and backlinks, a generated `INDEX.md`,
+an append-only `CHANGELOG.md`, immutable raw notes, immutable final outputs and
+a fixed catalogue of permissioned operations. No database, no vector store, no
+hosted memory service. See [docs/memory.md](docs/memory.md).
+
+Your real Vault lives on your own computer, outside this repository, and is
+never committed or published.
+
 ## What Step One does
 
 1. Discovers project-local skills from the filesystem.
@@ -36,9 +48,10 @@ file, and `primee doctor` reports `hosted_ai_dependencies: []`.
 ## What Step One does **not** do yet
 
 Voice input and output, file management outside the Vault, operating system
-actions, scheduling, a HUD, multi-device sync, and any real email, calendar,
-metrics or web connector. See [`docs/roadmap.md`](docs/roadmap.md) for the full,
-honest list of placeholders.
+actions, scheduling, a HUD, multi-device sync, encryption at rest, automatic
+distillation of raw notes into wiki pages, and any real email, calendar, metrics
+or web connector. See [`docs/roadmap.md`](docs/roadmap.md) for the full, honest
+list of placeholders.
 
 ## Requirements
 
@@ -57,16 +70,22 @@ copy config\primee.example.toml       config\primee.local.toml
 copy config\permissions.example.toml  config\permissions.local.toml
 copy config\connectors.example.toml   config\connectors.local.toml
 
-# 3. Edit config\primee.local.toml and set your Vault path. It must be a folder
-#    OUTSIDE this repository, for example:
-#      root = "${env:USERPROFILE}/Documents/PrimeeVault"
-#    Create that folder before running Primee.
+# 3. Create your Vault OUTSIDE this repository. Dry run first: it writes nothing.
+python run_primee.py vault init --root "%USERPROFILE%\Documents\PrimeeVault" --dry-run
+python run_primee.py vault init --root "%USERPROFILE%\Documents\PrimeeVault" --approve vault.init
 
-# 4. Ask Primee something.
+# 4. Point Primee at it, without writing your user name into any file.
+setx PRIMEE_VAULT_PATH "%USERPROFILE%\Documents\PrimeeVault"
+
+# 5. Ask Primee something.
 python run_primee.py explain "what changed this week?"
 python run_primee.py run "morning brief"
 python run_primee.py run "daily plan" --dry-run
+python run_primee.py vault validate
 ```
+
+A fictional example Vault ships in [`templates/vault/`](templates/README.md) so
+you can see the memory model before creating your own.
 
 `python -m primee ...` works identically after `pip install -e .`, and
 `run_primee.py` needs no install step at all.
@@ -89,6 +108,7 @@ calendar, website, credential or private file.
 | [docs/routing.md](docs/routing.md) | The deterministic router and its scoring |
 | [docs/permissions.md](docs/permissions.md) | Deny-by-default permissions and approval |
 | [docs/vault.md](docs/vault.md) | Vault isolation and the write path |
+| [docs/memory.md](docs/memory.md) | **Primee Memory: the Markdown Vault, schema, links, index** |
 | [docs/security.md](docs/security.md) | Security decisions, and their honest limits |
 | [docs/configuration.md](docs/configuration.md) | Where configuration lives |
 | [docs/running.md](docs/running.md) | Running Primee locally |
@@ -99,10 +119,11 @@ calendar, website, credential or private file.
 ## Repository layout
 
 ```
-config/    configuration templates (never real paths, never credentials)
-src/       the Primee package: core, skills, connectors
-tests/     unittest suite plus synthetic fixtures
-docs/      documentation
+config/     configuration templates (never real paths, never credentials)
+src/        the Primee package: core, memory, skills, connectors
+templates/  a fictional example Vault — not your data
+tests/      unittest suite plus synthetic fixtures
+docs/       documentation
 ```
 
 The real Vault, the audit log and your local configuration all live **outside**

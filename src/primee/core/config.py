@@ -26,6 +26,11 @@ from .errors import ConfigError
 from .permissions import PermissionPolicy
 
 DEFAULT_CONFIG_DIRNAME = "config"
+
+#: Environment variable consulted when [vault] root is empty. This is how the
+#: Vault path stays configurable per machine without any personal path or user
+#: name ever appearing in the repository.
+VAULT_PATH_ENV = "PRIMEE_VAULT_PATH"
 MAIN_FILE = "primee.toml"
 PERMISSIONS_FILE = "permissions.toml"
 CONNECTORS_FILE = "connectors.toml"
@@ -132,6 +137,11 @@ class PrimeeConfig:
     def describe(self) -> dict:
         return {
             "vault_configured": self.vault.configured,
+            "vault_source": (
+                "configuration"
+                if self.vault.configured and not os.environ.get(VAULT_PATH_ENV)
+                else ("environment" if self.vault.configured else "unset")
+            ),
             "dry_run": self.runtime.dry_run,
             "skills_dir": self.runtime.skills_dir or "(bundled)",
             "state_dir": str(self.state_directory()),
@@ -229,8 +239,12 @@ def _default_connectors() -> dict[str, ConnectorConfig]:
 
 def _build(data: Mapping[str, Any], used: list[str]) -> PrimeeConfig:
     vault_raw = _section(data, "vault")
+    configured_root = str(vault_raw["root"]).strip() if vault_raw.get("root") else ""
+    # An explicit setting always wins; the environment variable is the fallback
+    # so a machine can supply its own path without editing a committed file.
+    root = configured_root or os.environ.get(VAULT_PATH_ENV, "").strip()
     vault = VaultConfig(
-        root=(str(vault_raw["root"]).strip() if vault_raw.get("root") else None),
+        root=root or None,
         max_file_bytes=_positive_int(vault_raw.get("max_file_bytes"), 512 * 1024, "vault.max_file_bytes"),
     )
 

@@ -29,6 +29,43 @@ config/*.local.toml
 *.jsonl
 !tests/fixtures/**/*.jsonl
 
+# --- Primee Memory: the real personal Vault -------------------------------
+# The Vault holds your actual notes, knowledge and outputs. It lives on your own
+# computer, outside this repository, and is never committed, pushed, uploaded to
+# a browser development environment, used in tests, logged or published.
+#
+# The repository contains only: Vault implementation code, documentation, the
+# fictional template Vault under templates/, synthetic fixtures and tests.
+/vault/
+/Vault/
+/PrimeeVault/
+/primee-vault/
+/my-vault/
+*.vault/
+**/vault-local/
+**/PRIMEE_VAULT/
+
+# Anything a real Vault would carry, wherever it was accidentally placed.
+**/raw/**/*.md
+**/wiki/**/*.md
+**/outputs/**/*.md
+!templates/**
+!tests/**
+!docs/**
+
+# Locally downloaded models and temporary audio for future Primee steps.
+/models/
+*.gguf
+*.safetensors
+*.onnx
+*.bin
+/audio/
+*.wav
+*.mp3
+*.m4a
+*.ogg
+*.flac
+
 # --- Python -----------------------------------------------------------------
 __pycache__/
 *.py[cod]

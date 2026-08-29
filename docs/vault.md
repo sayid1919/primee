@@ -4,6 +4,10 @@ The Vault is the only place Primee stores persistent user content, and the Vault
 skill is the only component allowed to touch it. No other skill has a storage
 handle.
 
+This page covers **path isolation and the write path**. For the memory model
+itself — the `raw/`, `wiki/` and `outputs/` folders, the page schema, wikilinks,
+`INDEX.md` and `CHANGELOG.md` — see [memory.md](memory.md).
+
 ## Where it lives
 
 Configured, never hardcoded:
@@ -74,6 +78,8 @@ formatting character stays blocked.
 
 ## Operations
 
+The storage layer exposes five primitives, which the memory service builds on:
+
 | Operation | Permission | Behaviour |
 | --- | --- | --- |
 | `read` | `vault.read` | returns UTF-8 text; missing file → `VAULT_FILE_MISSING` |
@@ -82,8 +88,16 @@ formatting character stays blocked.
 | `append` | `vault.append` | adds a newline between blocks; creates the file if absent |
 | `update` | `vault.update` | requires the file to exist |
 
-**There is no delete operation.** Step One has no way to remove a Vault file at
-all — not through the skill, not through the storage layer.
+The full named operation catalogue — `create_raw`, `write_wiki`,
+`publish_output`, `rebuild_index` and the rest — is in [memory.md](memory.md).
+
+**There is no delete operation.** Primee has no way to remove a Vault file at
+all: not through the skill, not through the memory service, not through the
+storage layer.
+
+Three root files are managed by Primee and cannot be targeted by any generic
+operation: `INDEX.md` (regenerate it with `rebuild_index`), `CHANGELOG.md` (only
+appended to, and an append verifies the existing history first) and `PRIMEE.md`.
 
 ## Atomic writes
 

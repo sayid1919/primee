@@ -68,10 +68,18 @@ class MetricsSkillTests(TempVaultCase):
         self.assertEqual(outcome.error_code, ErrorCode.CONNECTOR_NOT_CONFIGURED)
         self.assertIn("will not invent", outcome.result.sanitized_error_message)
 
-    def test_proposes_no_writes_and_no_external_actions(self):
+    def test_proposes_one_dated_output_and_no_external_actions(self):
         outcome = self.runtime().handle("metrics report")
-        self.assertEqual(outcome.result.proposed_vault_writes, [])
+        writes = outcome.result.proposed_vault_writes
+        self.assertEqual(len(writes), 1)
+        self.assertEqual(writes[0].operation, "publish_output")
+        self.assertEqual(writes[0].path, "")  # the Vault generates the path
+        self.assertEqual(writes[0].metadata["output_type"], "output_report")
         self.assertEqual(outcome.result.proposed_external_actions, [])
+
+    def test_store_false_proposes_nothing(self):
+        outcome = self.runtime().handle("metrics report", inputs={"store": False})
+        self.assertEqual(outcome.result.proposed_vault_writes, [])
 
     def test_invalid_period_is_rejected(self):
         outcome = self.runtime().handle("metrics report", inputs={"period": "century"})
@@ -109,11 +117,23 @@ class InboxSkillTests(TempVaultCase):
         self.assertEqual(scores, sorted(scores, reverse=True))
         self.assertEqual(items[0]["id"], "m-001")
 
-    def test_is_read_only(self):
+    def test_is_read_only_towards_email_and_calendar(self):
         outcome = self.runtime().handle("morning brief")
         self.assertTrue(outcome.result.structured_data["read_only"])
-        self.assertEqual(outcome.result.proposed_vault_writes, [])
+        # Inbox never acts on the mailbox or the calendar...
         self.assertEqual(outcome.result.proposed_external_actions, [])
+        # ...and the only thing it writes is its own brief, into outputs/.
+        writes = outcome.result.proposed_vault_writes
+        self.assertEqual([w.operation for w in writes], ["publish_output"])
+        self.assertEqual(writes[0].metadata["output_type"], "output_brief")
+        # The brief, plus the changelog entry recording that it was written.
+        self.assertEqual(
+            sorted(p.name for p in self.vault_root.iterdir()), ["CHANGELOG.md", "outputs"]
+        )
+
+    def test_store_false_writes_nothing_at_all(self):
+        outcome = self.runtime().handle("morning brief", inputs={"store": False})
+        self.assertEqual(outcome.result.proposed_vault_writes, [])
         self.assertEqual(list(self.vault_root.iterdir()), [])
 
     def test_no_connector_means_no_invented_brief(self):
@@ -150,8 +170,10 @@ class TrendsSkillTests(TempVaultCase):
         self.assertEqual(outcome.status, COMPLETED)
         self.assertTrue(outcome.result.structured_data["first_run"])
         self.assertEqual(outcome.result.structured_data["verified_changes"], [])
-        self.assertTrue(outcome.vault_writes[0].performed)
-        self.assertTrue((self.vault_root / "trends" / "latest-snapshot.md").is_file())
+        write = outcome.vault_writes[0]
+        self.assertTrue(write.performed)
+        self.assertTrue(write.path.startswith("outputs/"))
+        self.assertTrue((self.vault_root / write.path).is_file())
 
     def test_second_run_reports_only_real_changes(self):
         self.runtime("trends_day1.json").handle("what changed")
@@ -196,10 +218,10 @@ class TrendsSkillTests(TempVaultCase):
         self.assertEqual(outcome.result.structured_data["verified_changes"], [])
 
     def test_snapshot_file_is_markdown_with_frontmatter(self):
-        self.runtime().handle("what changed")
-        text = (self.vault_root / "trends" / "latest-snapshot.md").read_text(encoding="utf-8")
+        outcome = self.runtime().handle("what changed")
+        text = (self.vault_root / outcome.vault_writes[0].path).read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
-        self.assertIn("primee_type: trends_snapshot", text)
+        self.assertIn('type: "output_snapshot"', text)
         self.assertIn("```json", text)
 
 
@@ -220,15 +242,18 @@ class PlanSkillTests(TempVaultCase):
 
     def test_uses_an_iso_date_filename(self):
         outcome = self.runtime().handle("daily plan", inputs={"candidates": [_candidate("A")]})
-        self.assertEqual(outcome.result.structured_data["plan_path"], f"plans/{TODAY}.md")
-        self.assertTrue((self.vault_root / "plans" / f"{TODAY}.md").is_file())
+        path = outcome.vault_writes[0].path
+        self.assertEqual(path, f"outputs/{TODAY}-080000-daily-plan.md")
+        self.assertTrue((self.vault_root / path).is_file())
 
     def test_writes_through_the_vault_never_directly(self):
         outcome = self.runtime().handle("daily plan", inputs={"candidates": [_candidate("A")]})
         write = outcome.vault_writes[0]
         self.assertTrue(write.performed)
         self.assertEqual(write.requested_by, "plan")
-        self.assertEqual(write.operation, "create")
+        self.assertEqual(write.operation, "publish_output")
+        # The skill proposes no path at all; the Vault generates it.
+        self.assertEqual(outcome.result.proposed_vault_writes[0].path, "")
 
     def test_refuses_to_invent_priorities_when_there_is_nothing_to_go_on(self):
         outcome = self.runtime().handle("daily plan")
@@ -249,39 +274,55 @@ class PlanSkillTests(TempVaultCase):
         self.assertEqual(len(outcome.result.structured_data["priorities"]), 1)
         self.assertTrue(any("did not pad" in w for w in outcome.result.warnings))
 
-    def test_refuses_to_overwrite_an_existing_plan_by_default(self):
-        self.runtime().handle("daily plan", inputs={"candidates": [_candidate("First")]})
-        outcome = self.runtime().handle("daily plan", inputs={"candidates": [_candidate("Second")]})
-        self.assertEqual(outcome.error_code, ErrorCode.VAULT_FILE_EXISTS)
-        self.assertIn("First", (self.vault_root / "plans" / f"{TODAY}.md").read_text(encoding="utf-8"))
+    def test_a_second_plan_never_overwrites_the_first(self):
+        first = self.runtime().handle("daily plan", inputs={"candidates": [_candidate("First")]})
+        second = self.runtime().handle("daily plan", inputs={"candidates": [_candidate("Second")]})
+        first_path, second_path = first.vault_writes[0].path, second.vault_writes[0].path
+        self.assertNotEqual(first_path, second_path)
+        self.assertIn("First", (self.vault_root / first_path).read_text(encoding="utf-8"))
+        self.assertIn("Second", (self.vault_root / second_path).read_text(encoding="utf-8"))
 
     def test_reads_candidates_from_the_vault_when_none_are_supplied(self):
-        (self.vault_root / "plans").mkdir()
-        (self.vault_root / "plans" / "candidates.md").write_text(
-            "# Candidates\n\n"
+        self._write_candidates_page()
+        outcome = self.runtime().handle("daily plan")
+        self.assertEqual(outcome.status, COMPLETED)
+        self.assertEqual(
+            outcome.result.structured_data["candidate_source"], "wiki/plan-candidates"
+        )
+        self.assertEqual(
+            outcome.result.structured_data["priorities"][0]["title"], "Renew the domain"
+        )
+
+    def _write_candidates_page(self):
+        (self.vault_root / "wiki").mkdir(exist_ok=True)
+        (self.vault_root / "wiki" / "plan-candidates.md").write_text(
+            "---\n"
+            'id: "wik-20260827-0123456789"\n'
+            "schema_version: 1\n"
+            'title: "Plan candidates"\n'
+            'type: "wiki_topic"\n'
+            "tags:\n  - \"plan\"\n"
+            'created: "2026-08-27T08:00:00+03:30"\n'
+            'updated: "2026-08-27T08:00:00+03:30"\n'
+            'summary: "Approved candidate actions."\n'
+            "---\n\n"
             "## Renew the domain\n"
             "- reason: it expires this week\n"
             "- expected_outcome: the domain is renewed for a year\n"
             "- completion_condition: the registrar shows the new expiry date\n",
             encoding="utf-8",
         )
-        outcome = self.runtime().handle("daily plan")
-        self.assertEqual(outcome.status, COMPLETED)
-        self.assertEqual(outcome.result.structured_data["candidate_source"], "plans/candidates.md")
-        self.assertEqual(
-            outcome.result.structured_data["priorities"][0]["title"], "Renew the domain"
-        )
 
     def test_invalid_date_is_rejected(self):
         outcome = self.runtime().handle("daily plan", inputs={"day": "27-08-2026"})
         self.assertEqual(outcome.error_code, ErrorCode.INVALID_INPUT)
 
-    def test_plan_file_is_markdown_with_frontmatter(self):
-        self.runtime().handle("daily plan", inputs={"candidates": [_candidate("A")]})
-        text = (self.vault_root / "plans" / f"{TODAY}.md").read_text(encoding="utf-8")
+    def test_plan_file_is_markdown_with_valid_frontmatter(self):
+        outcome = self.runtime().handle("daily plan", inputs={"candidates": [_candidate("A")]})
+        text = (self.vault_root / outcome.vault_writes[0].path).read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
-        self.assertIn("primee_type: daily_plan", text)
-        self.assertIn(f'date: "{TODAY}"', text)
+        self.assertIn('type: "output_plan"', text)
+        self.assertIn(f'created: "{TODAY}T08:00:00+03:30"', text)
 
 
 class VaultSkillTests(TempVaultCase):

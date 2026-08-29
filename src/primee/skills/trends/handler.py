@@ -18,7 +18,7 @@ from primee.core.frontmatter import parse_document
 from primee.core.result_types import SkillResult, VaultWrite
 
 SKILL_NAME = "trends"
-DEFAULT_SNAPSHOT_PATH = "trends/latest-snapshot.md"
+SNAPSHOT_TYPE = "output_snapshot"
 SNAPSHOT_VERSION = 1
 FENCE = "```json"
 
@@ -69,8 +69,7 @@ def run(context: SkillContext) -> SkillResult:
     missing_sources = (response.data or {}).get("missing_sources", [])
     observed_at = response.observed_at or context.now_iso()
 
-    snapshot_path = str(context.input("snapshot_path", DEFAULT_SNAPSHOT_PATH)).strip()
-    previous, previous_error = _load_previous(context, snapshot_path)
+    previous, previous_path, previous_error = _load_previous(context)
 
     warnings: list[str] = []
     if missing_sources:
@@ -89,15 +88,12 @@ def run(context: SkillContext) -> SkillResult:
         "source_id": response.source_id,
         "items": current_items,
     }
-    document = _render_snapshot(snapshot_payload, context.today())
-    operation = "create" if first_run and previous_error is None else "update"
-    if first_run and previous_error is not None:
-        operation = "update"
+    document = _render_snapshot(snapshot_payload, context, previous_path)
 
     structured: dict[str, Any] = {
         "generated_at": context.now_iso(),
         "first_run": first_run,
-        "snapshot_path": snapshot_path,
+        "previous_snapshot": previous_path,
         "previous_observed_at": "" if first_run else previous.get("observed_at", ""),
         "current_observed_at": observed_at,
         "sources": list(source_ids),
@@ -139,31 +135,58 @@ def run(context: SkillContext) -> SkillResult:
         warnings=warnings,
         proposed_vault_writes=[
             VaultWrite(
-                path=snapshot_path,
-                operation=operation,
+                path="",  # the Vault generates the ISO-dated filename
+                operation="publish_output",
                 content=document,
                 reason="Store the observed snapshot so the next run has a baseline.",
+                metadata={
+                    "title": f"Trends snapshot {context.today()}",
+                    "summary": (
+                        f"Observed {sum(len(v) for v in current_items.values())} item(s) "
+                        f"across {len(current_items)} source(s)."
+                    ),
+                    "output_type": SNAPSHOT_TYPE,
+                    "tags": ["trends", "snapshot"],
+                    "status": "final",
+                    "source": response.source_id,
+                    "related": [previous_path] if previous_path else [],
+                },
             )
         ],
     )
 
 
-def _load_previous(context: SkillContext, path: str) -> tuple[dict | None, str | None]:
-    read = context.vault.read(path)
+def _load_previous(context: SkillContext) -> tuple[dict | None, str, str | None]:
+    """Find and read the most recent approved snapshot.
+
+    The snapshot is located by searching page metadata for the newest
+    ``output_snapshot``, so a dated filename never has to be guessed. Returns
+    ``(payload, link_target, error_message)``.
+    """
+    explicit = str(context.input("snapshot_path", "") or "").strip()
+    if explicit:
+        target = explicit[:-3] if explicit.endswith(".md") else explicit
+    else:
+        latest = context.vault.latest_of_type(SNAPSHOT_TYPE)
+        if latest is None:
+            return None, "", None
+        target = str(latest.get("link_target", ""))
+
+    read = context.vault.read(f"{target}.md")
     if not read.ok:
         if read.error_code == ErrorCode.VAULT_FILE_MISSING:
-            return None, None
-        return None, (
+            return None, "", None
+        return None, "", (
             f"The previous snapshot could not be read ({read.error_code}); "
             "this run is treated as a first run."
         )
-    payload = _extract_json(read.content or "")
+    payload = _extract_json(read.body or read.content or "")
     if payload is None:
-        return None, (
-            "The stored snapshot is not readable as a Primee snapshot; "
+        return None, target, (
+            f"'{target}' is not readable as a Primee snapshot; "
             "this run is treated as a first run."
         )
-    return payload, None
+    return payload, target, None
 
 
 def _extract_json(document: str) -> dict | None:
@@ -187,26 +210,39 @@ def _extract_json(document: str) -> dict | None:
     return payload
 
 
-def _render_snapshot(payload: dict, day: str) -> str:
-    frontmatter = [
-        "---",
-        "primee_type: trends_snapshot",
-        f"snapshot_version: {payload['snapshot_version']}",
-        f'observed_at: "{payload["observed_at"]}"',
-        f'source_id: "{payload["source_id"]}"',
-        f'recorded_on: "{day}"',
-        "---",
-        "",
-        "# Trends snapshot",
-        "",
-        "Machine readable payload. Do not edit by hand.",
-        "",
-        FENCE,
-        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True),
-        "```",
+def _render_snapshot(payload: dict, context: SkillContext, previous: str) -> str:
+    """The Markdown body of the snapshot page.
+
+    Primee Memory writes the YAML frontmatter itself; the body carries a human
+    summary plus the machine-readable payload in a fenced block, so the page
+    stays useful in a plain text editor.
+    """
+    lines = [
+        f"Observed at {payload['observed_at']} from source `{payload['source_id']}`.",
         "",
     ]
-    return "\n".join(frontmatter)
+    if previous:
+        lines.extend([f"Compared against [[{previous}]].", ""])
+    else:
+        lines.extend(["This is the first snapshot; there was nothing to compare against.", ""])
+
+    lines.extend(["## Sources observed", ""])
+    for source_id, items in sorted(payload["items"].items()):
+        lines.append(f"- `{source_id}`: {len(items)} item(s)")
+    lines.extend(
+        [
+            "",
+            "## Machine-readable payload",
+            "",
+            "Do not edit by hand; the next run compares against this block.",
+            "",
+            FENCE,
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True),
+            "```",
+            "",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def _diff(previous: dict, current: dict, previous_at: str, current_at: str) -> list[dict]:

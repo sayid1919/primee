@@ -17,10 +17,11 @@ CONFIG = str(REPO_ROOT / "config")
 
 
 def run_cli(argv: list[str]) -> tuple[int, str]:
-    buffer = io.StringIO()
-    with redirect_stdout(buffer):
+    """Run the CLI, capturing both streams so tests stay quiet."""
+    out, err = io.StringIO(), io.StringIO()
+    with redirect_stdout(out), redirect_stderr(err):
         code = main(argv)
-    return code, buffer.getvalue()
+    return code, out.getvalue() + err.getvalue()
 
 
 class CommandTests(unittest.TestCase):
@@ -73,6 +74,10 @@ class ClockIndependenceTests(TempVaultCase):
     pinning `day`, and started failing the moment the calendar moved on.
     """
 
+    def outputs(self) -> list[str]:
+        folder = self.vault_root / "outputs"
+        return sorted(p.name for p in folder.iterdir()) if folder.is_dir() else []
+
     def test_the_plan_path_follows_the_day_input_not_the_wall_clock(self):
         config = self.write_config()
         run_cli(
@@ -87,7 +92,11 @@ class ClockIndependenceTests(TempVaultCase):
                 'candidates=[{"title":"A","reason":"b","expected_outcome":"c","completion_condition":"d"}]',
             ]
         )
-        self.assertTrue((self.vault_root / "plans" / "2001-01-01.md").is_file())
+        # The date comes from the 'day' input; only the time part comes from
+        # the wall clock, so this assertion stays true on any day.
+        names = self.outputs()
+        self.assertEqual(len(names), 1)
+        self.assertRegex(names[0], r"^2001-01-01-\d{6}-daily-plan\.md$")
 
     def write_config(self) -> str:
         return RunCommandTests.write_config(self)
@@ -107,6 +116,10 @@ class InputParsingTests(unittest.TestCase):
 
 
 class RunCommandTests(TempVaultCase):
+    def outputs(self) -> list[str]:
+        folder = self.vault_root / "outputs"
+        return sorted(p.name for p in folder.iterdir()) if folder.is_dir() else []
+
     def write_config(self, **extra) -> str:
         lines = [
             "[vault]",
@@ -125,6 +138,8 @@ class RunCommandTests(TempVaultCase):
             '"vault.create" = "auto"',
             '"vault.append" = "auto"',
             '"vault.update" = "approval"',
+            '"vault.index" = "auto"',
+            '"vault.init" = "approval"',
             '"connector.email.read" = "auto"',
             '"connector.calendar.read" = "auto"',
             '"connector.metrics.read" = "auto"',
@@ -170,7 +185,7 @@ class RunCommandTests(TempVaultCase):
         )
         self.assertEqual(code, 0)
         self.assertIn("[dry run]", output)
-        self.assertFalse((self.vault_root / "plans").exists())
+        self.assertEqual(self.outputs(), [])
 
     def test_a_real_run_writes_through_the_vault_and_audits_it(self):
         config = self.write_config()
@@ -187,11 +202,13 @@ class RunCommandTests(TempVaultCase):
             ]
         )
         self.assertEqual(code, 0)
-        self.assertTrue((self.vault_root / "plans" / f"{TODAY}.md").is_file())
+        names = self.outputs()
+        self.assertEqual(len(names), 1)
+        self.assertRegex(names[0], rf"^{TODAY}-\d{{6}}-daily-plan\.md$")
         audit_lines = (self.tmp_path / "audit.jsonl").read_text(encoding="utf-8").splitlines()
         actions = [json.loads(line)["action"] for line in audit_lines]
         self.assertIn("route", actions)
-        self.assertTrue(any(action.startswith("vault.create") for action in actions))
+        self.assertTrue(any("publish_output" in action for action in actions))
 
     def test_no_audit_flag_keeps_the_log_file_untouched(self):
         config = self.write_config()
@@ -200,27 +217,29 @@ class RunCommandTests(TempVaultCase):
 
     def test_approve_flag_only_grants_the_named_permission(self):
         config = self.write_config()
-        candidates = 'candidates=[{"title":"A","reason":"b","expected_outcome":"c","completion_condition":"d"}]'
-        day = f"day={TODAY}"
-        run_cli(["--config", config, "run", "daily plan", "--input", day, "--input", candidates])
+        # Create a wiki page (vault.create is "auto" here).
+        code, _ = run_cli(["--config", config, "run", "morning brief"])
+        self.assertEqual(code, 0)
+        # rebuild_index needs vault.index, which is "auto" in this config.
+        code, output = run_cli(["--config", config, "vault", "rebuild_index"])
+        self.assertEqual(code, 0)
+        self.assertIn("Rebuilt INDEX.md", output)
+
+    def test_an_operation_needing_approval_is_refused_without_the_flag(self):
+        config = self.write_config()
+        target = str(self.tmp_path / "AnotherVault")
+        code, _ = run_cli(["--config", config, "vault", "init", "--root", target])
+        self.assertEqual(code, 1)
+        self.assertFalse((self.tmp_path / "AnotherVault").exists())
+
+    def test_the_same_operation_succeeds_with_approve(self):
+        config = self.write_config()
+        target = str(self.tmp_path / "AnotherVault")
         code, output = run_cli(
-            [
-                "--config",
-                config,
-                "run",
-                "daily plan",
-                "--input",
-                day,
-                "--input",
-                candidates,
-                "--input",
-                "overwrite=true",
-                "--approve",
-                "vault.update",
-            ]
+            ["--config", config, "vault", "init", "--root", target, "--approve", "vault.init"]
         )
         self.assertEqual(code, 0)
-        self.assertIn("written", output)
+        self.assertTrue((self.tmp_path / "AnotherVault" / "raw").is_dir())
 
 
 if __name__ == "__main__":

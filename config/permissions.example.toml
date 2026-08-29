@@ -21,6 +21,10 @@ default = "never"
 "vault.append" = "auto"
 # Updating replaces content that already exists, so it asks first.
 "vault.update" = "approval"
+# Rebuilding INDEX.md only regenerates a file from the pages themselves.
+"vault.index"  = "auto"
+# Creating a Vault makes folders on disk, so it asks first.
+"vault.init"   = "approval"
 
 # --- Read-only connectors --------------------------------------------------
 "connector.metrics.read"  = "auto"

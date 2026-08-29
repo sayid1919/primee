@@ -1,6 +1,6 @@
 ---
 name: plan
-version: 1.0.0
+version: 2.0.0
 description: "Produce today's three highest-priority actions from approved information, or say plainly that there is not enough."
 triggers:
   - plan
@@ -24,7 +24,6 @@ required_permissions:
   - vault.read
   - vault.list
   - vault.create
-  - vault.update
 inputs:
   - name: day
     type: date
@@ -34,10 +33,10 @@ inputs:
     type: list
     required: false
     description: "Approved candidate actions, each with title, reason, expected_outcome and completion_condition."
-  - name: overwrite
-    type: boolean
+  - name: candidates_page
+    type: string
     required: false
-    description: "Replace an existing plan for that date instead of refusing."
+    description: "Vault page holding approved candidate actions."
 outputs:
   - name: day
     type: string
@@ -47,8 +46,8 @@ outputs:
     type: string
 persistence:
   vault_writes: true
-  path_prefix: plans
-  description: "Proposes plans/<ISO-date>.md; the Vault skill performs the write."
+  path_prefix: outputs
+  description: "Proposes one dated plan in outputs/; the Vault skill performs the write."
 handler: handler.py:run
 ---
 
@@ -63,7 +62,8 @@ priority carries three things that make it checkable:
 - **expected outcome** - what will be true when it is done,
 - **completion condition** - the observable test for "finished".
 
-It then proposes writing the plan to `plans/<ISO-date>.md` through the Vault.
+It then proposes writing the plan to `outputs/`, where the Vault gives it a
+filename beginning with the ISO date.
 
 ## When it should activate
 
@@ -80,30 +80,30 @@ work on today.
 ## What information it requires
 
 Candidate actions, supplied either as the `candidates` input or from an approved
-candidates file in the Vault (`plans/candidates.md`). Each candidate must
-already carry a title, a reason, an expected outcome and a completion condition;
-the skill will not fabricate any of them.
+candidates page in the Vault (`wiki/plan-candidates` by default). Each candidate
+must already carry a title, a reason, an expected outcome and a completion
+condition; the skill will not fabricate any of them.
 
 ## What it may read
 
-`plans/candidates.md` and any existing plan for the requested date, both through
-the Vault skill.
+The candidates page, through the Vault skill.
 
 ## What it may write
 
-Exactly one file: `plans/<ISO-date>.md`. It never writes directly. It proposes
-the write and Primee Core decides, checking `vault.create` or `vault.update`
-against the permission policy first.
+Exactly one new dated plan page in `outputs/`. It never writes directly, never
+chooses the filename and never writes the frontmatter: it proposes the write and
+Primee Core forwards it to the Vault, which does all three.
 
 ## What requires user approval
 
-Overwriting a plan that already exists for that date. The skill refuses by
-default and only proposes an `update` when the caller passes `overwrite: true`,
-which still has to clear the `vault.update` permission and its approval gate.
+Whatever the permission policy assigns to `vault.create`. Plan never needs
+`vault.update`, because it never rewrites an existing plan. Running it twice in
+one day produces a second, separately timestamped plan rather than replacing the
+first, so the earlier plan and the decision behind it stay on record.
 
 ## What it returns
 
-A standard Primee result whose `structured_data` holds the day, the ISO plan
-path, and the priorities with their reason, expected outcome and completion
-condition. The proposed Vault write is returned as a proposal, never as a
-completed action.
+A standard Primee result whose `structured_data` holds the day and the
+priorities with their reason, expected outcome and completion condition. The
+proposed Vault write is returned as a proposal, never as a completed action; the
+Vault reports the ISO-dated path it actually used.

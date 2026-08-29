@@ -89,6 +89,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run.add_argument("--no-audit", action="store_true", help="Do not write to the audit log file.")
 
+    vault = sub.add_parser(
+        "vault",
+        parents=[common],
+        help="Run one Vault memory operation through the permission layer.",
+    )
+    vault.add_argument("operation", help="init, validate, read, search_text, rebuild_index, ...")
+    vault.add_argument("--path", default=None, help="Vault-relative path.")
+    vault.add_argument("--target", default=None, help="Wikilink target, e.g. wiki/topic.")
+    vault.add_argument("--root", default=None, help="Approved Vault path (init only).")
+    vault.add_argument("--query", default=None, help="Search text.")
+    vault.add_argument("--tag", default=None, help="Tag to search for.")
+    vault.add_argument("--field", default=None, help="Frontmatter field for a metadata search.")
+    vault.add_argument("--value", default=None, help="Value for a metadata search.")
+    vault.add_argument("--limit", type=int, default=None, help="Maximum results.")
+    vault.add_argument("--prefix", default=None, help="Folder prefix for list.")
+    vault.add_argument("--adopt", action="store_true", help="Adopt a non-empty directory (init).")
+    vault.add_argument("--dry-run", action="store_true", help="Plan the operation, perform none.")
+    vault.add_argument(
+        "--approve", action="append", default=[], metavar="PERMISSION",
+        help="Pre-approve one permission for this run only. Repeatable.",
+    )
+    vault.add_argument("--no-audit", action="store_true", help="Do not write to the audit log file.")
+
     sub.add_parser(
         "doctor",
         parents=[common],
@@ -179,6 +202,8 @@ def _dispatch(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
         return _explain(config, args)
     if args.command == "run":
         return _run(config, args)
+    if args.command == "vault":
+        return _vault(config, args)
     parser.error(f"Unknown command {args.command!r}")
     return 2
 
@@ -308,6 +333,65 @@ def _explain(config: PrimeeConfig, args: argparse.Namespace) -> int:
         phrases = ", ".join(f"{p}={v:.2f}" for p, v in score.matched_triggers[:3])
         print(f"  {score.skill_name:<10} {score.score:.2f}{flag}  {phrases}")
     return 0 if decision.matched else 1
+
+
+def _vault(config: PrimeeConfig, args: argparse.Namespace) -> int:
+    """Run one Vault operation through the same gate every skill uses."""
+    inputs: dict[str, Any] = {"operation": args.operation, "requested_by": "cli"}
+    for name in ("path", "target", "root", "query", "tag", "field", "value", "prefix"):
+        value = getattr(args, name, None)
+        if value is not None:
+            inputs[name] = value
+    if args.limit is not None:
+        inputs["limit"] = args.limit
+    if args.adopt:
+        inputs["adopt_non_empty"] = True
+
+    runtime = build_runtime(config, args)
+    outcome = runtime.handle("", inputs=inputs, skill_name="vault")
+
+    if getattr(args, "json", False):
+        print(json.dumps(outcome.to_dict(), ensure_ascii=False, indent=2))
+        return 0 if outcome.ok else 1
+
+    result = outcome.result
+    if result is None:
+        print(f"Vault failed: {outcome.message}", file=sys.stderr)
+        return 1
+    if not result.success:
+        print(f"[{result.error_code}] {result.sanitized_error_message}", file=sys.stderr)
+        _print_vault_details(result.structured_data)
+        return 1
+    print(result.summary)
+    _print_vault_details(result.structured_data)
+    return 0
+
+
+def _print_vault_details(data: dict) -> None:
+    for hit in data.get("results", [])[:20]:
+        print(f"  {hit['updated'][:19]}  {hit['type']:<16} {hit['path']}")
+        print(f"      {hit['title']} — {hit['summary']}")
+    for link in data.get("backlinks", []):
+        print(f"  <- {link}")
+    for entry in data.get("dangling_links", []) or data.get("dangling", []):
+        print(f"  dangling: [[{entry['target']}]] in {entry['source']}")
+    for entry in data.get("ambiguous_links", []) or data.get("ambiguous", []):
+        print(f"  ambiguous: [[{entry['target']}]] in {entry['source']} "
+              f"-> {', '.join(entry['candidates'])}")
+    for page in data.get("broken_pages", []):
+        print(f"  broken: {page['path']}: {page['error']}")
+    for page_id, paths in (data.get("duplicate_ids") or {}).items():
+        print(f"  duplicate id {page_id}: {', '.join(paths)}")
+    if "will_create_directories" in data:
+        # After a real run these lists describe what was actually created.
+        dry = data.get("dry_run", False)
+        verb = "would create" if dry else "created"
+        for folder in (
+            data["will_create_directories"] if dry else data.get("created_directories", [])
+        ):
+            print(f"  {verb} folder: {folder}")
+        for name in data["will_create_files"] if dry else data.get("created_files", []):
+            print(f"  {verb} file: {name}")
 
 
 def _run(config: PrimeeConfig, args: argparse.Namespace) -> int:

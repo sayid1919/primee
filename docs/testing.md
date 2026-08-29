@@ -41,6 +41,13 @@ invented.
 | `test_config.py` | defaults, validation, expansion, the shipped templates, credential hygiene |
 | `test_independence.py` | no AI SDK, no third-party import, no networking, no shell execution, no Claude directory |
 | `test_cli.py` | every command, exit codes, JSON output, dry run, `--approve` |
+| `test_memory_schema.py` | required fields, vocabularies, timestamps, stable ids, round-tripping |
+| `test_memory_init.py` | safe initialization, unsafe paths, non-empty directories, dry run |
+| `test_memory_service.py` | raw immutability, amendments, wiki updates, dated outputs, revisions, index, changelog |
+| `test_memory_links.py` | wikilink parsing, backlinks, dangling and ambiguous links, safe renaming |
+| `test_memory_security.py` | path escapes, reserved files, credential refusal, absence of delete, atomicity |
+| `test_memory_integration.py` | skills writing through the Vault under the permission layer |
+| `test_template_vault.py` | the template Vault stays valid, linked and free of personal data |
 
 ## Platform-dependent results
 
@@ -48,6 +55,13 @@ Symbolic-link tests report **skipped**, not passed, where the platform or
 account cannot create links — Windows without Developer Mode or elevation, for
 example. `python -m unittest discover -t . -s tests -v` shows which ones skipped.
 Read the skip list; a skipped security test is not a passing one.
+
+## Memory tests
+
+`tests/memory_support.py` provides `MemoryCase`: a temporary, initialised Vault
+plus a `MemoryService` bound to it and a fixed clock, with builders for raw,
+wiki and output pages. Every Vault used in a test is a fresh temporary
+directory that is removed afterwards. No test reads or writes a real Vault.
 
 ## Adding a test
 

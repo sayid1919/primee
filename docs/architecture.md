@@ -52,6 +52,15 @@ socket, or a writable Vault: it returns *proposals*, and Primee Core decides.
 | `core/clock.py` | Injectable local-time clock |
 | `core/context.py` | The read-only `SkillContext` handed to handlers |
 | `core/runtime.py` | Orchestration, guarded connectors, Vault plumbing |
+| `memory/schema.py` | The Vault page schema and its controlled vocabularies |
+| `memory/page.py` | Reading and writing one Markdown page |
+| `memory/links.py` | Wikilinks, backlinks, dangling and ambiguous detection |
+| `memory/index_builder.py` | Deterministic `INDEX.md` |
+| `memory/changelog.py` | Append-only `CHANGELOG.md` |
+| `memory/initializer.py` | Safe Vault initialization |
+| `memory/operations.py` | The operation-to-permission catalogue |
+| `memory/search.py` | Text, tag, metadata and recency search |
+| `memory/service.py` | `MemoryService`: the Primee Memory API |
 | `connectors/` | Read-only connector interfaces, mocks, not-configured defaults |
 | `skills/` | The five bundled skills, each a folder with `SKILL.md` + `handler.py` |
 
@@ -66,6 +75,9 @@ Three seams exist specifically so later steps do not require a rewrite:
   provider is a new class plus a config line, not a change to any skill.
 - **`ApprovalGate`** is an abstract class. A future HUD or voice prompt
   implements `request(ApprovalRequest) -> ApprovalOutcome`.
+- **Primee Memory** is a package behind the Vault skill. Its authoritative
+  storage is the Markdown itself, so any future index or cache can be added,
+  changed or thrown away without touching the memory.
 
 ## Why a handler cannot cheat
 

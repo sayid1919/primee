@@ -9,11 +9,23 @@
 # ever names an environment variable or an OS credential store entry.
 
 [vault]
-# Absolute path to the Vault. It must NOT live inside this git repository.
-# Windows example (note the forward slashes, which work fine on Windows):
+# Absolute path to your Vault: Primee's memory, as plain Markdown.
+#
+# It must NOT live inside this git repository, and it is never committed,
+# pushed or published. See docs/memory.md.
+#
+# Windows example (forward slashes work fine on Windows):
 #   root = "C:/Users/<your-user>/Documents/PrimeeVault"
-# You may also use ${env:USERPROFILE} instead of hardcoding your user name:
+# Better, so no user name is written down anywhere:
 #   root = "${env:USERPROFILE}/Documents/PrimeeVault"
+#
+# Leaving this empty falls back to the PRIMEE_VAULT_PATH environment variable,
+# which is the recommended way to keep the path off disk entirely:
+#   setx PRIMEE_VAULT_PATH "%USERPROFILE%\Documents\PrimeeVault"
+#
+# Create the Vault with:
+#   python run_primee.py vault init --root "<path>" --dry-run
+#   python run_primee.py vault init --root "<path>" --approve vault.init
 root = ""
 max_file_bytes = 524288
 

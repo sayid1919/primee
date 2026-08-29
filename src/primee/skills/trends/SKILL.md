@@ -1,6 +1,6 @@
 ---
 name: trends
-version: 1.0.0
+version: 2.0.0
 description: "Compare configured sources against the previous approved snapshot and report only what actually changed."
 triggers:
   - trends
@@ -22,8 +22,8 @@ exclusions:
 required_permissions:
   - connector.trends.read
   - vault.read
+  - vault.list
   - vault.create
-  - vault.update
 inputs:
   - name: sources
     type: list
@@ -32,7 +32,7 @@ inputs:
   - name: snapshot_path
     type: string
     required: false
-    description: "Override the Vault path of the stored snapshot."
+    description: "Read this exact snapshot page instead of the most recent one."
 outputs:
   - name: changes
     type: list
@@ -44,8 +44,8 @@ outputs:
     type: list
 persistence:
   vault_writes: true
-  path_prefix: trends
-  description: "Proposes a snapshot file under trends/ so the next run has something to compare against."
+  path_prefix: outputs
+  description: "Proposes a dated snapshot in outputs/ so the next run has a baseline."
 handler: handler.py:run
 ---
 
@@ -76,19 +76,20 @@ configuration, and the previous snapshot from the Vault.
 
 ## What it may read
 
-The configured trends connector, and the snapshot file under `trends/` in the
-Vault.
+The configured trends connector, and the most recent `output_snapshot` page in
+the Vault, found by searching page metadata rather than by guessing a filename.
 
 ## What it may write
 
-One snapshot file under `trends/` in the Vault, and only by proposing the write
-to Primee Core, which forwards it to the Vault skill.
+One new dated snapshot page in `outputs/`, and only by proposing the write to
+Primee Core, which forwards it to the Vault skill. Each run creates a **new**
+snapshot; no earlier snapshot is ever overwritten, so the history of what was
+observed and when stays intact and auditable.
 
 ## What requires user approval
 
-Whatever the permission policy assigns to `vault.create` and `vault.update`. The
-example policy allows creating the first snapshot automatically and requires
-approval to overwrite an existing one.
+Whatever the permission policy assigns to `vault.create`. Trends never needs
+`vault.update`, because it never rewrites a snapshot.
 
 ## What it returns
 

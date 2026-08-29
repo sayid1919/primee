@@ -83,6 +83,18 @@ _PATTERNS: tuple[tuple[re.Pattern[str], object], ...] = (
         ),
         lambda m: f"{m.group(1)}{m.group(2)}{REDACTED}",
     ),
+    # Well-known credential prefixes, which carry no keyword to trigger on.
+    (
+        re.compile(
+            r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"          # AWS access key id
+            r"|\bsk-(?:ant-)?[A-Za-z0-9_\-]{16,}"      # OpenAI / Anthropic style
+            r"|\bgh[pousr]_[A-Za-z0-9]{16,}"           # GitHub token
+            r"|\bxox[abposr]-[A-Za-z0-9-]{10,}"        # Slack token
+            r"|\bAIza[0-9A-Za-z_\-]{35}\b"            # Google API key
+            r"|\beyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]*"  # JWT
+        ),
+        REDACTED,
+    ),
     # Email addresses (treated as personal data, not secrets).
     (re.compile(r"\b[\w.+-]{1,64}@[\w-]{1,63}(?:\.[\w-]{1,63})+\b"), REDACTED_EMAIL),
     # Long digit runs: card numbers, national IDs, account numbers.
@@ -90,10 +102,20 @@ _PATTERNS: tuple[tuple[re.Pattern[str], object], ...] = (
     # Windows / POSIX home directories reveal the account name.
     (re.compile(r"(?i)([A-Z]:\\Users\\)[^\\\r\n]+"), lambda m: m.group(1) + REDACTED_PATH),
     (re.compile(r"(/home/|/Users/)[^/\s]+"), lambda m: m.group(1) + REDACTED_PATH),
-    # High entropy looking blobs.
+    # High-entropy looking blobs: long, mixed-case AND containing digits, which
+    # is the shape of an API key or an opaque token.
+    #
+    # Deliberately NOT matched: long lowercase slugs such as
+    # "2026-08-29-152447-synthetic-kickoff-capture", which are ordinary Vault
+    # filenames. Requiring mixed case plus a digit, and at most two hyphens,
+    # keeps real filenames readable in summaries and audit entries while still
+    # catching base64/base62 credentials.
     (
         re.compile(
-            r"\b(?=[A-Za-z0-9_\-]{40,})(?=[^\s]*\d)(?=[^\s]*[A-Za-z])[A-Za-z0-9_\-]{40,}\b"
+            r"\b(?=[A-Za-z0-9_\-]{40,}\b)"
+            r"(?=[A-Za-z0-9_\-]*[a-z])(?=[A-Za-z0-9_\-]*[A-Z])(?=[A-Za-z0-9_\-]*\d)"
+            r"(?![A-Za-z0-9_]*(?:-[A-Za-z0-9_]*){3,})"
+            r"[A-Za-z0-9_\-]{40,}\b"
         ),
         REDACTED,
     ),

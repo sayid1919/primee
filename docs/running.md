@@ -55,6 +55,7 @@ Forward slashes work fine on Windows. Verify with `python run_primee.py doctor`
 | `permissions` | the permission catalogue, implemented vs reserved |
 | `explain "<request>"` | how a request would route — runs nothing |
 | `run "<request>"` | route and execute |
+| `vault <operation>` | run one Vault memory operation through the permission layer |
 
 Global flags work before or after the subcommand: `--config <path>` and
 `--json`.
@@ -68,6 +69,21 @@ Global flags work before or after the subcommand: `--config <path>` and
 | `--dry-run` | plan every side effect, perform none |
 | `--approve <permission>` | pre-approve one permission for this run only, repeatable |
 | `--no-audit` | keep this run out of the audit log file |
+
+`vault` takes the operation name plus whatever it needs: `--path`, `--target`,
+`--root`, `--query`, `--tag`, `--field`, `--value`, `--limit`, `--prefix`,
+`--adopt`, `--dry-run`, `--approve` and `--no-audit`.
+
+```powershell
+python run_primee.py vault init --root "<absolute path>" --dry-run
+python run_primee.py vault validate
+python run_primee.py vault validate_links
+python run_primee.py vault rebuild_index
+python run_primee.py vault search_text --query "lighthouse"
+python run_primee.py vault backlinks --target wiki/lighthouse-project
+```
+
+See [memory.md](memory.md) for the full operation catalogue.
 
 ## Examples
 
@@ -111,5 +127,6 @@ fixture  = "tests/fixtures/data/email.json"
 ## Where things are written
 
 - Vault content → your configured Vault root, only via the Vault skill.
+  Skill outputs land in `outputs/` with an ISO-dated filename.
 - Audit log → `<state_dir>/audit/audit.jsonl`, outside the repo and the Vault.
 - Nothing else. Primee writes nowhere else and sends nothing anywhere.

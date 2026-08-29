@@ -1,6 +1,6 @@
 ---
 name: inbox
-version: 1.0.0
+version: 2.0.0
 description: "Prepare a read-only morning brief of at most three things that genuinely need attention today."
 triggers:
   - inbox
@@ -25,6 +25,7 @@ exclusions:
 required_permissions:
   - connector.email.read
   - connector.calendar.read
+  - vault.create
 inputs:
   - name: day
     type: date
@@ -34,6 +35,10 @@ inputs:
     type: integer
     required: false
     description: "Maximum items to return, capped at three."
+  - name: store
+    type: boolean
+    required: false
+    description: "Propose storing the brief in outputs/. Defaults to true."
 outputs:
   - name: day
     type: string
@@ -42,9 +47,9 @@ outputs:
   - name: sources
     type: list
 persistence:
-  vault_writes: false
-  path_prefix: ""
-  description: "Inbox is read-only and proposes no Vault writes in Step One."
+  vault_writes: true
+  path_prefix: outputs
+  description: "Proposes one dated morning brief in outputs/; the Vault skill performs the write."
 handler: handler.py:run
 ---
 
@@ -79,7 +84,11 @@ and the audit log never records message content.
 
 ## What it may write
 
-Nothing. It proposes no Vault writes and no external actions.
+One dated brief page in `outputs/`, proposed to Primee Core and written by the
+Vault skill. It is read-only with respect to your **email and calendar**: it
+never sends, replies, deletes, archives, moves, accepts or declines anything,
+and it proposes no external actions at all. Pass `store=false` to get the brief
+without proposing a write.
 
 ## What requires user approval
 
@@ -89,7 +98,8 @@ Primee Core even if a policy tried to allow them.
 
 ## What it returns
 
-A standard Primee result. `structured_data` contains the day, the selected
+A standard Primee result, plus a proposed `output_brief` page for `outputs/`.
+`structured_data` contains the day, the selected
 items with a `reason` and a `score_breakdown` for each, and the status of each
 data source. When no connector is configured, the result says so plainly and
 returns no items rather than inventing a brief.

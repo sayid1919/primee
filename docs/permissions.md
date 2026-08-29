@@ -39,6 +39,8 @@ Implemented in Step One:
 | `vault.create` | create a new Vault file |
 | `vault.append` | append to a Vault file |
 | `vault.update` | replace an existing Vault file |
+| `vault.init` | create the Vault folder structure at an approved path |
+| `vault.index` | regenerate `INDEX.md` from the pages themselves |
 | `connector.metrics.read` | read numbers from the metrics connector |
 | `connector.email.read` | read message metadata (never bodies) |
 | `connector.calendar.read` | read event metadata |
@@ -84,6 +86,20 @@ Skills never touch the connector registry directly. Primee Core hands them a
 `GuardedConnectors` view that checks `connector.<kind>.read` on every lookup. A
 refusal yields a `DeniedConnector` that returns no data at all, and the skill
 reports `PERMISSION_DENIED` rather than pretending it has no data source.
+
+## Memory operations
+
+Every named Vault operation maps to exactly one permission, in one shared table
+(`primee/memory/operations.py`) used by both the gate and the implementation.
+See [memory.md](memory.md#operations) for the full catalogue.
+
+Two rules are enforced by the memory service on top of the permission layer,
+because no permission should be able to grant them:
+
+- A raw note can never be updated or renamed, by anyone.
+- An output marked `final` or `shipped` can never be overwritten, by anyone.
+
+Correcting either produces a new linked page instead.
 
 ## Inspecting the policy
 

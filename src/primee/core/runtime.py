@@ -29,6 +29,7 @@ from .redaction import redact_text
 from .result_types import SkillResult, VaultWrite
 from .router import DeterministicRouter, RouteDecision, Router
 from .skill_loader import SkillRegistry, discover_skills
+from .vault_operations import permission_for
 
 VAULT_SKILL = "vault"
 
@@ -183,17 +184,23 @@ class PrimeeRuntime:
         return bundled_skills_dir()
 
     def storage(self):
-        """Lazily build the Vault storage so an unconfigured Vault is not fatal."""
+        """Lazily build the Vault memory service.
+
+        An unconfigured Vault is not fatal: the error is raised only when a
+        skill actually needs persistence, so read-only skills keep working.
+        """
         if self._storage is not None:
             return self._storage
         if self._storage_error is not None:
             raise self._storage_error
+        from ..memory.service import MemoryService
         from ..skills.vault.storage import VaultStorage
 
         try:
-            self._storage = VaultStorage(
+            store = VaultStorage(
                 self.config.vault.root, max_file_bytes=self.config.vault.max_file_bytes
             )
+            self._storage = MemoryService(store, self.clock)
         except PrimeeError as exc:
             self._storage_error = exc
             raise
@@ -328,6 +335,9 @@ class PrimeeRuntime:
             vault = VaultAccess(
                 _reader=lambda path: self._vault_read(request_id, skill_name, declared, path),
                 _lister=lambda prefix: self._vault_list(request_id, skill_name, declared, prefix),
+                _searcher=lambda mode, field, value, limit: self._vault_search(
+                    request_id, skill_name, declared, mode, field, value, limit
+                ),
             )
         else:
             vault = DeniedVaultAccess()
@@ -502,9 +512,9 @@ class PrimeeRuntime:
         forbids.
         """
         operation = str(inputs.get("operation", "")).strip().lower()
-        if operation not in ("read", "list", "create", "append", "update"):
+        permission = permission_for(operation)
+        if permission is None:
             return None  # the handler reports the invalid operation itself
-        permission = f"vault.{operation}"
         allowed, _state, error_code, reason = self._permit(
             request_id, VAULT_SKILL, declared, permission, f"{permission}:direct"
         )
@@ -584,8 +594,14 @@ class PrimeeRuntime:
                 error_code=result.error_code,
                 message=result.sanitized_error_message or "",
             )
+        data = result.structured_data
+        content = data.get("content", "")
         return VaultReadResult(
-            ok=True, found=True, content=result.structured_data.get("content", "")
+            ok=True,
+            found=True,
+            content=content,
+            body=data.get("body", content),
+            metadata=dict(data.get("metadata", {}) or {}),
         )
 
     def _vault_list(
@@ -603,10 +619,44 @@ class PrimeeRuntime:
             return []
         return list(result.structured_data.get("paths", []))
 
+    def _vault_search(
+        self,
+        request_id: str,
+        skill_name: str,
+        declared: frozenset[str],
+        mode: str,
+        field_name: str,
+        value: str,
+        limit: int,
+    ) -> list[dict]:
+        allowed, _state, _code, _reason = self._permit(
+            request_id, skill_name, declared, "vault.list", f"vault.search:{mode}"
+        )
+        if not allowed:
+            return []
+        operation = {"text": "search_text", "tag": "search_tag", "metadata": "search_metadata"}.get(
+            mode, "recent"
+        )
+        result = self._call_vault_skill(
+            request_id,
+            skill_name,
+            {
+                "operation": operation,
+                "query": value,
+                "tag": value,
+                "field": field_name,
+                "value": value,
+                "limit": limit,
+            },
+        )
+        if not result.success:
+            return []
+        return list(result.structured_data.get("results", []))
+
     def _apply_vault_write(
         self, request_id: str, skill_name: str, declared: frozenset[str], write: VaultWrite
     ) -> VaultWriteOutcome:
-        action = f"vault.{write.operation}:{write.path}"
+        action = f"{write.permission}:{write.operation}:{write.path or '(generated)'}"
         allowed, state, error_code, reason = self._permit(
             request_id, skill_name, declared, write.permission, action
         )
@@ -645,7 +695,12 @@ class PrimeeRuntime:
         result = self._call_vault_skill(
             request_id,
             skill_name,
-            {"operation": write.operation, "path": write.path, "content": write.content},
+            {
+                "operation": write.operation,
+                "path": write.path,
+                "content": write.content,
+                "metadata": dict(write.metadata),
+            },
         )
         performed = bool(result.success)
         self.audit.record(
@@ -663,7 +718,9 @@ class PrimeeRuntime:
             },
         )
         return VaultWriteOutcome(
-            path=write.path,
+            # Memory operations generate their own ISO-dated path, so report
+            # what the Vault actually wrote rather than what was proposed.
+            path=str(result.structured_data.get("path") or write.path or "(generated)"),
             operation=write.operation,
             requested_by=skill_name,
             performed=performed,

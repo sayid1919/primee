@@ -45,6 +45,8 @@ _SPECS: tuple[PermissionSpec, ...] = (
     PermissionSpec("vault.create", "Create a new file in the Vault.", True),
     PermissionSpec("vault.append", "Append to an existing Vault file.", True),
     PermissionSpec("vault.update", "Replace the content of an existing Vault file.", True),
+    PermissionSpec("vault.init", "Create the Vault folder structure at an approved path.", True),
+    PermissionSpec("vault.index", "Regenerate INDEX.md from the pages themselves.", True),
     PermissionSpec("connector.metrics.read", "Read numbers from a metrics connector.", True),
     PermissionSpec("connector.email.read", "Read message headers from an email connector.", True),
     PermissionSpec("connector.calendar.read", "Read events from a calendar connector.", True),
