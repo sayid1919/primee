@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "primee"
+version = "0.1.0"
+description = "Primee - a local-first personal operating system with no hosted AI dependency."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+
+# Primee has ZERO runtime dependencies, by design.
+#
+# Everything it needs is in the Python standard library: tomllib for
+# configuration, a purpose-built strict parser for SKILL.md frontmatter,
+# dataclasses for the result contract, and unittest for the test suite.
+#
+# No AI SDK is present or permitted here: not anthropic, not openai, not
+# google-generativeai, not any hosted agent runtime.
+dependencies = []
+
+[project.scripts]
+primee = "primee.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"primee.skills" = ["*/SKILL.md", "*/handler.py"]

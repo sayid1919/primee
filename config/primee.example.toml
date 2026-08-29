@@ -1,0 +1,77 @@
+# Primee - example configuration.
+#
+# Copy this file to `primee.local.toml` in the same folder and edit that copy.
+# Files ending in `.local.toml` are git-ignored: they are the right place for
+# machine specific paths.
+#
+# This file NEVER contains a password, API key, token or any other credential.
+# Connector authentication is described in `connectors.example.toml` and only
+# ever names an environment variable or an OS credential store entry.
+
+[vault]
+# Absolute path to the Vault. It must NOT live inside this git repository.
+# Windows example (note the forward slashes, which work fine on Windows):
+#   root = "C:/Users/<your-user>/Documents/PrimeeVault"
+# You may also use ${env:USERPROFILE} instead of hardcoding your user name:
+#   root = "${env:USERPROFILE}/Documents/PrimeeVault"
+root = ""
+max_file_bytes = 524288
+
+[runtime]
+# When true, Primee plans every side effect but performs none.
+dry_run = false
+# Leave empty to use the skills bundled with this repository.
+skills_dir = ""
+# Leave empty to use %LOCALAPPDATA%\Primee on Windows.
+state_dir = ""
+# Routing thresholds. Raising min_route_score makes Primee ask more often;
+# raising ambiguity_margin makes it refuse to guess more often.
+min_route_score = 0.35
+ambiguity_margin = 0.15
+
+[audit]
+enabled = true
+# Message bodies are never logged. This switch exists so the default stays
+# visible and auditable; Step One has no code path that logs content.
+log_message_bodies = false
+# Leave empty to use <state_dir>/audit/audit.jsonl.
+path = ""
+
+[schedule]
+# Step One does NOT install any scheduler. These values describe the intended
+# daily rhythm and are read by `primee doctor`; wiring them into Windows Task
+# Scheduler is a later, separately approved step.
+timezone = "system"       # always the Windows local timezone; never hardcoded
+trends_at = "07:30"
+inbox_at = "08:00"
+plan_at = "08:00"
+run_every_day = true
+rest_days = []            # e.g. ["friday"] to skip the weekend
+missed_job_policy = "propose_once"
+
+# Metrics: Primee only computes summaries you declare here. A series that is not
+# listed is never reported, and a series with no data source is reported as
+# "not configured" rather than being estimated.
+# Supported summaries: latest, previous, sum, average, minimum, maximum, delta
+[[metrics.series]]
+key = "website_visits"
+label = "Website visits"
+unit = "visits"
+summaries = ["latest", "previous", "delta", "average"]
+
+[[metrics.series]]
+key = "new_leads"
+label = "New leads"
+unit = "leads"
+summaries = ["latest", "sum"]
+
+[[metrics.series]]
+key = "conversion_rate"
+label = "Conversion rate"
+unit = "%"
+summaries = ["latest", "delta"]
+
+[trends]
+# Identifiers of the sources you want watched. They are opaque strings that a
+# connector resolves; Primee never invents or discovers sources on its own.
+sources = []

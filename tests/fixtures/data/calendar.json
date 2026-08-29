@@ -1,0 +1,33 @@
+{
+  "observed_at": "2026-08-27T07:55:00+03:30",
+  "note": "Synthetic sample data. No real calendar was contacted.",
+  "events": [
+    {
+      "id": "e-001",
+      "title": "Sample: project review",
+      "date": "2026-08-27",
+      "start": "10:00",
+      "end": "11:00",
+      "needs_preparation": true,
+      "response_pending": false
+    },
+    {
+      "id": "e-002",
+      "title": "Sample: routine standup",
+      "date": "2026-08-27",
+      "start": "09:00",
+      "end": "09:15",
+      "needs_preparation": false,
+      "response_pending": false
+    },
+    {
+      "id": "e-003",
+      "title": "Sample: next week workshop",
+      "date": "2026-09-03",
+      "start": "14:00",
+      "end": "16:00",
+      "needs_preparation": true,
+      "response_pending": true
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+# Primee - example connector configuration.
+#
+# Copy to `connectors.local.toml` and edit that copy.
+#
+# SECURITY: this file never holds a credential value. `credential_env` names an
+# environment variable that a FUTURE connector would read at runtime; the value
+# itself lives in your OS credential store or your own environment, never in
+# this repository, never in the Vault, and never in the audit log.
+#
+# Step One ships exactly two providers:
+#   provider = "none"   -> not configured (the default and the honest answer)
+#   provider = "mock"   -> reads a synthetic JSON fixture from disk
+# There is no real provider yet. Connecting a real account is a separate,
+# explicitly approved step.
+
+[connectors.metrics]
+provider = "none"
+# fixture = "tests/fixtures/data/metrics.json"
+# credential_env = "PRIMEE_METRICS_TOKEN"   # NAME only, never a value
+
+[connectors.email]
+provider = "none"
+# fixture = "tests/fixtures/data/email.json"
+# credential_env = "PRIMEE_EMAIL_TOKEN"
+
+[connectors.calendar]
+provider = "none"
+# fixture = "tests/fixtures/data/calendar.json"
+# credential_env = "PRIMEE_CALENDAR_TOKEN"
+
+[connectors.trends]
+provider = "none"
+# fixture = "tests/fixtures/data/trends_day1.json"
+# credential_env = "PRIMEE_TRENDS_TOKEN"

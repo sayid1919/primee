@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-08-27T07:30:00+03:30",
+  "note": "Synthetic sample data. No website was contacted.",
+  "items": {
+    "sample-ai-feed": [
+      {"id": "a2", "title": "Sample item two (renamed)", "published_at": "2026-08-26"},
+      {"id": "a3", "title": "Sample item three", "published_at": "2026-08-27"}
+    ],
+    "sample-market-feed": [
+      {"id": "b1", "title": "Sample market note", "published_at": "2026-08-26"}
+    ]
+  }
+}

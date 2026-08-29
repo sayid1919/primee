@@ -1,0 +1,50 @@
+# --- Primee: never commit private data -------------------------------------
+# Local, machine specific configuration (paths, chosen providers).
+config/*.local.toml
+*.local.toml
+
+# Secret material. Primee does not create these, but make it impossible to
+# commit one by accident.
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+/secrets/
+/credentials/
+
+# The real Vault must live outside this repository. These are a second line of
+# defence in case someone points it at the working tree.
+#
+# NOTE: these patterns are anchored with a leading "/" so they match only a
+# vault at the repository root. An unanchored "vault/" would also match
+# src/primee/skills/vault/, silently excluding the Vault skill's own source.
+/vault/
+/Vault/
+/PrimeeVault/
+
+# Primee runtime state: audit log, caches, snapshots.
+/state/
+*.jsonl
+!tests/fixtures/**/*.jsonl
+
+# --- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Editors / OS -----------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

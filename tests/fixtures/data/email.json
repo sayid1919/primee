@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-08-27T07:55:00+03:30",
+  "note": "Synthetic sample data. No real mailbox was contacted.",
+  "messages": [
+    {
+      "id": "m-001",
+      "subject": "Sample: quote request for project A",
+      "from_label": "Sample Contact One",
+      "received_at": "2026-08-27T06:40:00+03:30",
+      "unread": true,
+      "flagged": true,
+      "direct": true,
+      "due_date": "2026-08-27"
+    },
+    {
+      "id": "m-002",
+      "subject": "Sample: newsletter digest",
+      "from_label": "Sample Newsletter",
+      "received_at": "2026-08-27T05:10:00+03:30",
+      "unread": true,
+      "flagged": false,
+      "direct": false,
+      "due_date": ""
+    },
+    {
+      "id": "m-003",
+      "subject": "Sample: invoice follow-up",
+      "from_label": "Sample Contact Two",
+      "received_at": "2026-08-26T18:00:00+03:30",
+      "unread": false,
+      "flagged": true,
+      "direct": true,
+      "due_date": ""
+    },
+    {
+      "id": "m-004",
+      "subject": "Sample: already handled",
+      "from_label": "Sample Contact Three",
+      "received_at": "2026-08-25T09:00:00+03:30",
+      "unread": false,
+      "flagged": false,
+      "direct": false,
+      "due_date": ""
+    }
+  ]
+}

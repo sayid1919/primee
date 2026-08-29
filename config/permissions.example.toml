@@ -1,0 +1,44 @@
+# Primee - example permission policy.
+#
+# Copy to `permissions.local.toml` and edit that copy.
+#
+# Every permission is `never` unless it is listed below. That is the
+# deny-by-default rule and it is enforced in code, not by convention.
+#
+# Modes:
+#   auto     - allowed without asking, once you have set it here
+#   approval - allowed only with an explicit approval for that single run
+#   never    - refused, always
+
+[permissions]
+default = "never"
+
+[permissions.modes]
+# --- Vault -----------------------------------------------------------------
+"vault.read"   = "auto"
+"vault.list"   = "auto"
+"vault.create" = "auto"
+"vault.append" = "auto"
+# Updating replaces content that already exists, so it asks first.
+"vault.update" = "approval"
+
+# --- Read-only connectors --------------------------------------------------
+"connector.metrics.read"  = "auto"
+"connector.email.read"    = "auto"
+"connector.calendar.read" = "auto"
+"connector.trends.read"   = "auto"
+
+# --- Reserved for later steps ----------------------------------------------
+# These are listed so the policy file documents your intent. Primee Core denies
+# every one of them in Step One regardless of what is written here, because no
+# implementation exists yet.
+"fs.read"        = "approval"
+"fs.write"       = "approval"
+"calendar.write" = "approval"
+"network.fetch"  = "approval"
+"system.execute" = "approval"
+"audio.capture"  = "approval"
+"camera.capture" = "approval"
+
+# Never allowed. Listing them explicitly makes the intent auditable.
+"email.send" = "never"
