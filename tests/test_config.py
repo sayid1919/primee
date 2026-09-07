@@ -48,7 +48,19 @@ class ExampleTemplateTests(TempVaultCase):
     def test_the_shipped_example_files_parse(self):
         config = load_examples(self.tmp_path)
         self.assertIsInstance(config, PrimeeConfig)
-        self.assertEqual(len(config.source_files), 3)
+        # primee, permissions, connectors and, since Step Three, voice.
+        self.assertEqual(len(config.source_files), 4)
+
+    def test_the_example_voice_file_keeps_speech_off(self):
+        config = load_examples(self.tmp_path)
+        self.assertFalse(config.voice.enabled)
+        self.assertEqual(config.voice.tts_engine, "none")
+        self.assertFalse(config.voice.configured)
+        self.assertFalse(config.voice.save_transcripts)
+        self.assertIsNone(config.voice.runtime_dir)
+        self.assertIsNone(config.voice.models_dir)
+        # The example policy asks before speaking; it never speaks silently.
+        self.assertEqual(config.permissions.mode_for("audio.playback"), "approval")
 
     def test_the_example_policy_is_still_deny_by_default(self):
         policy = load_examples(self.tmp_path).permissions

@@ -114,17 +114,23 @@ calendar, website, credential or private file.
 | [docs/running.md](docs/running.md) | Running Primee locally |
 | [docs/testing.md](docs/testing.md) | Running and extending the test suite |
 | [docs/adding-a-skill.md](docs/adding-a-skill.md) | Adding a new Primee skill |
+| [docs/voice.md](docs/voice.md) | Step Three preparation: optional local text-to-speech, pinned manifest, Windows tools, benchmark |
 | [docs/roadmap.md](docs/roadmap.md) | Every placeholder, and which step fills it |
 
 ## Repository layout
 
 ```
 config/     configuration templates (never real paths, never credentials)
-src/        the Primee package: core, memory, skills, connectors
+src/        the Primee package: core, memory, skills, connectors, voice
 templates/  a fictional example Vault — not your data
+tools/      Windows PowerShell tools and the speech worker (run outside Core)
 tests/      unittest suite plus synthetic fixtures
 docs/       documentation
 ```
+
+The optional voice runtime (`.venv-voice/`), every speech model and every
+benchmark recording also live outside Git. Speech is off by default; see
+[`docs/voice.md`](docs/voice.md).
 
 The real Vault, the audit log and your local configuration all live **outside**
 this repository and are excluded by `.gitignore`.

@@ -1,0 +1,122 @@
+{
+  "schema": "primee-voice-manifest",
+  "schema_version": 1,
+  "profile": "haaniye",
+  "generated_at": "2026-09-02T12:00:00+02:00",
+  "generated_by": "tests/fixtures (synthetic; every hash below is invented)",
+  "statement": "Synthetic fixture for parsing tests. Nothing here was downloaded and nothing here is real.",
+  "hash_note": "A hash is a content match, not a security guarantee and not an independent signature.",
+  "components": [
+    {
+      "component": "runtime",
+      "name": "sherpa-onnx",
+      "version": "1.13.7",
+      "revision": null,
+      "source": "https://pypi.org/pypi/sherpa-onnx/1.13.7/json",
+      "license": "Apache-2.0",
+      "license_note": "synthetic",
+      "requires": ["sherpa-onnx-core==1.13.7"],
+      "files": [
+        {
+          "path": "sherpa_onnx-1.13.7-cp311-cp311-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/00/00/synthetic/sherpa_onnx-1.13.7-cp311-cp311-win_amd64.whl",
+          "size": 2277232,
+          "hash_type": "publisher-sha256",
+          "hash": "0000000000000000000000000000000000000000000000000000000000000001",
+          "hash_source": "synthetic"
+        }
+      ]
+    },
+    {
+      "component": "runtime",
+      "name": "sherpa-onnx-core",
+      "version": "1.13.7",
+      "revision": null,
+      "source": "https://pypi.org/pypi/sherpa-onnx-core/1.13.7/json",
+      "license": "Apache-2.0",
+      "license_note": "synthetic",
+      "requires": [],
+      "files": [
+        {
+          "path": "sherpa_onnx_core-1.13.7-py3-none-win_amd64.whl",
+          "url": "https://files.pythonhosted.org/packages/00/00/synthetic/sherpa_onnx_core-1.13.7-py3-none-win_amd64.whl",
+          "size": 16526006,
+          "hash_type": "publisher-sha256",
+          "hash": "0000000000000000000000000000000000000000000000000000000000000002",
+          "hash_source": "synthetic"
+        }
+      ]
+    },
+    {
+      "component": "model",
+      "name": "vits-mimic3-fa-haaniye_low",
+      "version": null,
+      "revision": "0123456789abcdef0123456789abcdef01234567",
+      "source": "https://huggingface.co/api/models/csukuangfj/vits-mimic3-fa-haaniye_low",
+      "license": null,
+      "license_note": "The converted repository declares no licence metadata; none is assigned.",
+      "repository": "csukuangfj/vits-mimic3-fa-haaniye_low",
+      "requires": [],
+      "files": [
+        {
+          "path": "fa-haaniye_low.onnx",
+          "url": "https://huggingface.co/csukuangfj/vits-mimic3-fa-haaniye_low/resolve/0123456789abcdef0123456789abcdef01234567/fa-haaniye_low.onnx",
+          "size": 65800000,
+          "hash_type": "publisher-sha256",
+          "hash": "0000000000000000000000000000000000000000000000000000000000000003",
+          "hash_source": "synthetic"
+        },
+        {
+          "path": "fa-haaniye_low.onnx.json",
+          "url": "https://huggingface.co/csukuangfj/vits-mimic3-fa-haaniye_low/resolve/0123456789abcdef0123456789abcdef01234567/fa-haaniye_low.onnx.json",
+          "size": 4000,
+          "hash_type": "publisher-git-blob-sha1",
+          "hash": "0000000000000000000000000000000000000004",
+          "hash_source": "synthetic"
+        },
+        {
+          "path": "tokens.txt",
+          "url": "https://huggingface.co/csukuangfj/vits-mimic3-fa-haaniye_low/resolve/0123456789abcdef0123456789abcdef01234567/tokens.txt",
+          "size": 900,
+          "hash_type": "publisher-git-blob-sha1",
+          "hash": "0000000000000000000000000000000000000005",
+          "hash_source": "synthetic"
+        },
+        {
+          "path": "espeak-ng-data/phontab",
+          "url": "https://huggingface.co/csukuangfj/vits-mimic3-fa-haaniye_low/resolve/0123456789abcdef0123456789abcdef01234567/espeak-ng-data/phontab",
+          "size": 60000,
+          "hash_type": "publisher-git-blob-sha1",
+          "hash": "0000000000000000000000000000000000000006",
+          "hash_source": "synthetic"
+        }
+      ]
+    },
+    {
+      "component": "provenance",
+      "name": "mycroft-haaniye_low",
+      "version": null,
+      "revision": "89abcdef0123456789abcdef0123456789abcdef",
+      "source": "https://github.com/MycroftAI/mimic3-voices/tree/89abcdef0123456789abcdef0123456789abcdef/voices/fa/haaniye_low",
+      "license": "CC0",
+      "license_note": "Original voice LICENSE file content: \"CC-0\". SOURCE file content: \"TBD\".",
+      "repository": "MycroftAI/mimic3-voices",
+      "path": "voices/fa/haaniye_low",
+      "requires": [],
+      "files": [
+        {
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/MycroftAI/mimic3-voices/89abcdef0123456789abcdef0123456789abcdef/voices/fa/haaniye_low/LICENSE",
+          "size": 5,
+          "hash_type": "computed-sha256-at-manifest-time",
+          "hash": "0000000000000000000000000000000000000000000000000000000000000007",
+          "hash_source": "synthetic"
+        }
+      ],
+      "documents": {"LICENSE": "CC-0\n", "SOURCE": "TBD\n"},
+      "speaker_gender": "not stated in the official documentation; confirm by listening",
+      "redistribution": "not assessed",
+      "approved_use": "private local benchmark only"
+    }
+  ]
+}

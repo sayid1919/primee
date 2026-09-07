@@ -1,0 +1,53 @@
+# Primee - example voice configuration (Step Three).
+#
+# Copy to `voice.local.toml` in this folder and edit that copy. Files ending in
+# `.local.toml` are git-ignored, which matters here because this section names
+# machine-specific paths.
+#
+# Everything in this file is OFF by default. Primee Core does not need any of it.
+# The speech engine (sherpa-onnx) and the speech model (Haaniye) are third-party
+# files installed OUTSIDE the repository by tools\voice\Install-PrimeeVoice.ps1,
+# only after you reviewed and approved the pinned manifest it was given.
+#
+# Speaking also requires the permission `audio.playback` to be `auto` or
+# `approval` in permissions.local.toml. Deny by default applies here as well.
+
+[voice]
+# Master switch. false = text only, always.
+enabled = false
+
+# "none" or "sherpa-onnx". Nothing else exists.
+tts_engine = "none"
+
+# The voice profile. Only "haaniye" exists (Persian, low quality, CC0 voice
+# licence, dataset provenance incomplete: upstream SOURCE file says TBD).
+profile = "haaniye"
+
+# Where models live. Leave empty to use PRIMEE_MODELS_PATH, else
+# %LOCALAPPDATA%\Primee\models. Must be outside this repository.
+models_dir = ""
+
+# The isolated Python environment that holds sherpa-onnx. The installer writes
+# the path it created here. Leave empty until then: empty means "no runtime".
+runtime_dir = ""
+# Optional explicit interpreter inside runtime_dir. Normally derived:
+# <runtime_dir>\Scripts\python.exe
+runtime_python = ""
+# Optional override of the worker script. Normally tools\voice\sherpa_tts_worker.py
+# from this checkout.
+worker_script = ""
+
+# "winsound" (Windows standard library) or "none".
+player = "winsound"
+
+# Only a short summary is ever spoken; the full answer stays on screen.
+speak_summary_only = true
+max_spoken_chars = 240
+
+# Hard limit for one synthesis run before the worker is killed.
+timeout_seconds = 60
+
+# Speech-to-text is not implemented yet. When it is, transcripts are held in
+# memory only and saved solely with explicit per-transcript approval AND this
+# switch. Keep it false.
+save_transcripts = false

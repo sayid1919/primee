@@ -58,6 +58,20 @@ class ErrorCode:
     CONFIG_INVALID = "CONFIG_INVALID"
     INSUFFICIENT_INFORMATION = "INSUFFICIENT_INFORMATION"
 
+    # Voice (Step Three). Every one of these keeps the text answer visible on
+    # screen; they only describe why nothing was spoken.
+    VOICE_DISABLED = "VOICE_DISABLED"
+    VOICE_RUNTIME_MISSING = "VOICE_RUNTIME_MISSING"
+    VOICE_MODEL_MISSING = "VOICE_MODEL_MISSING"
+    VOICE_MANIFEST_INVALID = "VOICE_MANIFEST_INVALID"
+    VOICE_HASH_MISMATCH = "VOICE_HASH_MISMATCH"
+    VOICE_EXECUTABLE_REJECTED = "VOICE_EXECUTABLE_REJECTED"
+    VOICE_PROCESS_TIMEOUT = "VOICE_PROCESS_TIMEOUT"
+    VOICE_PROCESS_FAILED = "VOICE_PROCESS_FAILED"
+    VOICE_OUTPUT_INVALID = "VOICE_OUTPUT_INVALID"
+    VOICE_PLAYBACK_UNAVAILABLE = "VOICE_PLAYBACK_UNAVAILABLE"
+    VOICE_TEXT_REJECTED = "VOICE_TEXT_REJECTED"
+
     UNEXPECTED = "UNEXPECTED"
 
 
@@ -135,3 +149,16 @@ class PermissionDeniedError(PrimeeError):
 class ConfigError(PrimeeError):
     def __init__(self, message: str, *, detail: Optional[Mapping[str, Any]] = None) -> None:
         super().__init__(ErrorCode.CONFIG_INVALID, message, detail=detail)
+
+
+class VoiceError(PrimeeError):
+    """A voice-layer failure. The caller must fall back to text output."""
+
+    def __init__(
+        self,
+        code: str,
+        message: str,
+        *,
+        detail: Optional[Mapping[str, Any]] = None,
+    ) -> None:
+        super().__init__(code, message, detail=detail)

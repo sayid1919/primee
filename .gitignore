@@ -85,3 +85,15 @@ htmlcov/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# --- Primee Voice (Step Three) ---------------------------------------------
+# The isolated speech runtime and every speech model live outside Git. The
+# Windows setup tool writes only to these places and to *.local.toml.
+/.venv-voice/
+/.venv-*/
+/voice-runtime/
+*.onnx.json
+/benchmarks/
+/haaniye-benchmark-*/
+*.manifest.json
+!tests/fixtures/**/*.manifest.json

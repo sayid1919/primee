@@ -5,6 +5,7 @@
     python -m primee run "morning brief"
     python -m primee run --skill plan --input day=2026-08-27 --dry-run
     python -m primee doctor
+    python -m primee voice status
 
 Nothing here contacts the network.
 """
@@ -120,6 +121,32 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser(
         "permissions", parents=[common], help="List every permission Primee understands."
     )
+
+    voice = sub.add_parser(
+        "voice",
+        parents=[common],
+        help="Local voice output (Step Three): status, profile, speak, benchmark.",
+    )
+    voice_sub = voice.add_subparsers(dest="voice_command", required=False)
+    voice_sub.add_parser("status", parents=[common], help="Show whether speech is possible right now.")
+    voice_sub.add_parser("profile", parents=[common], help="Show the voice profile, its licences and warnings.")
+    speak = voice_sub.add_parser("speak", parents=[common], help="Speak one short text locally, or show it if speech is unavailable.")
+    speak.add_argument("text", help="The text. Only a short summary of it is spoken.")
+    speak.add_argument(
+        "--approve", action="append", default=[], metavar="PERMISSION",
+        help="Pre-approve audio.playback for this run only.",
+    )
+    speak.add_argument("--no-audit", action="store_true", help="Do not write to the audit log file.")
+    bench = voice_sub.add_parser(
+        "benchmark", parents=[common],
+        help="Synthesise the fixed Persian benchmark set into WAV files outside the repository. Plays nothing.",
+    )
+    bench.add_argument("--output", required=True, help="Absolute directory OUTSIDE the repository for the WAV files and report.")
+    bench.add_argument(
+        "--approve", action="append", default=[], metavar="PERMISSION",
+        help="Pre-approve audio.playback for this run only.",
+    )
+    bench.add_argument("--no-audit", action="store_true", help="Do not write to the audit log file.")
     return parser
 
 
@@ -204,6 +231,8 @@ def _dispatch(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
         return _run(config, args)
     if args.command == "vault":
         return _vault(config, args)
+    if args.command == "voice":
+        return _voice(config, args)
     parser.error(f"Unknown command {args.command!r}")
     return 2
 
@@ -284,6 +313,9 @@ def _doctor(config: PrimeeConfig, args: argparse.Namespace) -> int:
         except PrimeeError as exc:
             vault_state = f"error: {exc.sanitized_message()}"
 
+    from .voice.service import VoiceService
+
+    voice_status = VoiceService(config).status()
     payload = {
         "version": __version__,
         "config": config.describe(),
@@ -293,6 +325,7 @@ def _doctor(config: PrimeeConfig, args: argparse.Namespace) -> int:
         "connectors": connectors.describe(),
         "permission_policy": config.permissions.describe(),
         "audit_path": str(config.audit_path()),
+        "voice": voice_status,
         "hosted_ai_dependencies": [],
     }
     if getattr(args, "json", False):
@@ -310,6 +343,13 @@ def _doctor(config: PrimeeConfig, args: argparse.Namespace) -> int:
     print("  permissions  :")
     for name, mode in payload["permission_policy"]["modes"].items():
         print(f"    {name:<26} {mode}")
+    adapter = voice_status["adapter"]
+    print(
+        f"  voice        : enabled={voice_status['enabled']} engine={voice_status['tts_engine']} "
+        f"available={adapter['available']} permission={voice_status['permission']['mode']}"
+    )
+    for reason in adapter["reasons"]:
+        print(f"    - {reason}")
     if registry.errors:
         print("  skill errors :")
         for error in registry.errors:
@@ -392,6 +432,123 @@ def _print_vault_details(data: dict) -> None:
             print(f"  {verb} folder: {folder}")
         for name in data["will_create_files"] if dry else data.get("created_files", []):
             print(f"  {verb} file: {name}")
+
+
+def _voice_service(config: PrimeeConfig, args: argparse.Namespace):
+    from .voice.service import VoiceService
+
+    clock = SystemClock()
+    if not config.audit.enabled:
+        sink = NullSink()
+    elif getattr(args, "no_audit", False):
+        sink = MemorySink()
+    else:
+        sink = JsonlSink(config.audit_path())
+    return VoiceService(config, audit=AuditLog(sink, clock, enabled=config.audit.enabled), clock=clock)
+
+
+def _voice(config: PrimeeConfig, args: argparse.Namespace) -> int:
+    """Step Three entry point. Only the text-to-speech benchmark path exists yet."""
+    from .voice import VOICE_STATUS
+    from .voice.service import PLAYBACK_PERMISSION
+
+    as_json = getattr(args, "json", False)
+    command = getattr(args, "voice_command", None)
+    service = _voice_service(config, args)
+
+    if command in (None, "status"):
+        status = service.status()
+        if command is None:
+            status["notice"] = (
+                "The push-to-talk voice loop is not implemented yet. "
+                "Available: `primee voice status`, `primee voice profile`, "
+                "`primee voice speak TEXT`, `primee voice benchmark --output DIR`."
+            )
+            status["stage"] = VOICE_STATUS
+        if as_json:
+            print(json.dumps(status, ensure_ascii=False, indent=2))
+            return 0
+        if command is None:
+            print(status["notice"])
+            print()
+        adapter = status["adapter"]
+        print(f"Voice enabled   : {status['enabled']}  (engine {status['tts_engine']}, profile {config.voice.profile})")
+        print(f"Permission      : {status['permission']['name']} = {status['permission']['mode']}")
+        print(f"Player          : {status['player']['name']} (available={status['player']['available']})")
+        print(f"Engine ready    : {adapter['available']}")
+        for reason in adapter["reasons"]:
+            print(f"  - {reason}")
+        print(f"Models directory: {status['models_dir']}")
+        print(f"Implemented     : {status['implemented']}")
+        return 0
+
+    if command == "profile":
+        profile = service.profile
+        if profile is None:
+            print(f"Unknown voice profile {config.voice.profile!r}.", file=sys.stderr)
+            return 1
+        if as_json:
+            print(json.dumps(profile.describe(), ensure_ascii=False, indent=2))
+            return 0
+        print(f"{profile.display_name}  [{profile.key}]")
+        print(f"  language : {profile.language}   engine: {profile.engine}   model: {profile.model_type}   quality: {profile.quality}")
+        print(f"  original : {profile.original_repository}/{profile.original_path}")
+        print(f"  converted: {profile.model_repository}")
+        print("  licences :")
+        for record in profile.licenses:
+            print(f"    {record.subject:<28} {record.license or 'not stated':<12} {record.statement}")
+        print(f"  provenance SOURCE file: {profile.provenance_source_file}  -> {profile.provenance_note}")
+        print(f"  speaker gender        : {profile.speaker_gender}")
+        print(f"  redistribution        : {profile.redistribution_status}")
+        print(f"  approved use          : {profile.approved_use}")
+        for warning in profile.warnings:
+            print(f"  warning: {warning}")
+        return 0
+
+    approved = PLAYBACK_PERMISSION in (getattr(args, "approve", []) or [])
+
+    if command == "speak":
+        outcome = service.speak(args.text, approved=approved)
+        if as_json:
+            payload = outcome.describe()
+            payload["text"] = outcome.text
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
+            return 0 if outcome.spoken else 1
+        print(outcome.text)
+        if outcome.spoken:
+            print(f"  (spoken with {outcome.engine})")
+        else:
+            print(f"  (text only: {outcome.fallback_reason})")
+        for warning in outcome.warnings:
+            print(f"  warning: {warning}")
+        return 0 if outcome.spoken else 1
+
+    if command == "benchmark":
+        from .voice.benchmark import run_benchmark
+
+        report = run_benchmark(service, Path(args.output), clock=service.clock, approved=approved)
+        if as_json:
+            print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+            return 0 if report.ok else 1
+        if not report.ok and not report.cases:
+            print(f"Benchmark did not run: {report.reason}", file=sys.stderr)
+            return 1
+        print(f"Benchmark files: {report.output_dir}")
+        for case in report.cases:
+            if case.ok:
+                metrics = case.metrics
+                print(
+                    f"  {case.key:<16} {case.file:<20} audio {metrics.get('audio_seconds')}s "
+                    f"synthesis {metrics.get('synthesis_seconds')}s rtf {metrics.get('real_time_factor')}"
+                )
+            else:
+                print(f"  {case.key:<16} FAILED [{case.error_code}] {case.fallback_reason}")
+        print(f"Report: {report.report_path}")
+        print("Listen to every file, then classify: Accept / Accept temporarily / Reject.")
+        return 0 if report.ok else 1
+
+    print(f"Unknown voice command {command!r}.", file=sys.stderr)
+    return 2
 
 
 def _run(config: PrimeeConfig, args: argparse.Namespace) -> int:

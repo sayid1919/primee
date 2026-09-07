@@ -39,7 +39,7 @@ invented.
 | `test_runtime.py` | routing integration, permission denial, approval, dry run, Vault gateway, handler failure, external actions |
 | `test_skills.py` | the behaviour of all five bundled skills |
 | `test_config.py` | defaults, validation, expansion, the shipped templates, credential hygiene |
-| `test_independence.py` | no AI SDK, no third-party import, no networking, no shell execution, no Claude directory |
+| `test_independence.py` | no AI SDK, no third-party import, no networking, no shell execution, no Claude directory; exactly one `subprocess` boundary with `shell=False` and a list |
 | `test_cli.py` | every command, exit codes, JSON output, dry run, `--approve` |
 | `test_memory_schema.py` | required fields, vocabularies, timestamps, stable ids, round-tripping |
 | `test_memory_init.py` | safe initialization, unsafe paths, non-empty directories, dry run |
@@ -48,6 +48,13 @@ invented.
 | `test_memory_security.py` | path escapes, reserved files, credential refusal, absence of delete, atomicity |
 | `test_memory_integration.py` | skills writing through the Vault under the permission layer |
 | `test_template_vault.py` | the template Vault stays valid, linked and free of personal data |
+| `test_voice_process.py` | the subprocess boundary: allowlisted executable, symlink refusal, argument rules, sanitised environment, timeout, bounded output, stdin delivery |
+| `test_voice_manifest.py` | manifest parsing, hash kinds kept apart, verification, tamper and missing-file detection |
+| `test_voice_profiles.py` | the Haaniye record: CC0 voice licence, separate licences, `SOURCE = TBD`, no gender or redistribution claim; `audio.playback` is core-only |
+| `test_voice_adapters.py` | the sherpa adapter through a stand-in worker: missing runtime, model, worker; hash mismatch; non-zero exit; timeout; invalid output; text over stdin |
+| `test_voice_service.py` | permission gate, disabled config, fallbacks, temp WAV deletion, audit without words, summary, transcript policy, benchmark |
+| `test_voice_cli.py` | `primee voice` notice, status, profile, speak fallback, benchmark refusal inside the repo, `doctor` |
+| `test_voice_hygiene.py` | no model or audio tracked, runtime and models ignored, sources not ignored, static checks on the PowerShell tools |
 
 ## Platform-dependent results
 

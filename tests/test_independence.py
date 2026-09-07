@@ -43,6 +43,10 @@ NETWORK_MODULES = {"socket", "http", "urllib", "ftplib", "smtplib", "imaplib", "
 
 STDLIB_ALLOWED = set(sys.stdlib_module_names)
 
+#: The single module allowed to import ``subprocess``. Every other file under
+#: ``src/`` is still forbidden to, and this one is held to the rules below.
+PROCESS_BOUNDARY = SRC / "primee" / "voice" / "process.py"
+
 
 def source_files() -> list[Path]:
     return sorted(SRC.rglob("*.py"))
@@ -104,7 +108,12 @@ class NoHostedAiTests(unittest.TestCase):
         forbidden_attributes = {"system", "popen", "spawn", "spawnl", "execv", "execve"}
         forbidden_roots = {"subprocess", "shlex", "pty", "ctypes"}
         for path in source_files():
-            self.assertEqual(imported_roots(path) & forbidden_roots, set(), msg=str(path))
+            roots = imported_roots(path)
+            if path == PROCESS_BOUNDARY:
+                # Step Three: exactly one module may start a child process, and
+                # SubprocessBoundaryTests below pins how it is allowed to do so.
+                roots = roots - {"subprocess"}
+            self.assertEqual(roots & forbidden_roots, set(), msg=str(path))
             tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
             for node in ast.walk(tree):
                 if not isinstance(node, ast.Call):
@@ -121,6 +130,74 @@ class NoHostedAiTests(unittest.TestCase):
                     )
 
 
+class SubprocessBoundaryTests(unittest.TestCase):
+    """Step Three added one child-process boundary. These tests keep it to one.
+
+    The exception is deliberately narrow: ``primee/voice/process.py`` may
+    import ``subprocess``; nothing else may, and that module may only call
+    ``Popen`` with ``shell=False`` and a list, never a string command, never
+    ``os.system``/``popen``, never ``cmd.exe`` or PowerShell.
+    """
+
+    def test_exactly_one_module_imports_subprocess(self):
+        importers = [
+            str(path.relative_to(REPO_ROOT))
+            for path in source_files()
+            if "subprocess" in imported_roots(path)
+        ]
+        self.assertEqual(importers, [str(PROCESS_BOUNDARY.relative_to(REPO_ROOT))])
+
+    def test_the_boundary_never_uses_a_shell_or_a_command_string(self):
+        text = PROCESS_BOUNDARY.read_text(encoding="utf-8")
+        tree = ast.parse(text, filename=str(PROCESS_BOUNDARY))
+        popen_calls = 0
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", "")
+            self.assertNotIn(name, {"run", "call", "check_call", "check_output", "getoutput", "getstatusoutput"},
+                             msg=f"only Popen is allowed at the boundary, not subprocess.{name}")
+            if name == "Popen":
+                popen_calls += 1
+                keywords = {kw.arg: kw.value for kw in node.keywords}
+                self.assertIn("shell", keywords, msg="Popen must pass shell= explicitly")
+                self.assertIsInstance(keywords["shell"], ast.Constant)
+                self.assertIs(keywords["shell"].value, False)
+                self.assertTrue(node.args, msg="Popen must receive the argument list positionally")
+                first = node.args[0]
+                self.assertNotIsInstance(first, (ast.Constant, ast.JoinedStr, ast.BinOp),
+                                         msg="the command must be a list built from validated parts, never a string")
+        self.assertEqual(popen_calls, 1, msg="exactly one Popen call may exist")
+        for forbidden in ("cmd.exe", "powershell", "pwsh", "Invoke-Expression", "shell=True", "os.system", "os.popen"):
+            self.assertNotIn(forbidden, text, msg=forbidden)
+
+    def test_the_boundary_never_looks_an_executable_up_on_path(self):
+        text = PROCESS_BOUNDARY.read_text(encoding="utf-8")
+        self.assertNotIn("shutil.which", text)
+        self.assertNotIn("os.environ[\"PATH\"]", text)
+        self.assertNotIn("environ.get(\"PATH\")", text)
+
+    def test_no_voice_module_imports_the_speech_engine_or_a_network_module(self):
+        for path in sorted((SRC / "primee" / "voice").rglob("*.py")):
+            roots = imported_roots(path)
+            self.assertNotIn("sherpa_onnx", roots, msg=str(path))
+            self.assertNotIn("onnxruntime", roots, msg=str(path))
+            self.assertNotIn("numpy", roots, msg=str(path))
+            self.assertEqual(roots & NETWORK_MODULES, set(), msg=str(path))
+
+    def test_the_worker_lives_outside_the_package_and_has_no_network_code(self):
+        worker = REPO_ROOT / "tools" / "voice" / "sherpa_tts_worker.py"
+        self.assertTrue(worker.is_file())
+        roots = imported_roots(worker)
+        self.assertEqual(roots & NETWORK_MODULES, set())
+        self.assertEqual(roots & FORBIDDEN_MODULES, set())
+        self.assertIn("sherpa_onnx", roots, msg="the worker is where the engine import belongs")
+        text = worker.read_text(encoding="utf-8")
+        for forbidden in ("subprocess", "urllib", "socket", "http", "requests", "shell=True"):
+            self.assertNotIn(forbidden, text, msg=forbidden)
+
+
 class RepositoryHygieneTests(unittest.TestCase):
     """Guards against .gitignore accidentally excluding Primee's own source.
 
@@ -132,7 +209,7 @@ class RepositoryHygieneTests(unittest.TestCase):
     def test_no_source_test_config_or_doc_file_is_git_ignored(self):
         import subprocess  # noqa: PLC0415 - test-only, never imported by src/
 
-        tracked_dirs = ["src", "tests", "config", "docs"]
+        tracked_dirs = ["src", "tests", "config", "docs", "tools"]
         paths = [
             str(path.relative_to(REPO_ROOT))
             for directory in tracked_dirs

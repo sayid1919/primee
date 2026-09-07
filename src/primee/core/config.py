@@ -31,9 +31,16 @@ DEFAULT_CONFIG_DIRNAME = "config"
 #: Vault path stays configurable per machine without any personal path or user
 #: name ever appearing in the repository.
 VAULT_PATH_ENV = "PRIMEE_VAULT_PATH"
+#: Environment variable consulted when [voice] models_dir is empty. Local speech
+#: models are large third-party binaries and never live inside the repository.
+MODELS_PATH_ENV = "PRIMEE_MODELS_PATH"
 MAIN_FILE = "primee.toml"
 PERMISSIONS_FILE = "permissions.toml"
 CONNECTORS_FILE = "connectors.toml"
+VOICE_FILE = "voice.toml"
+
+VOICE_ENGINES = ("none", "sherpa-onnx")
+VOICE_PLAYERS = ("none", "winsound")
 
 _ENV_RE = re.compile(r"\$\{env:([A-Za-z_][A-Za-z0-9_]{0,63})\}")
 _TIME_RE = re.compile(r"^([01]\d|2[0-3]):([0-5]\d)$")
@@ -100,6 +107,34 @@ class AuditConfig:
 
 
 @dataclass(frozen=True)
+class VoiceSettings:
+    """Step Three: the optional, local-only voice layer.
+
+    Everything here is *off* unless the person using this computer turns it on.
+    No path in this section is ever inside the repository: the runtime is an
+    isolated Python environment and the models are third-party files, both
+    excluded from Git.
+    """
+
+    enabled: bool = False
+    tts_engine: str = "none"
+    profile: str = "haaniye"
+    models_dir: Optional[str] = None
+    runtime_dir: Optional[str] = None
+    runtime_python: Optional[str] = None
+    worker_script: Optional[str] = None
+    player: str = "winsound"
+    speak_summary_only: bool = True
+    max_spoken_chars: int = 240
+    timeout_seconds: int = 60
+    save_transcripts: bool = False
+
+    @property
+    def configured(self) -> bool:
+        return self.enabled and self.tts_engine != "none"
+
+
+@dataclass(frozen=True)
 class RuntimeConfig:
     dry_run: bool = False
     skills_dir: Optional[str] = None
@@ -114,6 +149,7 @@ class PrimeeConfig:
     runtime: RuntimeConfig = field(default_factory=RuntimeConfig)
     schedule: ScheduleConfig = field(default_factory=ScheduleConfig)
     audit: AuditConfig = field(default_factory=AuditConfig)
+    voice: VoiceSettings = field(default_factory=VoiceSettings)
     permissions: PermissionPolicy = field(default_factory=PermissionPolicy)
     connectors: Mapping[str, ConnectorConfig] = field(default_factory=dict)
     metrics_series: tuple[MetricSeries, ...] = ()
@@ -133,6 +169,15 @@ class PrimeeConfig:
         if self.audit.path:
             return Path(expand(self.audit.path))
         return self.state_directory() / "audit" / "audit.jsonl"
+
+    def models_directory(self) -> Path:
+        """Where local speech models live: config, else the environment, else state."""
+        if self.voice.models_dir:
+            return Path(expand(self.voice.models_dir))
+        from_env = os.environ.get(MODELS_PATH_ENV, "").strip()
+        if from_env:
+            return Path(expand(from_env))
+        return self.state_directory() / "models"
 
     def describe(self) -> dict:
         return {
@@ -157,6 +202,20 @@ class PrimeeConfig:
                 "inbox_at": self.schedule.inbox_at,
                 "plan_at": self.schedule.plan_at,
                 "rest_days": list(self.schedule.rest_days),
+            },
+            "voice": {
+                "enabled": self.voice.enabled,
+                "tts_engine": self.voice.tts_engine,
+                "profile": self.voice.profile,
+                "models_dir_source": (
+                    "configuration"
+                    if self.voice.models_dir
+                    else ("environment" if os.environ.get(MODELS_PATH_ENV) else "state_dir")
+                ),
+                "runtime_configured": bool(self.voice.runtime_dir or self.voice.runtime_python),
+                "player": self.voice.player,
+                "speak_summary_only": self.voice.speak_summary_only,
+                "save_transcripts": self.voice.save_transcripts,
             },
             "source_files": list(self.source_files),
         }
@@ -204,7 +263,7 @@ def load_config(source: Optional[Path | str] = None) -> PrimeeConfig:
 
     path = Path(expand(str(source)))
     if path.is_dir():
-        for name in (MAIN_FILE, PERMISSIONS_FILE, CONNECTORS_FILE):
+        for name in (MAIN_FILE, PERMISSIONS_FILE, CONNECTORS_FILE, VOICE_FILE):
             candidate = path / name
             local = path / name.replace(".toml", ".local.toml")
             for chosen in (candidate, local):
@@ -275,6 +334,8 @@ def _build(data: Mapping[str, Any], used: list[str]) -> PrimeeConfig:
         path=(str(audit_raw["path"]).strip() or None) if audit_raw.get("path") else None,
     )
 
+    voice = _voice_settings(_section(data, "voice"))
+
     policy = PermissionPolicy.from_mapping(_section(data, "permissions"))
 
     connectors = _default_connectors()
@@ -325,11 +386,48 @@ def _build(data: Mapping[str, Any], used: list[str]) -> PrimeeConfig:
         runtime=runtime,
         schedule=schedule,
         audit=audit,
+        voice=voice,
         permissions=policy,
         connectors=connectors,
         metrics_series=tuple(series),
         trends_sources=tuple(str(item).strip() for item in sources if str(item).strip()),
         source_files=tuple(used),
+    )
+
+
+def _voice_settings(raw: Mapping[str, Any]) -> VoiceSettings:
+    engine = str(raw.get("tts_engine", "none")).strip().lower() or "none"
+    if engine not in VOICE_ENGINES:
+        raise ConfigError(
+            f"Setting 'voice.tts_engine' must be one of {', '.join(VOICE_ENGINES)}."
+        )
+    player = str(raw.get("player", "winsound")).strip().lower() or "winsound"
+    if player not in VOICE_PLAYERS:
+        raise ConfigError(f"Setting 'voice.player' must be one of {', '.join(VOICE_PLAYERS)}.")
+    profile = str(raw.get("profile", "haaniye")).strip().lower() or "haaniye"
+    if not re.match(r"^[a-z][a-z0-9_-]{0,31}$", profile):
+        raise ConfigError("Setting 'voice.profile' must be a short lowercase identifier.")
+
+    def _optional_path(key: str) -> Optional[str]:
+        value = raw.get(key)
+        if value is None:
+            return None
+        text = str(value).strip()
+        return text or None
+
+    return VoiceSettings(
+        enabled=bool(raw.get("enabled", False)),
+        tts_engine=engine,
+        profile=profile,
+        models_dir=_optional_path("models_dir"),
+        runtime_dir=_optional_path("runtime_dir"),
+        runtime_python=_optional_path("runtime_python"),
+        worker_script=_optional_path("worker_script"),
+        player=player,
+        speak_summary_only=bool(raw.get("speak_summary_only", True)),
+        max_spoken_chars=_positive_int(raw.get("max_spoken_chars"), 240, "voice.max_spoken_chars"),
+        timeout_seconds=_positive_int(raw.get("timeout_seconds"), 60, "voice.timeout_seconds"),
+        save_transcripts=bool(raw.get("save_transcripts", False)),
     )
 
 

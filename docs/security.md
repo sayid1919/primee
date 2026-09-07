@@ -21,7 +21,10 @@ does not claim more than the code delivers.
 | Path validation before access | Shape check, then resolution check, on every Vault path |
 | Full audit trail | Timestamp, skill, action, permission, approval state, sanitized outcome |
 | Message content is never logged | `log_message_bodies` defaults to false, and no code path logs bodies |
-| No shell execution from metadata | `SKILL.md` is parsed by an inert parser; no `subprocess`, no `eval`, no `exec` anywhere |
+| No shell execution from metadata | `SKILL.md` is parsed by an inert parser; no `eval`, no `exec` anywhere |
+| One child-process boundary | Only `primee/voice/process.py` may import `subprocess`: one `Popen`, `shell=False`, argument list, absolute executable inside an allowlisted root, no symlinks, sanitised environment, timeout, bounded output |
+| Speech is opt-in and local | `audio.playback` is `never` by default; the engine and model live outside Git; the worker has no network code; text always stays on screen |
+| Third-party files are verified | Installed model files are checked byte-for-byte against the approved manifest before every use; a mismatch means text only |
 | No data transmission | No networking module is imported anywhere in `src/` |
 | No delete operation anywhere | Absent from the catalogue, the service and the storage class |
 | Raw notes immutable | No code path updates or renames a raw note |
@@ -31,8 +34,9 @@ does not claim more than the code delivers.
 | Skills cannot choose a page path | Memory proposals must carry an empty `path`; the Vault generates it |
 | The real Vault stays out of Git | `.gitignore` plus a test that no repository source is ignored |
 
-`tests/test_independence.py` parses every source file and asserts the last three
-rows mechanically, so a regression fails the suite rather than going unnoticed.
+`tests/test_independence.py` parses every source file and asserts the shell,
+network and process-boundary rows mechanically, so a regression fails the suite
+rather than going unnoticed.
 
 ## Redaction
 

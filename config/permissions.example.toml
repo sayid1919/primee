@@ -44,5 +44,12 @@ default = "never"
 "audio.capture"  = "approval"
 "camera.capture" = "approval"
 
+# --- Voice output (Step Three) ---------------------------------------------
+# audio.playback lets Primee speak a SHORT summary of an answer through the local
+# speaker. It is never requested by a skill; it applies to you, at the keyboard.
+# Speech is off unless [voice] in voice.local.toml is enabled AND this is auto
+# or approval. Text always stays on screen. Recommended while benchmarking:
+"audio.playback" = "approval"
+
 # Never allowed. Listing them explicitly makes the intent auditable.
 "email.send" = "never"

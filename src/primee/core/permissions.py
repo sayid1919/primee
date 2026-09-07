@@ -61,6 +61,15 @@ _SPECS: tuple[PermissionSpec, ...] = (
     PermissionSpec("audio.capture", "Capture microphone audio.", False),
     PermissionSpec("camera.capture", "Capture camera video.", False),
     PermissionSpec("audit.write", "Append to the audit log.", True, skill_requestable=False),
+    # Step Three. Granted to the person at the keyboard through the policy file,
+    # never requested by a skill: a skill returns text, and Primee Core decides
+    # whether a short summary of it is also spoken aloud on this computer.
+    PermissionSpec(
+        "audio.playback",
+        "Speak a short response summary through the local speaker.",
+        True,
+        skill_requestable=False,
+    ),
 )
 
 PERMISSIONS: dict[str, PermissionSpec] = {spec.name: spec for spec in _SPECS}

@@ -1,6 +1,6 @@
 # Roadmap — what is real, what is a placeholder
 
-Covers Steps One and Two.
+Covers Steps One and Two, and the Step Three preparation.
 
 Step One is a foundation. This page is the honest inventory: what works today,
 what is deliberately a stub, and which later step is meant to fill each gap.
@@ -50,6 +50,19 @@ what is deliberately a stub, and which later step is meant to fill each gap.
 - All four skills writing through the Vault into `outputs/`.
 - A fictional template Vault, verified by tests to stay valid and impersonal.
 
+### Step Three — Voice, preparation only (not complete)
+
+- A generic text-to-speech contract, a text-only fallback and one engine
+  adapter (Haaniye on sherpa-onnx) behind a single hardened subprocess boundary.
+- A pinned manifest format with publisher hashes kept apart by kind, and
+  Windows tools that build the manifest from public metadata and install from
+  it only after approval, with dry run and rollback.
+- `audio.playback`, a core-only permission, `never` by default.
+- The fixed seven-phrase Persian benchmark; the person classifies by listening.
+- **Not built:** speech-to-text, push-to-talk, the tkinter window, the full
+  loop. `primee voice` returns a controlled notice. Nothing has run on the
+  target Windows computer yet. See [`voice.md`](voice.md).
+
 ## Placeholders, and why
 
 | Component | State now | Filled by |
@@ -69,7 +82,7 @@ what is deliberately a stub, and which later step is meant to fill each gap.
 
 | Capability | Note |
 | --- | --- |
-| Voice command and local speech output | Permission names are reserved; no code exists |
+| Voice command (speech-to-text, push-to-talk) | `audio.capture` reserved; only the text-to-speech benchmark path exists (Step Three preparation) |
 | File search and management outside the Vault | `fs.read` / `fs.write` reserved and unconditionally denied |
 | Operating system actions | `system.execute` reserved and unconditionally denied |
 | Scheduling at 07:30 / 08:00 | `[schedule]` is read by `doctor` and nothing else; no scheduler is installed |
