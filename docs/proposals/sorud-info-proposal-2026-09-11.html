@@ -10,8 +10,7 @@
 @font-face{font-family:"Darvish";src:url("fonts/Darvish-Medium.ttf") format("truetype");font-weight:500}
 @font-face{font-family:"Darvish";src:url("fonts/Darvish-SemiBold.ttf") format("truetype");font-weight:600}
 @font-face{font-family:"Darvish";src:url("fonts/Darvish-Bold.ttf") format("truetype");font-weight:700}
-@font-face{font-family:"Mirza";src:url("fonts/Mirza-Regular.ttf") format("truetype");font-weight:400}
-@font-face{font-family:"Mirza";src:url("fonts/Mirza-Bold.ttf") format("truetype");font-weight:700}
+@font-face{font-family:"IranNastaliq";src:url("fonts/IranNastaliq.ttf") format("truetype");font-weight:400}
 
 :root{
   --paper:#F2EEE6; --paper-2:#E9E3D8; --ink:#16191D; --ink-2:#4A5058;
@@ -72,7 +71,7 @@ pre .fa{unicode-bidi:isolate;direction:rtl}
 
 /* option cards */
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:3.5mm;margin:2mm 0 2mm}
-.opt{border-radius:3mm;padding:3mm 3.5mm 2.6mm;font-size:9.5pt;line-height:1.7;position:relative}
+.opt{border-radius:3mm;padding:2.8mm 3.3mm 2.4mm;font-size:9.3pt;line-height:1.65;position:relative}
 .opt .t{font-weight:700;font-size:9.4pt;margin-bottom:1.2mm;display:flex;align-items:center;gap:2mm}
 .opt.min{background:var(--paper-2);border:1px solid var(--line)}
 .opt.min .t{color:var(--ink-2)}
@@ -100,7 +99,7 @@ td.c,th.c{text-align:center}
 
 /* decorative */
 .gridbg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:10mm 10mm;opacity:.35;pointer-events:none}
-.mashq{position:absolute;font-family:"Mirza";color:var(--ink);pointer-events:none;white-space:nowrap;line-height:1}
+.mashq{position:absolute;font-family:"IranNastaliq";color:var(--ink);pointer-events:none;white-space:nowrap;line-height:1}
 .dash{border-top:1.5px dashed var(--ink);opacity:.55}
 
 /* palette swatches */
@@ -149,8 +148,8 @@ td.c,th.c{text-align:center}
 .road .ph{font-family:"Azar";font-size:20pt;line-height:1;color:var(--ink);display:block;margin-bottom:1mm}
 
 /* TOC */
-.toc{columns:2;column-gap:8mm;font-size:9.6pt}
-.toc div{break-inside:avoid;display:flex;justify-content:space-between;border-bottom:1px dotted var(--line);padding:1.2mm 0}
+.toc{columns:2;column-gap:8mm;font-size:9.1pt}
+.toc div{break-inside:avoid;display:flex;justify-content:space-between;border-bottom:1px dotted var(--line);padding:.7mm 0}
 .toc div b{font-weight:600}
 .toc .n{font-family:"DejaVu Sans Mono",monospace;font-size:8pt;color:var(--ink-2)}
 .toc .h{font-weight:700;color:var(--lapis);border-bottom:0;margin-top:2mm}
@@ -251,7 +250,7 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
   <div class="two">
     <div class="box">
       <h4>ارجاع به گزارش ممیزی</h4>
-      <p style="font-size:9.4pt">هر پیشنهاد با یک یا چند شناسه مانند <span class="id">S-05</span> علامت خورده است. این شناسه‌ها دقیقاً همان ردیف‌های جدول مشکلات در گزارش ممیزی ۲۰ شهریور ۱۴۰۵ هستند. پیشنهادی که شناسه ندارد، پیشنهاد نیست؛ در این سند وجود ندارد.</p>
+      <p style="font-size:9.4pt">هر پیشنهاد با یک یا چند شناسه مانند <span class="id">S-05</span> علامت خورده است؛ این شناسه‌ها همان ردیف‌های جدول مشکلات در گزارش ممیزی ۲۰ شهریور ۱۴۰۵ هستند.</p>
       <h4>دو گزینه برای هر مورد</h4>
       <div class="opts" style="margin:1.5mm 0 0">
         <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div>کم‌هزینه‌ترین تغییری که مشکل را واقعاً حل می‌کند، نه پنهان.</div>
@@ -261,11 +260,12 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
     <div class="box">
       <h4>اصول ثابت این پروپوزال</h4>
       <ul style="font-size:9.4pt">
-        <li><b>ساختار سایت عوض نمی‌شود.</b> موتور تشخیص وزن، مسیرها و منطق فعلی حفظ می‌شوند؛ پیشنهادها لایهٔ طراحی، محتوا و پیکربندی را هدف می‌گیرند.</li>
-        <li><b>نمونهٔ کد واقعی.</b> هرجا ممکن بوده، CSS، HTML، JSON-LD یا پیکربندی سرور دقیق آمده است تا اجرا بی‌ابهام باشد.</li>
-        <li><b>هر تصمیم رنگی و تایپوگرافیک با عدد.</b> نسبت‌های کنتراست محاسبه شده‌اند، نه حدس.</li>
-        <li><b>فیچرها جدا از طراحی.</b> بخش ۱۵ فقط قابلیت‌های تازه را فهرست می‌کند تا با بازطراحی قاطی نشود.</li>
+        <li><b>ساختار سایت عوض نمی‌شود.</b> موتور، مسیرها و منطق حفظ می‌شوند؛ پیشنهادها فقط لایهٔ طراحی، محتوا و پیکربندی را هدف می‌گیرند.</li>
+        <li><b>نمونهٔ کد واقعی.</b> هرجا ممکن بوده، CSS، HTML، JSON-LD یا پیکربندی دقیق سرور آمده است.</li>
+        <li><b>هر تصمیم رنگی با عدد.</b> نسبت‌های کنتراست محاسبه شده‌اند، نه حدس.</li>
+        <li><b>فیچرها جدا از طراحی.</b> بخش ۱۵ فقط قابلیت‌های تازه را فهرست می‌کند.</li>
         <li><b>نیمایی، اختیاری.</b> بخش ۱۶ بر پایهٔ منابع درسی و دانشگاهی نوشته شده و اجرای آن به تصمیم شما وابسته است.</li>
+        <li><b>مرز دانسته و فرض.</b> ممیزی هیچ صفحه‌ای از سرود را باز نکرد (شبکه مسدود بود)؛ پس هر گزاره دربارهٔ وضع فعلی یا از شواهد بیرونی (عنوان ایندکس‌شده، DNS، معرفی گنجور) می‌آید یا صریحاً «فرض» نامیده شده است.</li>
       </ul>
     </div>
   </div>
@@ -280,7 +280,7 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
   <div class="three" style="margin-top:4mm">
     <div class="box"><div class="secnum" style="font-size:30pt;color:var(--copper)">۱</div><b>پایدار شدن</b><p style="font-size:9.3pt;margin:0">سایت از خط اینترنت خانگی پشت یک لایهٔ CDN/تونل می‌رود و HTTPS معتبر می‌گیرد. <span class="id">S-01</span><span class="id">S-02</span><span class="id">S-03</span><span class="id">S-06</span><span class="id">S-15</span></p></div>
     <div class="box"><div class="secnum" style="font-size:30pt;color:var(--saffron)">۲</div><b>دیده شدن</b><p style="font-size:9.3pt;margin:0">صفحهٔ اصلی، فهرست اوزان، راهنما و صفحهٔ دقت با عنوان، توضیح، داده ساختاریافته و نقشهٔ سایت ایندکس می‌شوند. <span class="id">S-05</span><span class="id">S-07</span><span class="id">S-08</span><span class="id">S-09</span><span class="id">S-20</span></p></div>
-    <div class="box"><div class="secnum" style="font-size:30pt;color:var(--lapis)">۳</div><b>خوانده شدن</b><p style="font-size:9.3pt;margin:0">سیستم طراحی تازه: پالت با کنتراست سنجیده، تایپوگرافی فارسی، نمایش هجاها با رنگ + نشانه، حالت تاریک و WCAG AA. <span class="id">S-18</span><span class="id">S-12</span><span class="id">S-13</span></p></div>
+    <div class="box"><div class="secnum" style="font-size:30pt;color:var(--lapis)">۳</div><b>خوانده شدن</b><p style="font-size:9.3pt;margin:0">سیستم طراحی تازه: پالت با کنتراست سنجیده، تایپوگرافی فارسی، نمایش هجاها با رنگ + نشانه، حالت تاریک و WCAG AA. <span class="id">S-18</span><span class="id">S-07</span><span class="id">S-17</span></p></div>
   </div>
 
   <h3>پنج پیام کلیدی</h3>
@@ -289,7 +289,7 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
     <li><b>بزرگ‌ترین بازده در کمترین کار:</b> HTTPS + عنوان/توضیح/canonical + نقشهٔ سایت + سه صفحهٔ پشتیبان. (<span class="id">S-05</span> تا <span class="id">S-09</span>)</li>
     <li><b>نمایش هجاها باید از «فقط رنگ» به «رنگ + شکل + متن» برسد</b> تا هم دسترس‌پذیر باشد هم در چاپ و اشتراک‌گذاری معنا را حفظ کند. (<span class="id">S-18</span>)</li>
     <li><b>سلب‌مسئولیت گنجور را به فرصت تبدیل کنید:</b> صفحهٔ «دقت و روش‌شناسی» با عدد، و حلقهٔ بازخورد برای تصحیح خطاها. (<span class="id">S-13</span><span class="id">S-14</span>)</li>
-    <li><b>بخش نیمایی، تمایز رقابتی است:</b> هیچ‌یک از پنج رقیب شناسایی‌شده وزن نیمایی را ساخت‌یافته نشان نمی‌دهد. (<span class="id">S-13</span>)</li>
+    <li><b>بخش نیمایی می‌تواند تمایز رقابتی باشد:</b> در صفحات ایندکس‌شدهٔ پنج رقیب هیچ نشانه‌ای از پشتیبانی ساخت‌یافتهٔ وزن نیمایی دیده نشد؛ چون صفحات رقبا در ممیزی باز نشدند، این فرض پیش از سرمایه‌گذاری باید مستقیم بررسی شود.</li>
   </ol>
 
   <h3>نقشهٔ راه پیشنهادی (چهار فاز، بدون وابستگی به بودجه)</h3>
@@ -355,7 +355,7 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
   <div class="sw" style="grid-template-columns:repeat(3,1fr);margin-top:2.5mm">
     <div style="background:#B7472A;color:#FAF7F1">هجای کوتاه · مسی + نشانهٔ ∪<span>#B7472A</span></div>
     <div style="background:#1F6B78;color:#FAF7F1">هجای بلند · فیروزهٔ تیره + نشانهٔ —<span>#1F6B78</span></div>
-    <div style="background:#6B4E9B;color:#FAF7F1">هجای کشیده · بنفش + نشانهٔ ∪—<span>#6B4E9B</span></div>
+    <div style="background:#6B4E9B;color:#FAF7F1">هجای کشیده · بنفش + نشانهٔ — ∪<span>#6B4E9B</span></div>
   </div>
 
   <div class="two" style="margin-top:4mm">
@@ -386,7 +386,7 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
     </div>
   </div>
   <div class="opts">
-    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>تعریف ۸ توکن رنگ بالا در <code>:root</code> و جایگزینی رنگ‌های سخت‌کد فعلی.</li><li>واژه‌نشان متنی «سرود» با فونت نمایشی + خط وزن، به‌جای لوگوی تصویری.</li><li>favicon و آیکون ۵۱۲px از همان واژه‌نشان.</li></ul></div>
+    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>تعریف ۸ توکن رنگ بالا در <code>:root</code> و ارجاع دادن رنگ‌های موجود به آن‌ها.</li><li>واژه‌نشان متنی «سرود» با فونت نمایشی + خط وزن، به‌جای لوگوی تصویری.</li><li>favicon و آیکون ۵۱۲px از همان واژه‌نشان.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>پروندهٔ هویت: نشانه، حالت تک‌رنگ/معکوس، فاصلهٔ امن، کاربرد روی تصویر OG.</li><li>توکن‌های معنایی (<code>--syl-short/long/ext</code>) جدا از توکن‌های برند، تا تغییر برند رنگ هجاها را نشکند.</li><li>نسخهٔ تاریک با کنتراست‌های محاسبه‌شده (بخش ۹).</li></ul></div>
   </div>
   <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۶</span></div>
@@ -397,7 +397,7 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
   <div class="head"><span>بخش ۲ · تایپوگرافی فارسی</span><span class="l">S-17 · S-18</span></div>
   <div class="secnum">۲</div>
   <h2 class="sec">تایپوگرافی فارسی</h2>
-  <p>کاربر در سرود شعر می‌خواند و هجا می‌شمارد؛ خوانایی فارسی این‌جا هستهٔ محصول است، نه آرایش. پیشنهاد: یک قلم متنِ آزاد برای بدنه و رابط، یک قلم نمایشی برای عنوان‌ها، و یک قلم تک‌عرض لاتین برای نشانه‌های عروضی (∪ / —). قلم‌های ارسالی شما (آذر، درویش) در همین سند به کار رفته‌اند.</p>
+  <p>کاربر در سرود شعر می‌خواند و هجا می‌شمارد؛ خوانایی فارسی این‌جا هستهٔ محصول است، نه آرایش. پیشنهاد: یک قلم متنِ آزاد برای بدنه و رابط، یک قلم نمایشی برای عنوان‌ها، و یک قلم تک‌عرض لاتین برای نشانه‌های عروضی (∪ و —). قلم‌های ارسالی شما (آذر، درویش) در همین سند به کار رفته‌اند.</p>
 
   <div class="two">
     <div>
@@ -408,7 +408,7 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
           <tr><td>بدنه و رابط</td><td>Vazirmatn (متغیر، ۱۰۰–۹۰۰)</td><td>درویش Regular/Medium</td></tr>
           <tr><td>عنوان‌ها و واژه‌نشان</td><td>Estedad (متغیر)</td><td>آذر</td></tr>
           <tr><td>نشانه‌های عروضی و کد</td><td>JetBrains Mono</td><td>—</td></tr>
-          <tr><td>سیاه‌مشق تزئینی</td><td>—</td><td>میرزا (فقط پس‌زمینه)</td></tr>
+          <tr><td>سیاه‌مشق تزئینی</td><td>—</td><td>ایران‌نستعلیق (فقط پس‌زمینه)</td></tr>
         </tbody>
       </table>
       <h4 style="margin-top:2.4mm">مقیاس تایپ (px / ارتفاع خط)</h4>
@@ -426,30 +426,28 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
     <div>
       <h4>قواعد ویژهٔ فارسی که باید در CSS دیده شود</h4>
       <ul style="font-size:9.2pt">
-        <li>ارتفاع خط بدنه کمتر از ۱٫۸ نباشد؛ نقطه‌ها و اعراب هجاها به خط بالا نچسبند.</li>
-        <li>متن شعر <b>هرگز justify نشود</b>؛ کشیدگی واژه‌ها مرز هجاها را گمراه می‌کند.</li>
+        <li>ارتفاع خط بدنه کمتر از ۱٫۸ نباشد تا نقطه‌ها و اعراب به خط بالا نچسبند.</li>
+        <li>متن شعر <b>هرگز justify نشود</b>؛ کشیدگی واژه‌ها مرز هجاها را گم می‌کند.</li>
         <li>نیم‌فاصله (ZWNJ) حفظ و نرمال‌سازی شود؛ «می‌رود» نباید به «می رود» بشکند.</li>
-        <li>ارقام فارسی با <code>font-variant-numeric</code> یا تبدیل در سرور، نه با فونت جداگانه.</li>
-        <li>نشانه‌های ∪ و — با قلم تک‌عرض و <code>direction:ltr</code>؛ هم‌ترازی با ترتیب راست‌به‌چپ هجاها از راه چیدمان فلکس، نه ترفند متنی.</li>
+        <li>ارقام فارسی با نویسه‌های ۰–۹ در خودِ متن (یا تبدیل در سرور) بیایند؛ <code>font-variant-numeric</code> ارقام لاتین را فارسی نمی‌کند و فقط برای هم‌عرض‌کردن (<code>tabular-nums</code>) به‌کار می‌رود.</li>
+        <li>نشانه‌های ∪ و — در یک اسپان جداسازی‌شده (<code>unicode-bidi:isolate</code>) تا ترتیبشان با ترتیب راست‌به‌چپ هجاها یکی بماند.</li>
         <li>بارگذاری فونت با <code>font-display: swap</code> و یک <code>&lt;link rel="preload" as="font"&gt;</code> فقط برای وزن ۴۰۰ بدنه (<span class="id">S-17</span>).</li>
       </ul>
       <pre>:root{
-  --font-body:"Vazirmatn",system-ui,sans-serif;
+  --font-body:"Vazirmatn","Vazir Fallback",system-ui,sans-serif;
   --font-display:"Estedad",var(--font-body);
   --font-mono:"JetBrains Mono",ui-monospace,monospace;
 }
 html{font-family:var(--font-body);font-size:17px;line-height:1.9}
-h1,h2,.wordmark{font-family:var(--font-display);
-  font-weight:700;line-height:1.3;text-wrap:balance}
+h1,h2{font-family:var(--font-display);font-weight:700}
 .poem{font-size:22px;line-height:2.2;font-weight:500;
   text-align:start;text-justify:none;word-spacing:.08em}
-.scansion{font-family:var(--font-mono);direction:ltr;
-  unicode-bidi:isolate;letter-spacing:.05em}
-body{font-variant-numeric:tabular-nums}</pre>
+.scansion{font-family:var(--font-mono);
+  unicode-bidi:isolate;letter-spacing:.05em}</pre>
     </div>
   </div>
   <div class="opts">
-    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>Vazirmatn برای همه‌چیز؛ مقیاس ۶پله‌ای بالا؛ ارتفاع خط ۱٫۹؛ بدون justify.</li><li>یک فایل WOFF2 متغیر (~۹۰KB) به‌جای چند وزن جدا.</li></ul></div>
+    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>یک قلم (Vazirmatn) برای همه‌چیز؛ مقیاس ۶پله‌ای بالا؛ ارتفاع خط ۱٫۹؛ بدون justify.</li><li>یک فایل WOFF2 متغیر (~۹۰KB) به‌جای چند وزن جدا.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>جفت Estedad + Vazirmatn، یا آذر + درویش با مجوز وب.</li><li>زیرمجموعه‌سازی فونت به محدودهٔ فارسی + ارقام؛ <code>size-adjust</code> برای فونت جایگزین تا CLS صفر بماند.</li><li>سبک چاپی <code>@media print</code> با نشانه‌های سیاه‌وسفید.</li></ul></div>
   </div>
   <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۷</span></div>
@@ -500,7 +498,7 @@ body{font-variant-numeric:tabular-nums}</pre>
 @media (max-width:600px){html{font-size:16px}.cta{position:sticky;bottom:12px}}</pre>
   <div class="opts" style="margin-top:1mm">
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>تک‌ستون ۷۲۰px مرکز، سرصفحه با ۴ پیوند، پاصفحه با نام طراح و پیوند گنجور.</li><li>کادر ورودی بالای صفحه، نتیجه زیر آن؛ بدون ستون کناری.</li></ul></div>
-    <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>لی‌اوت دو‌ستونه با ستون کناریِ زنده (اوزان پرکاربرد از آمار خودِ سایت).</li><li>حالت «تمرکز»: با شروع تایپ، ستون کناری محو می‌شود و بعد از نتیجه برمی‌گردد.</li><li>سیاه‌مشق پس‌زمینه با <code>mix-blend-mode: multiply</code> و شفافیت ۶٪.</li></ul></div>
+    <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>لی‌اوت دو‌ستونه با ستون کناریِ زنده (اوزان پرکاربرد از آمار خودِ سایت).</li><li>حالت «تمرکز»: با شروع تایپ، ستون کناری محو می‌شود و بعد از نتیجه برمی‌گردد.</li><li>سیاه‌مشق نستعلیق در پس‌زمینه با <code>mix-blend-mode: multiply</code> و شفافیت ۶٪.</li></ul></div>
   </div>
   <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۸</span></div>
 </section>
@@ -510,14 +508,14 @@ body{font-variant-numeric:tabular-nums}</pre>
   <div class="head"><span>بخش ۴ · فرم ورودی و حالت‌ها</span><span class="l">S-18</span></div>
   <div class="secnum">۴</div>
   <h2 class="sec">فرم ورودی و حالت‌های آن</h2>
-  <p>جریان فعلی («متن → دکمهٔ بررسی → نتیجه») درست است و نباید عوض شود. آنچه کم است، پیش‌بینی لحظه‌های ریزش است: کاربر نمی‌داند چه بنویسد، یک مصراع ناقص می‌فرستد، یا شعری خارج از ۷۱ وزن وارد می‌کند و صفحه ساکت می‌ماند (<span class="id">S-18</span>).</p>
+  <p>جریانی که گنجور توصیف کرده («متن → دکمهٔ بررسی → نتیجه») درست است و نباید عوض شود. رفتار سایت در حالت‌های مرزی در ممیزی آزموده نشد (<span class="id">S-18</span>)؛ آنچه در هر ابزارِ از این دست باید طراحی شود، همین لحظه‌های ریزش است: کاربر نمی‌داند چه بنویسد، مصراعی ناقص می‌فرستد، یا شعری خارج از ۷۱ وزن وارد می‌کند.</p>
   <div class="two" style="grid-template-columns:1fr 1.2fr">
     <div>
       <h4>آناتومی کادر ورودی</h4>
       <div class="wire">
         <div class="lbl" style="margin-bottom:1mm">شعر را بنویسید یا بچسبانید؛ هر مصراع در یک خط</div>
         <div style="border:1.5px solid var(--lapis);border-radius:1.5mm;padding:2mm;background:#fff;min-height:16mm;font-size:9pt;line-height:1.9;color:var(--ink-2)">ای ساربان آهسته ران کآرام جانم می‌رود<br>وآن دل که با خود داشتم با دلستانم می‌رود</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5mm"><span><span class="btn">بررسی</span> <span class="btn ghost">نمونه</span> <span class="btn ghost">پاک کردن</span></span><span class="lbl">۲ مصراع، ۳۲ واژه</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.5mm"><span><span class="btn">بررسی</span> <span class="btn ghost">نمونه</span> <span class="btn ghost">پاک کردن</span></span><span class="lbl">۲ مصراع، ۱۷ واژه</span></div>
       </div>
       <ul style="font-size:9pt;margin-top:2mm">
         <li><b>نمونه:</b> یک بیت آشنا را می‌گذارد تا کاربرِ تازه در ۵ ثانیه خروجی ببیند.</li>
@@ -532,10 +530,10 @@ body{font-variant-numeric:tabular-nums}</pre>
       <table style="font-size:8.6pt">
         <thead><tr><th style="width:22mm">حالت</th><th>رفتار و متن پیشنهادی</th></tr></thead>
         <tbody>
-          <tr><td>خالی</td><td>راهنمای یک‌خطی داخل کادر + دکمهٔ «نمونه». دکمهٔ بررسی غیرفعال نیست، اما با کلیک، پیام «چیزی برای بررسی نیست» کنار کادر می‌آید.</td></tr>
-          <tr><td>در حال بررسی</td><td>خط وزن (نقطه–خط) به‌صورت اسکلت (skeleton) زیر کادر جان می‌گیرد؛ دکمه به «در حال بررسی…» تبدیل می‌شود و دوبار ارسال را می‌بندد.</td></tr>
+          <tr><td>خالی</td><td>راهنمای یک‌خطی داخل کادر + دکمهٔ «نمونه». دکمهٔ بررسی غیرفعال نیست؛ با کلیک، پیام «چیزی برای بررسی نیست» می‌آید.</td></tr>
+          <tr><td>در حال بررسی</td><td>خط وزن به‌صورت اسکلت زیر کادر جان می‌گیرد؛ دکمه به «در حال بررسی…» تبدیل و دوبار ارسال بسته می‌شود.</td></tr>
           <tr><td>موفق</td><td>نتیجه با تغییر فوکوس به سرتیتر نتیجه (<code>tabindex="-1"</code>) و اعلام صفحه‌خوان «وزن پیدا شد: …».</td></tr>
-          <tr><td>وزن پیدا نشد</td><td>هرگز صفحهٔ ساکت. پیام: «این متن با ۷۱ وزن شناخته‌شدهٔ سرود هم‌خوان نبود. شاید: مصراع ناقص، غلط املایی، یا شعر نیمایی/سپید.» + پیوند به راهنما و (اختیاری) بخش نیمایی.</td></tr>
+          <tr><td>وزن پیدا نشد</td><td>هرگز صفحهٔ ساکت. پیام: «این متن با ۷۱ وزن شناخته‌شدهٔ سرود هم‌خوان نبود. شاید مصراع ناقص، غلط املایی، یا شعر نیمایی/سپید.» + پیوند به راهنما.</td></tr>
           <tr><td>چند وزن محتمل</td><td>۲ تا ۳ گزینه با درصد هم‌خوانی هجاها؛ کاربر یکی را انتخاب می‌کند (فیچر F-05).</td></tr>
           <tr><td>خطای سرور</td><td>پیام انسانی + «دوباره تلاش کن» + متن ورودی حفظ می‌شود.</td></tr>
           <tr><td>ورودی خیلی بلند</td><td>حد ۴۰ مصراع با شمارندهٔ قرمزشونده؛ پیشنهاد «بخش‌بخش بررسی کن».</td></tr>
@@ -543,15 +541,18 @@ body{font-variant-numeric:tabular-nums}</pre>
       </table>
     </div>
   </div>
-  <pre>&lt;form id="scan" aria-describedby="hint"&gt;
-  &lt;label for="poem"&gt;<span class="fa">شعر را بنویسید یا بچسبانید؛ هر مصراع در یک خط</span>&lt;/label&gt;
-  &lt;textarea id="poem" name="poem" rows="3" autocomplete="off" spellcheck="false"
-            aria-describedby="hint count" placeholder="<span class="fa">ای ساربان آهسته ران…</span>"&gt;&lt;/textarea&gt;
-  &lt;p id="count" aria-live="polite"&gt;<span class="fa">۰ مصراع</span>&lt;/p&gt;
+  <pre>&lt;form id="scan" novalidate&gt;
+  &lt;label for="poem"&gt;<span class="fa">شعر را بنویسید؛ هر مصراع در یک خط</span>&lt;/label&gt;
+  &lt;textarea id="poem" rows="3" autocomplete="off"
+    spellcheck="false" aria-describedby="count"&gt;&lt;/textarea&gt;
+  <span class="fa">&lt;!-- شمارنده خوانده می‌شود، اما اعلام نمی‌شود --&gt;</span>
+  &lt;p id="count" aria-live="off"&gt;۰ <span class="fa">مصراع</span>&lt;/p&gt;
   &lt;button type="submit"&gt;<span class="fa">بررسی</span>&lt;/button&gt;
   &lt;button type="button" data-sample&gt;<span class="fa">نمونه</span>&lt;/button&gt;
   &lt;button type="reset"&gt;<span class="fa">پاک کردن</span>&lt;/button&gt;
-  &lt;p id="hint" hidden role="status"&gt;&lt;/p&gt;   <span class="c">&lt;!-- <span class="fa">پیام حالت‌ها این‌جا می‌آید</span> --&gt;</span>
+  <span class="fa">&lt;!-- همیشه در DOM بمانند تا اعلام شوند --&gt;</span>
+  &lt;p id="status" role="status" aria-live="polite"&gt;&lt;/p&gt;
+  &lt;p id="error"  role="alert"&gt;&lt;/p&gt;
 &lt;/form&gt;</pre>
   <div class="opts" style="margin-top:0">
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>برچسب واقعی، دکمهٔ نمونه، پیام «وزن پیدا نشد» و حالت بارگذاری.</li><li>حفظ ورودی بعد از خطا.</li></ul></div>
@@ -568,14 +569,13 @@ body{font-variant-numeric:tabular-nums}</pre>
   <p>معرفی رسمی سرود می‌گوید هجاها «با رنگ‌های گوناگون» نمایش داده می‌شوند. اگر رنگ تنها کانال باشد، معیار WCAG 1.4.1 نقض می‌شود و در چاپ سیاه‌وسفید یا اسکرین‌شات فشرده معنا از بین می‌رود (<span class="id">S-18</span>). پیشنهاد: هر هجا سه کانال هم‌زمان داشته باشد: <b>رنگ</b>، <b>شکل خط زیرین</b> (نقطه‌چین/پیوسته/دوتایی) و <b>نشانهٔ متنی</b> (∪ / — / ∪—). گروه‌بندی ارکان با کادر خط‌چین و نام رکن بالای آن.</p>
 
   <div class="box" style="padding:4mm 4mm 3mm">
-    <div class="legend" style="margin-bottom:2mm"><span><i style="background:var(--copper)"></i>کوتاه ∪</span><span><i style="background:var(--teal)"></i>بلند —</span><span><i style="background:var(--violet)"></i>کشیده ∪—</span><span class="muted">· رکن: <span class="scan">— — ∪ —</span> (مستفعلن) · بحر رجز مثمن سالم</span></div>
+    <div class="legend" style="margin-bottom:2mm"><span><i style="background:var(--copper)"></i>کوتاه ∪</span><span><i style="background:var(--teal)"></i>بلند —</span><span><i style="background:var(--violet)"></i>کشیده <span class="scan">— ∪</span></span><span class="muted">· رکن: <span class="scan">— ∪ — —</span> (فاعلاتن) · بحر رمل مسدس محذوف</span></div>
     <div class="beit">
-      <div class="footg" data-f="مستفعلن"><span class="syl l">ای<small>—</small></span><span class="syl l">سا<small>—</small></span><span class="syl s">رِ<small>∪</small></span><span class="syl l">بان<small>—</small></span></div>
-      <div class="footg" data-f="مستفعلن"><span class="syl l">آ<small>—</small></span><span class="syl l">هِس<small>—</small></span><span class="syl s">تِ<small>∪</small></span><span class="syl l">ران<small>—</small></span></div>
-      <div class="footg" data-f="مستفعلن"><span class="syl l">کا<small>—</small></span><span class="syl l">را<small>—</small></span><span class="syl s">مِ<small>∪</small></span><span class="syl l">جا<small>—</small></span></div>
-      <div class="footg" data-f="مستفعلن"><span class="syl l">نم<small>—</small></span><span class="syl l">می<small>—</small></span><span class="syl s">رَ<small>∪</small></span><span class="syl l">وَد<small>—</small></span></div>
+      <div class="footg" data-f="فاعلاتن"><span class="syl l">بِش<small>—</small></span><span class="syl s">نُ<small>∪</small></span><span class="syl l">از<small>—</small></span><span class="syl l">نی<small>—</small></span></div>
+      <div class="footg" data-f="فاعلاتن"><span class="syl l">چون<small>—</small></span><span class="syl s">حِ<small>∪</small></span><span class="syl l">کا<small>—</small></span><span class="syl l">یت<small>—</small></span></div>
+      <div class="footg" data-f="فاعلن"><span class="syl l">می<small>—</small></span><span class="syl s">کُ<small>∪</small></span><span class="syl l">نَد<small>—</small></span></div>
     </div>
-    <div style="font-size:8.4pt;color:var(--ink-2)">مصراع ۱ از ۲، «ای ساربان آهسته ران کآرام جانم می‌رود»، ۱۶ هجا، هم‌خوانی کامل</div>
+    <div style="font-size:8.4pt;color:var(--ink-2)">مصراع ۱ از ۲، «بشنو از نی چون حکایت می‌کند» (مولوی، مثنوی معنوی)، ۱۱ هجا، هم‌خوانی کامل</div>
   </div>
 
   <div class="two" style="margin-top:3mm">
@@ -592,8 +592,8 @@ body{font-variant-numeric:tabular-nums}</pre>
     <div>
       <h4>HTML/CSS معنایی</h4>
       <pre style="margin:0">&lt;ol class="line" aria-label="<span class="fa">مصراع ۱</span>"&gt;
-  &lt;li class="foot" data-name="<span class="fa">مستفعلن</span>"&gt;
-    &lt;span class="syl syl--long"&gt;<span class="fa">ای</span>&lt;i aria-hidden="true"&gt;—&lt;/i&gt;
+  &lt;li class="foot" data-name="<span class="fa">فاعلاتن</span>"&gt;
+    &lt;span class="syl syl--long"&gt;<span class="fa">بِش</span>&lt;i aria-hidden="true"&gt;—&lt;/i&gt;
       &lt;span class="sr"&gt;<span class="fa">بلند</span>&lt;/span&gt;&lt;/span&gt;
     …
   &lt;/li&gt;
@@ -608,7 +608,9 @@ body{font-variant-numeric:tabular-nums}</pre>
   border-bottom:3px solid currentColor}
 .syl--ext{color:var(--syl-ext);
   border-bottom:3px double currentColor}
-.sr{position:absolute;clip:rect(0 0 0 0);width:1px}</pre>
+.sr{position:absolute;width:1px;height:1px;
+  margin:-1px;padding:0;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;border:0}</pre>
     </div>
   </div>
   <div class="opts">
@@ -673,7 +675,7 @@ body{font-variant-numeric:tabular-nums}</pre>
     <tbody>
       <tr><td><b>فهرست اوزان</b><br><code>/vazn/</code></td><td>۷۱ کارت وزن با فیلتر بحر (هزج، رمل، رجز، متقارب…) و جستجوی ارکانی؛ هر کارت: نام دوگانه، الگوی نشانه‌ای، خط وزن، تعداد ساختارهای شناخته‌شده، یک نمونه. هر وزن صفحهٔ خودش را دارد: <code>/vazn/ramal-mosamman-mahzuf/</code></td><td>«وزن فاعلاتن فاعلاتن فاعلاتن فاعلن»، «بحر رمل چیست» · <span class="id">S-05</span><span class="id">S-20</span></td></tr>
       <tr><td><b>راهنما</b><br><code>/rahnama/</code></td><td>سه بخش: چگونه شعر وارد کنم، چگونه نتیجه را بخوانم (با همان نمونهٔ رنگی بخش ۵)، چرا گاهی وزن پیدا نمی‌شود. با تصاویر واقعی رابط، نه متن خالی.</td><td>«تشخیص وزن شعر آنلاین»، «تقطیع شعر» · <span class="id">S-20</span></td></tr>
-      <tr><td><b>دقت و روش‌شناسی</b><br><code>/deghat/</code></td><td>مجموعهٔ آزمون (تعداد بیت، منبع، توزیع اوزان)، دقت کل و به تفکیک بحر، خطاهای شناخته‌شده (مثل تفکیک اوزان قابل تبدیل که گنجور ذکر کرده)، تاریخ آخرین سنجش. جدول‌ها و یک نمودار میله‌ای ساده.</td><td>«دقت تشخیص وزن شعر» · <span class="id">S-13</span><span class="id">S-14</span></td></tr>
+      <tr><td><b>دقت و روش‌شناسی</b><br><code>/deghat/</code></td><td>مجموعهٔ آزمون (تعداد بیت، منبع، توزیع اوزان)، دقت کل و به تفکیک بحر، خطاهای شناخته‌شده (گنجور در صفحات آمار اوزان، «اشتباه در تشخیص اوزانِ قابل تبدیل به یکدیگر» را نمونه می‌آورد)، تاریخ آخرین سنجش. جدول‌ها و یک نمودار میله‌ای ساده.</td><td>«دقت تشخیص وزن شعر» · <span class="id">S-13</span><span class="id">S-14</span></td></tr>
       <tr><td><b>درباره</b><br><code>/darbare/</code></td><td>داستان سرود، نام و معرفی طراح (دکتر نوید فاضل)، سال آغاز، همکاری با گنجور، سیاست حریم خصوصی یک‌پاراگرافی. سیاه‌مشق پس‌زمینه.</td><td>«سرود نوید فاضل»، برند · <span class="id">S-10</span></td></tr>
       <tr><td><b>تغییرات</b><br><code>/taghirat/</code></td><td>فهرست تاریخ‌دار: «مهر ۱۴۰۵: افزودن ۳ ساختار به بحر هزج». حتی سه خط در سال، نشانهٔ زنده‌بودن است.</td><td>تازگی برای موتور جستجو · <span class="id">S-12</span></td></tr>
       <tr><td><b>API</b><br><code>/api/</code></td><td>مستند عمومیِ همان رابطی که گنجور استفاده می‌کند: ورودی، خروجی، محدودیت نرخ، نمونهٔ curl. (فیچر F-06)</td><td>«api وزن شعر» · <span class="id">S-11</span></td></tr>
@@ -686,7 +688,7 @@ body{font-variant-numeric:tabular-nums}</pre>
         <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:10pt">فاعلاتن فاعلاتن فاعلن</b><span class="tag ms" style="font-size:7.4pt">رمل</span></div>
         <div style="font-size:8pt;color:var(--ink-2)">رمل مسدس محذوف · <span class="scan" style="font-size:7.6pt">— ∪ — — | — ∪ — — | — ∪ —</span></div>
         <div class="mbar" style="margin:1.5mm 0"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i><i class="l"></i><i class="s"></i><i class="l"></i></div>
-        <div style="font-size:8.4pt">«بشنو این نی چون شکایت می‌کند» · مولوی، مثنوی معنوی</div>
+        <div style="font-size:8.4pt">«بشنو از نی چون حکایت می‌کند» · مولوی، مثنوی معنوی</div>
         <div style="font-size:7.6pt;color:var(--ink-2);margin-top:1mm">وزن مثنوی معنوی · نمونه و آمار از گنجور</div>
       </div>
     </div>
@@ -736,12 +738,18 @@ body{font-variant-numeric:tabular-nums}</pre>
       <p style="font-size:9pt">ناحیهٔ نتیجه پیش از اولین بررسی خالی نمی‌ماند: نمونهٔ خروجی خاکستری با متن «نتیجهٔ شما این شکلی خواهد بود» نشان داده می‌شود تا کاربرِ تازه بداند چه انتظاری داشته باشد.</p>
     </div>
   </div>
-  <pre># nginx: <span class="fa">ریدایرکت مسیر تاریخی و ۴۰۴ واقعی</span>
+  <pre><span class="fa"># nginx: ریدایرکت مسیر تاریخی و ۴۰۴ واقعی</span>
 location = /sorud/ { return 301 https://sorud.info/; }
 error_page 404 /404.html;
 location = /404.html { internal;
   add_header X-Robots-Tag "noindex" always; }
-error_page 502 503 504 /offline.html;   <span class="c"># <span class="fa">صفحهٔ ایستا روی</span> CDN</span></pre>
+
+<span class="fa"># صفحهٔ «در دسترس نیست» را نمی‌توان با</span>
+<span class="fa">#   error_page داد: وقتی سرور پایین است</span>
+<span class="fa">#   nginx هم نیست. این صفحه باید در لبه</span>
+<span class="fa">#   بنشیند — Custom Error Page یا</span>
+<span class="fa">#   Always Online در CDN.</span>
+error_page 502 503 504 /offline.html;</pre>
   <div class="opts" style="margin-top:0">
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>صفحهٔ ۴۰۴ با کد واقعی، noindex، پیوندهای اصلی؛ ریدایرکت <code>/sorud/</code>.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>۴۰۴ با کادر ورودی و هویت؛ صفحهٔ آفلاین روی CDN؛ حالت خالیِ آموزنده؛ گزارش ۴۰۴های پرتکرار.</li></ul></div>
@@ -762,11 +770,11 @@ error_page 502 503 504 /offline.html;   <span class="c"># <span class="fa">صف�
       <tr><td>1.4.3 کنتراست</td><td>همهٔ جفت‌های بخش ۱ ≥ ۴٫۹۷</td><td>axe / محاسبه</td></tr>
       <tr><td>1.1.1 متن جایگزین</td><td>واژه‌نشان با <code>alt="سرود"</code>؛ نمودارهای صفحهٔ دقت با جدول معادل</td><td>بازبینی دستی</td></tr>
       <tr><td>2.1.1 کیبورد</td><td>ترتیب فوکوس: پیوند پرش → کادر → بررسی → نمونه → نتیجه؛ میان‌بر Ctrl+Enter</td><td>پیمایش با Tab</td></tr>
-      <tr><td>2.4.7 فوکوس مرئی</td><td><code>outline: 3px solid var(--saffron); outline-offset: 2px</code> روی همهٔ عناصر تعاملی</td><td>بازبینی دستی</td></tr>
+      <tr><td>2.4.7 و 1.4.11</td><td>حلقهٔ فوکوس از توکن <code>--focus</code>: لاجورد روی کاغذ (۸٫۰۶) و زعفرانی روی زمینهٔ تاریک (۷٫۳۰). زعفرانی روی کاغذ فقط ۲٫۲۸ است و رد می‌شود.</td><td>محاسبه + بازبینی</td></tr>
       <tr><td>4.1.3 پیام وضعیت</td><td>ناحیهٔ نتیجه <code>aria-live="polite"</code>؛ خطاها <code>role="alert"</code></td><td>NVDA / VoiceOver</td></tr>
       <tr><td>1.4.10 بازچینی</td><td>در ۳۲۰px بدون اسکرول افقیِ صفحه؛ فقط ردیف هجاها اسکرول داخلی دارد</td><td>Lighthouse</td></tr>
       <tr><td>2.3.3 حرکت</td><td>انیمیشن هجاها و اسکلت با <code>prefers-reduced-motion</code> خاموش می‌شود</td><td>تنظیم سیستم</td></tr>
-      <tr><td>3.1.1 زبان</td><td><code>&lt;html lang="fa" dir="rtl"&gt;</code>؛ الگوهای نشانه‌ای در <code>&lt;span lang="und" dir="ltr"&gt;</code></td><td>بازبینی HTML</td></tr>
+      <tr><td>3.1.1 زبان</td><td><code>&lt;html lang="fa" dir="rtl"&gt;</code>؛ الگوهای نشانه‌ای بی‌زبان‌اند، پس فقط جداسازی جهت: <code>&lt;span dir="rtl" style="unicode-bidi:isolate"&gt;</code></td><td>بازبینی HTML</td></tr>
     </tbody>
   </table>
   <div class="two" style="margin-top:3mm">
@@ -781,20 +789,22 @@ error_page 502 503 504 /offline.html;   <span class="c"># <span class="fa">صف�
       <p style="font-size:8.6pt;margin-top:1.5mm">هجای کشیده در حالت تاریک: <span class="ltr">#C4B0E6</span> (۹٫۰۷). حالت تاریک به‌صورت پیش‌فرض از سیستم می‌آید و با کلید سرصفحه قابل تغییر و ذخیره است.</p>
     </div>
     <div>
-      <pre style="margin:0">:root{--bg:#FAF7F1;--ink:#1E2126;
+      <pre style="margin:0">:root{--bg:#FAF7F1;--ink:#1E2126;--focus:#2B4C7E;
   --syl-short:#B7472A;--syl-long:#1F6B78;
-  --syl-ext:#6B4E9B}
+  --syl-ext:#6B4E9B;color-scheme:light}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme=light]){
-    --bg:#15181C;--ink:#ECE8E0;
+    --bg:#15181C;--ink:#ECE8E0;--focus:#D99A2B;
     --syl-short:#F0A28A;--syl-long:#7CC4CF;
-    --syl-ext:#C4B0E6}}
+    --syl-ext:#C4B0E6;color-scheme:dark}}
 :root[data-theme=dark]{
-  --bg:#15181C;--ink:#ECE8E0;
+  --bg:#15181C;--ink:#ECE8E0;--focus:#D99A2B;
   --syl-short:#F0A28A;--syl-long:#7CC4CF;
-  --syl-ext:#C4B0E6}
-:focus-visible{
-  outline:3px solid #D99A2B;outline-offset:2px}
+  --syl-ext:#C4B0E6;color-scheme:dark}
+<span class="fa">/* زعفرانی روی کاغذ فقط ۲٫۲۸ است و</span>
+<span class="fa">   معیار ۱.۴.۱۱ را رد می‌کند؛ لاجورد ۸٫۰۶ */</span>
+:focus-visible{outline:3px solid var(--focus);
+  outline-offset:2px}
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}}</pre>
     </div>
@@ -825,21 +835,31 @@ error_page 502 503 504 /offline.html;   <span class="c"># <span class="fa">صف�
         </tbody>
       </table>
       <h4 style="margin-top:3mm">robots.txt و نقشهٔ سایت</h4>
-      <pre style="margin:0">User-agent: *
+      <pre style="margin:0"><span class="fa"># robots.txt</span>
+User-agent: *
 Allow: /
 Disallow: /api/scan
 Sitemap: https://sorud.info/sitemap.xml
 
-&lt;!-- sitemap.xml: <span class="fa">خانه، ۶ صفحهٔ پشتیبان، ۷۱ وزن</span> --&gt;
-&lt;url&gt;
-  &lt;loc&gt;https://sorud.info/vazn/ramal-mosamman-mahzuf/&lt;/loc&gt;
-  &lt;lastmod&gt;2026-09-01&lt;/lastmod&gt;
-&lt;/url&gt;</pre>
+<span class="fa"># sitemap.xml — خانه، ۶ صفحهٔ پشتیبان، ۷۱ وزن</span>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://sorud.info/&lt;/loc&gt;
+    &lt;lastmod&gt;2026-09-01&lt;/lastmod&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://sorud.info/vazn/ramal-mosaddas-mahzuf/&lt;/loc&gt;
+    &lt;lastmod&gt;2026-09-01&lt;/lastmod&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</pre>
     </div>
     <div>
       <h4>سر صفحه (head) صفحهٔ اصلی</h4>
       <pre style="margin:0">&lt;html lang="fa" dir="rtl"&gt;
-&lt;title&gt;<span class="fa">تشخیص وزن شعر آنلاین</span> | <span class="fa">سرود، ۷۱ وزن عروضی</span>&lt;/title&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;
+&lt;title&gt;<span class="fa">تشخیص وزن شعر آنلاین | سرود، ۷۱ وزن عروضی</span>&lt;/title&gt;
 &lt;meta name="description" content="…"&gt;
 &lt;link rel="canonical" href="https://sorud.info/"&gt;
 &lt;meta property="og:title" content="<span class="fa">سرود: تشخیص وزن شعر</span>"&gt;
@@ -858,13 +878,13 @@ Sitemap: https://sorud.info/sitemap.xml
  "description":"<span class="fa">ابزار آنلاین تشخیص وزن عروضی شعر فارسی</span>",
  "author":{"@type":"Person","name":"<span class="fa">نوید فاضل</span>"},
  "offers":{"@type":"Offer","price":"0","priceCurrency":"IRR"},
- "isBasedOn":"https://ganjoor.net/"}
+ "sameAs":["https://blog.ganjoor.net/1396/09/08/sorud-info/"]}
 &lt;/script&gt;</pre>
       <ul style="font-size:8.8pt;margin-top:2mm">
         <li><b>canonical</b> همیشه به نسخهٔ <code>https://sorud.info/</code> بدون www (<span class="id">S-06</span>).</li>
         <li>H1 یکتا در هر صفحه؛ H2 برای «نتیجه»، «نمونهٔ آشنا» (<span class="id">S-08</span>).</li>
         <li>schema برای صفحهٔ وزن: <code>DefinedTerm</code> در یک <code>DefinedTermSet</code> به نام «اوزان عروضی فارسی».</li>
-        <li>schema صفحهٔ راهنما: <code>HowTo</code> با سه گام.</li>
+        <li>schema صفحهٔ راهنما: <code>HowTo</code> با سه گام — گوگل از ۲۰۲۳ نتیجهٔ غنی HowTo را نشان نمی‌دهد، اما نشانه‌گذاری برای درک صفحه همچنان ارزش دارد.</li>
         <li>نام دوگانه (سرود/Sorud) و <code>sameAs</code> به معرفی گنجور، ابهام برند را کم می‌کند (<span class="id">S-10</span>).</li>
       </ul>
     </div>
@@ -881,38 +901,42 @@ Sitemap: https://sorud.info/sitemap.xml
   <div class="head"><span>بخش ۱۱ · زیرساخت، HTTPS و امنیت</span><span class="l">S-01 · S-02 · S-03 · S-06 · S-15 · S-16</span></div>
   <div class="secnum">۱۱</div>
   <h2 class="sec">زیرساخت، HTTPS و امنیت</h2>
-  <p>یگانه مشکل «بحرانی» گزارش، میزبانی روی IP پویای خانگی است (<span class="id">S-01</span>) که سابقهٔ قطعی و تغییر IP دارد (<span class="id">S-02</span>)، بین دو ISP دوپاره است (<span class="id">S-03</span>) و IP اپراتور را فاش می‌کند (<span class="id">S-15</span>). هر دو گزینهٔ زیر به شما اجازه می‌دهند برنامه را همان‌جا که هست نگه دارید؛ فقط لبهٔ شبکه عوض می‌شود.</p>
+  <p>یگانه مشکل «بحرانی» گزارش، میزبانی روی IP پویای خانگی است (<span class="id">S-01</span>) که سابقهٔ قطعی و تغییر IP دارد (<span class="id">S-02</span>)، بین دو ISP دوپاره است (<span class="id">S-03</span>) و IP اپراتور را فاش می‌کند (<span class="id">S-15</span>). هر دو گزینهٔ زیر برنامه را همان‌جا که هست نگه می‌دارند؛ فقط لبهٔ شبکه عوض می‌شود.</p>
   <div class="opts" style="margin-top:0">
-    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول: تونل + CDN رایگان</div><ul><li>یک تونل خروجی (مثلاً Cloudflare Tunnel) از همان دستگاه خانگی؛ رکورد A/AAAA به CDN می‌رود، IP خانگی دیگر در DNS نیست.</li><li>TLS معتبر در لبه؛ ریدایرکت http→https و www→بدون‌www در همان لبه (<span class="id">S-06</span>).</li><li>صفحهٔ آفلاین ایستا وقتی تونل قطع است (<span class="id">S-02</span>).</li><li>یک رکورد و یک مسیر برای IPv4 و IPv6 (<span class="id">S-03</span>).</li></ul></div>
-    <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل: VPS کوچک + CDN</div><ul><li>انتقال همان برنامه به یک VPS (۱ vCPU / ۱GB کافی است) پشت CDN با WAF و کش صفحات ایستا.</li><li>دستگاه خانگی به‌عنوان محیط توسعه می‌ماند؛ استقرار با یک اسکریپت.</li><li>پایش دسترس‌پذیری (uptime) با هشدار ایمیلی؛ پشتیبان‌گیری هفتگی از داده‌ها.</li><li>هدف: در دسترس بودن &gt; ۹۹٫۵٪ ماهانه.</li></ul></div>
+    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول: تونل + CDN رایگان</div><ul><li>یک تونل خروجی (مثلاً Cloudflare Tunnel) از همان دستگاه؛ رکورد A/AAAA به CDN می‌رود و IP خانگی از DNS بیرون می‌آید.</li><li>TLS معتبر در لبه؛ ریدایرکت http→https و www→بدون‌www در همان لبه (<span class="id">S-06</span>).</li><li>صفحهٔ آفلاین ایستا در لبه، وقتی تونل قطع است (<span class="id">S-02</span>).</li><li>یک رکورد و یک مسیر برای IPv4 و IPv6 (<span class="id">S-03</span>).</li></ul></div>
+    <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل: VPS کوچک + CDN</div><ul><li>انتقال همان برنامه به یک VPS کوچک پشت CDN، با WAF و کش صفحات ایستا.</li><li>دستگاه خانگی محیط توسعه می‌ماند؛ استقرار با یک اسکریپت.</li><li>پایش uptime با هشدار ایمیلی؛ پشتیبان‌گیری هفتگی.</li><li>هدف: در دسترس بودن &gt; ۹۹٫۵٪ ماهانه.</li></ul></div>
   </div>
   <div class="two">
     <div>
       <h4>تونل (نمونهٔ پیکربندی)</h4>
-      <pre style="margin:0"># cloudflared config.yml
+      <pre style="margin:0"># <span class="fa">cloudflared config.yml</span>
 tunnel: sorud
 credentials-file: /etc/cloudflared/sorud.json
 ingress:
-  - hostname: sorud.info
-    service: http://localhost:8080
-  - hostname: www.sorud.info
-    service: http://localhost:8080
-  - service: http_status:404
+  - {hostname: sorud.info,     service: http://localhost:8080}
+  - {hostname: www.sorud.info, service: http://localhost:8080}
+  - {service: http_status:404}
 
-# <span class="fa">در لبه</span>: Always Use HTTPS = on
-# <span class="fa">ریدایرکت</span>: www.sorud.info/*
-#   → https://sorud.info/$1  (301)</pre>
+<span class="fa"># در لبه: Always Use HTTPS = on، و قانون</span>
+<span class="fa">#   www.sorud.info/* → https://sorud.info/$1 (301)</span></pre>
       <h4 style="margin-top:3mm">ریدایرکت‌ها و canonical سرور</h4>
-      <pre style="margin:0"># nginx (<span class="fa">روی</span> VPS <span class="fa">یا پشت تونل</span>)
-server {
-  listen 80;
-  server_name sorud.info www.sorud.info;
+      <pre style="margin:0"># <span class="fa">nginx — فقط گزینهٔ VPS؛ در گزینهٔ تونل،</span>
+#   <span class="fa">TLS و ریدایرکت در لبه انجام می‌شود.</span>
+server {                    <span class="fa"># ۱) http → https</span>
+  listen 80; server_name sorud.info www.sorud.info;
   return 301 https://sorud.info$request_uri;
 }
-server {
-  listen 443 ssl http2;
-  server_name www.sorud.info;
+<span class="fa"># هر دو بلوک ۴۴۳ همین دو خط را دارند:</span>
+<span class="fa">#   ssl_certificate     .../fullchain.pem;</span>
+<span class="fa">#   ssl_certificate_key .../privkey.pem;</span>
+server {                    <span class="fa"># ۲) www → بدون www</span>
+  listen 443 ssl; http2 on; server_name www.sorud.info;
   return 301 https://sorud.info$request_uri;
+}
+server {                    <span class="fa"># ۳) سایت اصلی</span>
+  listen 443 ssl default_server; http2 on;
+  server_name sorud.info;
+  location / { proxy_pass http://127.0.0.1:8080; }
 }</pre>
     </div>
     <div>
@@ -923,8 +947,7 @@ add_header Content-Security-Policy
   "default-src 'self'; img-src 'self' data:;
    style-src 'self'; script-src 'self';
    font-src 'self'; connect-src 'self';
-   frame-ancestors 'none'; base-uri 'self'"
-  always;
+   frame-ancestors 'none'; base-uri 'self'" always;
 add_header X-Content-Type-Options nosniff always;
 add_header X-Frame-Options DENY always;
 add_header Referrer-Policy
@@ -934,14 +957,15 @@ add_header Permissions-Policy
   always;
 server_tokens off;   <span class="c"># <span class="fa">نسخهٔ سرور را پنهان کن</span></span></pre>
       <ul style="font-size:8.8pt;margin-top:2mm">
-        <li>CSP بالا فرض می‌کند فونت و اسکریپت از خود دامنه بارگذاری می‌شوند (بخش ۲ و ۱۲)؛ اگر ابزار تحلیل خارجی می‌آید، دامنه‌اش صریحاً به <code>connect-src</code> اضافه شود.</li>
-        <li>پس از استقرار، آزمون با Mozilla Observatory و securityheaders.com؛ هدف: نمرهٔ A.</li>
-        <li>گواهی: Let's Encrypt با تمدید خودکار؛ در گزینهٔ تونل، لبه خودش گواهی می‌دهد.</li>
-        <li>مسیر <code>/api/</code> با محدودیت نرخ (مثلاً ۶۰ درخواست در دقیقه به ازای IP) تا هزینهٔ حملهٔ ساده بالا برود (<span class="id">S-15</span>).</li>
+        <li><b>در nginx هر <code>location</code> که خودش <code>add_header</code> دارد، هدرهای ارثی را حذف می‌کند؛</b> این هدرها را در یک snippet بگذارید و همه‌جا <code>include</code> کنید.</li>
+        <li>CSP بالا فرض می‌کند قلم و اسکریپت از خود دامنه می‌آیند؛ ابزار تحلیل خارجی باید به <code>connect-src</code> افزوده شود.</li>
+        <li>پس از استقرار، آزمون با Mozilla Observatory؛ هدف نمرهٔ A.</li>
+        <li>گواهی: Let's Encrypt با تمدید خودکار؛ در تونل، لبه گواهی می‌دهد.</li>
+        <li>محدودیت نرخ روی <code>/api/</code> (مثلاً ۶۰ درخواست در دقیقه به ازای IP) تا هزینهٔ حملهٔ ساده بالا برود (<span class="id">S-15</span>).</li>
       </ul>
     </div>
   </div>
-  <div class="callout">هر دو گزینه بدون تغییر در کد سرود اجرا می‌شوند. تنها تغییر در «برنامه»، خواندن IP واقعی کاربر از هدر <code>X-Forwarded-For</code> برای لاگ و محدودیت نرخ است.</div>
+  <div class="callout">بدون بلوک سوم و <code>default_server</code>، درخواستِ <code>https://sorud.info</code> به بلوک www می‌افتد و حلقهٔ ریدایرکت می‌سازد. تنها تغییر لازم در خود برنامه، خواندن IP کاربر از <code>X-Forwarded-For</code> است.</div>
   <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۶</span></div>
 </section>
 
@@ -950,11 +974,11 @@ server_tokens off;   <span class="c"># <span class="fa">نسخهٔ سرور را
   <div class="head"><span>بخش ۱۲ · عملکرد و بارگذاری</span><span class="l">S-17</span></div>
   <div class="secnum">۱۲</div>
   <h2 class="sec">عملکرد و بارگذاری</h2>
-  <p>Core Web Vitals سرود در ممیزی قابل اندازه‌گیری نبود (<span class="id">S-17</span>)، اما دو واقعیت مستقل بر آن اثر می‌گذارند: سرور در آلمان است و مخاطب اصلی در ایران؛ و صفحه با فونت فارسی سفارشی رندر می‌شود. بستهٔ زیر، بودجهٔ عملکرد و راه رسیدن به آن را مشخص می‌کند تا در دور دوم ممیزی با عدد سنجیده شود.</p>
+  <p>Core Web Vitals سرود در ممیزی قابل اندازه‌گیری نبود (<span class="id">S-17</span>). یک واقعیتِ اندازه‌گیری‌شده و یک فرضِ قابل آزمون بر آن اثر می‌گذارند: سرور روی خط مصرفی در آلمان است و مخاطب اصلی در ایران (<span class="id">S-01</span>)؛ و اگر صفحه قلم فارسی سفارشی بارگذاری کند — که تأیید نشد — هزینهٔ قلم مستقیم به LCP و CLS افزوده می‌شود. بستهٔ زیر، بودجهٔ عملکرد و راه رسیدن به آن را مشخص می‌کند تا در دور دوم ممیزی با عدد سنجیده شود.</p>
   <div class="two" style="grid-template-columns:1fr 1.15fr">
     <div>
       <h4>بودجهٔ پیشنهادی صفحهٔ اصلی</h4>
-      <table style="font-size:8.8pt">
+      <table style="font-size:8.3pt">
         <thead><tr><th>سنجه</th><th class="c">موبایل</th><th class="c">دسکتاپ</th></tr></thead>
         <tbody>
           <tr><td>LCP</td><td class="c ltr">≤ 2.5s</td><td class="c ltr">≤ 1.8s</td></tr>
@@ -968,46 +992,56 @@ server_tokens off;   <span class="c"># <span class="fa">نسخهٔ سرور را
         </tbody>
       </table>
       <h4 style="margin-top:3mm">منطق CLS در سرود</h4>
-      <p style="font-size:9pt">دو منبع اصلی پرش: ورود فونت سفارشی و ظاهرشدن نتیجه زیر فرم. راه‌حل: <code>size-adjust</code> برای فونت جایگزین، و رزرو ارتفاع حداقلی ناحیهٔ نتیجه با اسکلت هم‌اندازه.</p>
+      <p style="font-size:9pt">دو منبع پرش: ورود قلم سفارشی، و ظاهرشدن نتیجه زیر فرم. راه‌حل: <code>size-adjust</code> روی قلم جایگزین، و رزرو ارتفاع ناحیهٔ نتیجه با اسکلت هم‌اندازه.</p>
     </div>
     <div>
       <h4>پیکربندی سرور</h4>
-      <pre style="margin:0"># nginx
+      <pre style="margin:0"><span class="fa"># فشرده‌سازی</span>
 gzip on;
 gzip_types text/css application/javascript
   application/json image/svg+xml;
 gzip_min_length 1024;
+<span class="fa"># brotli نیازمند ماژول ngx_brotli است؛</span>
+<span class="fa">#   nginx معمولی این دستور را نمی‌شناسد.</span>
 brotli on;
 brotli_types text/css application/javascript;
 
+<span class="fa"># هر بلوک زیر باید include security-headers</span>
+<span class="fa">#   داشته باشد، وگرنه هدرها حذف می‌شوند.</span>
 location ~* \.(woff2|css|js|svg|png)$ {
+  include /etc/nginx/snippets/security-headers.conf;
   add_header Cache-Control
     "public, max-age=31536000, immutable";
 }
 location = / {
+  include /etc/nginx/snippets/security-headers.conf;
   add_header Cache-Control "public, max-age=300"; }
 location /api/ {
+  include /etc/nginx/snippets/security-headers.conf;
   add_header Cache-Control "no-store"; }</pre>
       <h4 style="margin-top:3mm">HTML</h4>
       <pre style="margin:0">&lt;link rel="preload" as="font" type="font/woff2"
   href="/fonts/vazirmatn-fa.woff2" crossorigin&gt;
 &lt;link rel="stylesheet" href="/css/app.[hash].css"&gt;
 &lt;script defer src="/js/app.[hash].js"&gt;&lt;/script&gt;
-&lt;img src="/og/home.png" width="1200" height="630"
-  loading="lazy" decoding="async" alt="…"&gt;
 
 @font-face{font-family:"Vazirmatn";
   src:url(/fonts/vazirmatn-fa.woff2) format("woff2");
   font-display:swap;
-  unicode-range:U+0600-06FF,U+FB50-FDFF,U+FE70-FEFF}
-@font-face{font-family:"Vazirmatn Fallback";
+  <span class="fa">/* ZWNJ و گیومه‌ها هم لازم‌اند */</span>
+  unicode-range:U+0600-06FF,U+200C-200F,U+FB50-FDFF,
+    U+FE70-FEFF,U+00AB,U+00BB,U+2010-2014}
+@font-face{font-family:"Vazir Fallback";
   src:local("Tahoma");
-  size-adjust:104%;ascent-override:95%}</pre>
+  size-adjust:104%;ascent-override:95%}
+<span class="fa">/* fallback باید در استک بیاید، وگرنه بی‌اثر است */</span>
+:root{--font-body:"Vazirmatn","Vazir Fallback",
+  Tahoma,system-ui,sans-serif}</pre>
     </div>
   </div>
   <div class="opts" style="margin-top:2mm">
-    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>فشرده‌سازی، کش یک‌ساله برای دارایی‌های هش‌دار، یک فونت WOFF2، اسکریپت <code>defer</code>، ابعاد صریح تصاویر.</li></ul></div>
-    <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>بودجهٔ جدول در CI با Lighthouse؛ CDN با کش HTML؛ فونت زیرمجموعه با <code>unicode-range</code>؛ اسکلت هم‌اندازهٔ نتیجه.</li></ul></div>
+    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>فشرده‌سازی، کش یک‌ساله برای دارایی‌های هش‌دار، یک قلم WOFF2 و <code>defer</code>.</li></ul></div>
+    <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>بودجهٔ جدول در CI با Lighthouse؛ CDN با کش HTML؛ قلم زیرمجموعه.</li></ul></div>
   </div>
   <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۷</span></div>
 </section>
@@ -1040,17 +1074,22 @@ location /api/ {
       <h4>پیاده‌سازی</h4>
       <pre style="margin:0">&lt;script defer data-domain="sorud.info"
   src="https://sorud.info/js/stats.js"&gt;&lt;/script&gt;
-<span class="c">// <span class="fa">خودمیزبانِ</span> Plausible <span class="fa">یا</span> Umami<span class="fa">؛ بدون کوکی</span></span>
+<span class="fa">// خودمیزبانِ Plausible یا Umami؛ بدون کوکی</span>
 
-const f = document.getElementById('scan');
-f.addEventListener('submit', e =&gt; {
+const form = document.getElementById('scan');
+const poem = document.getElementById('poem');
+const countLines = t =&gt;
+  t.split('\n').filter(l =&gt; l.trim()).length;
+
+form.addEventListener('submit', async e =&gt; {
+  e.preventDefault();
   window.plausible?.('scan_submit', {props:{
     lines: countLines(poem.value),
     source: poem.dataset.source || 'typed'}});
-});
-<span class="c">// <span class="fa">پس از پاسخ سرور</span></span>
-plausible('scan_result',
-  {props:{status, meter_id, ms}});</pre>
+  const {status, meter_id, ms} = await scan(poem.value);
+  window.plausible?.('scan_result',
+    {props:{status, meter_id, ms}});
+});</pre>
       <h4 style="margin-top:3mm">داشبورد ماهانه (یک صفحه)</h4>
       <ul style="font-size:9pt">
         <li>نرخ «وزن پیدا شد» ÷ کل ارسال‌ها (هدف: &gt; ۸۵٪).</li>
@@ -1074,12 +1113,12 @@ plausible('scan_result',
   <div class="head"><span>بخش ۱۴ · محتوا، اعتبار و روایت دقت</span><span class="l">S-11 · S-12 · S-13 · S-14</span></div>
   <div class="secnum">۱۴</div>
   <h2 class="sec">محتوا، اعتبار و روایت دقت</h2>
-  <p>رقبا عدد می‌گویند: وزن‌یاب نوسخن «۹۷٫۸٪ روی ۶۰ هزار بیت»، وبگاه عروض «مقالهٔ کنفرانسی». سرود، با موتوری که گنجور به آن تکیه می‌کند، هیچ عددی منتشر نکرده و در عوض جملهٔ «بعضاً خطا دارد» گنجور در ده‌ها صفحه تکرار می‌شود (<span class="id">S-13</span><span class="id">S-14</span>). این بخش، روایت را به دست سرود برمی‌گرداند.</p>
+  <p>رقبا عدد می‌گویند: وزن‌یاب نوسخن «۹۷٫۸٪ روی بیش از ۶۰ هزار بیت در ۵۰ وزن»، وبگاه عروض «مقالهٔ کنفرانسی». برای سرود، با موتوری که گنجور به آن تکیه می‌کند، هیچ عدد دقتی در نتایج جستجو یافت نشد؛ در عوض جملهٔ «بعضاً خطا دارد» گنجور در ده‌ها صفحه تکرار می‌شود (<span class="id">S-13</span><span class="id">S-14</span>). این بخش، روایت را به دست سرود برمی‌گرداند.</p>
   <div class="two">
     <div>
       <h4>صفحهٔ «دقت و روش‌شناسی» (ساختار)</h4>
       <ol style="font-size:9.1pt">
-        <li><b>مجموعهٔ آزمون:</b> ابیات با وزن دستی‌تأییدشده از پیکرهٔ گنجور (پیشنهاد: حداقل ۱۰ هزار بیت، توزیع متناسب با فراوانی اوزان).</li><li><b>روش سنجش:</b> تطابق دقیق نام وزن؛ گزارش جداگانه برای «اوزان قابل تبدیل» که گنجور به‌عنوان منبع خطا نام برده.</li>
+        <li><b>مجموعهٔ آزمون:</b> ابیات با وزن دستی‌تأییدشده از پیکرهٔ گنجور (پیشنهاد: حداقل ۱۰ هزار بیت، توزیع متناسب با فراوانی اوزان).</li><li><b>روش سنجش:</b> تطابق دقیق نام وزن؛ گزارش جداگانه برای اوزانِ قابل تبدیل به یکدیگر، همان دسته‌ای که گنجور در صفحات آمار اوزان نمونه آورده.</li>
         <li><b>نتایج:</b> دقت کل، دقت به تفکیک ۱۰ بحر پرکاربرد، جدول خطاهای شناخته‌شده.</li>
         <li><b>محدودیت‌ها:</b> صریح، همان‌طور که گنجور صریح است؛ صداقت این‌جا سرمایه است.</li>
         <li><b>تاریخ و نسخه:</b> هر سنجش با تاریخ و نسخهٔ موتور؛ نمودار روند در طول زمان.</li>
@@ -1105,7 +1144,7 @@ plausible('scan_result',
         <li>صفحهٔ هر وزن، منبع قابل ارجاع برای مقالات آموزشی می‌شود.</li>
       </ul>
       <h4>نگارش فارسی رابط</h4>
-      <p style="font-size:9.1pt">لحن فعلی سرود («تارنما»، «دگمه»، کسره‌گذاری کامل) هویت دارد و باید حفظ شود؛ فقط یک واژه‌نامهٔ ۲۰ واژه‌ای برای یکدستی (بررسی/وارسی، سروده/شعر، آهنگ/وزن) نوشته شود و در همهٔ صفحات رعایت گردد.</p>
+      <p style="font-size:9.1pt">تنها شاهد لحنیِ در دسترسِ ممیزی، عنوان ایندکس‌شدهٔ «سرود: بررسیِ وزنِ شعر - عروض» است: کسره‌گذاری کامل و واژگان ادبی. اگر همین لحن در سراسر رابط برقرار است، هویت‌بخش است و باید حفظ شود؛ پیشنهاد: یک واژه‌نامهٔ ۲۰ واژه‌ای برای یکدستی (بررسی/وارسی، سروده/شعر، آهنگ/وزن) در همهٔ صفحات.</p>
     </div>
   </div>
   <div class="opts" style="margin-top:1mm">
@@ -1124,7 +1163,7 @@ plausible('scan_result',
   <div class="fgrid">
     <div class="fcard"><div class="ft"><b>F-01 · لینک دائمی نتیجه</b><span class="pri">اولویت ۱</span></div>هر نتیجه یک URL کوتاه می‌گیرد (<code>/r/8k2f</code>) که همان کارت وزن را باز می‌کند؛ پایهٔ اشتراک‌گذاری و بک‌لینک. <span class="id">S-05</span><span class="id">S-11</span><br><span class="mi">حداقل: URL با پارامتر متن رمزشده.</span> <span class="idl">ایده‌آل: ذخیرهٔ سرور، تاریخ انقضا اختیاری، تصویر OG.</span></div>
     <div class="fcard"><div class="ft"><b>F-02 · کپی و خروجی</b><span class="pri">اولویت ۱</span></div>کپی متنی (نام وزن + الگو + متن)، PNG کارت با هویت سایت، و چاپ سیاه‌وسفید با نشانه‌ها. <span class="id">S-18</span><br><span class="mi">حداقل: کپی متنی.</span> <span class="idl">ایده‌آل: تصویر با Canvas در مرورگر، بدون بار سرور.</span></div>
-    <div class="fcard"><div class="ft"><b>F-03 · تاریخچهٔ محلی</b><span class="pri">اولویت ۲</span></div>۱۰ بررسی اخیر در <code>localStorage</code> با امکان پاک‌کردن؛ بدون حساب کاربری، بدون سرور.<br><span class="mi">حداقل: فهرست متنی.</span> <span class="idl">ایده‌آل: کارت‌های کوچک با نام وزن و بازگشایی یک‌کلیکی.</span></div>
+    <div class="fcard"><div class="ft"><b>F-03 · تاریخچهٔ محلی</b><span class="pri">اولویت ۲</span></div>۱۰ بررسی اخیر در <code>localStorage</code> با امکان پاک‌کردن؛ بدون حساب کاربری، بدون سرور. <span class="id">S-18</span><br><span class="mi">حداقل: فهرست متنی.</span> <span class="idl">ایده‌آل: کارت‌های کوچک با نام وزن و بازگشایی یک‌کلیکی.</span></div>
     <div class="fcard"><div class="ft"><b>F-04 · تصحیح دستی و بازخورد</b><span class="pri">اولویت ۱</span></div>کاربر می‌تواند روی هجایی کلیک کند و کوتاه/بلند بودنش را عوض کند؛ سرود دوباره وزن را می‌سنجد و اختلاف را به‌عنوان بازخورد ثبت می‌کند. <span class="id">S-13</span><span class="id">S-14</span><br><span class="mi">حداقل: فرم «گزارش خطا».</span> <span class="idl">ایده‌آل: ویرایش درجا + صف بازبینی.</span></div>
     <div class="fcard"><div class="ft"><b>F-05 · چند وزن محتمل با اطمینان</b><span class="pri">اولویت ۲</span></div>وقتی هم‌خوانی کامل نیست، ۲ تا ۳ گزینه با نسبت هجاهای منطبق؛ انتخاب کاربر ثبت می‌شود. <span class="id">S-14</span><span class="id">S-18</span><br><span class="mi">حداقل: نمایش گزینهٔ دوم.</span> <span class="idl">ایده‌آل: نوار اطمینان و یادگیری از انتخاب‌ها.</span></div>
     <div class="fcard"><div class="ft"><b>F-06 · API عمومی مستند</b><span class="pri">اولویت ۲</span></div>همان رابطی که گنجور استفاده می‌کند، با مستند OpenAPI، کلید رایگان و محدودیت نرخ؛ هر مصرف‌کننده یک ارجاع. <span class="id">S-11</span><span class="id">S-15</span><br><span class="mi">حداقل: صفحهٔ مستند + محدودیت نرخ.</span> <span class="idl">ایده‌آل: کلید API، نسخه‌بندی، نمونه‌کد.</span></div>
@@ -1143,7 +1182,7 @@ plausible('scan_result',
     <div class="fcard"><div class="ft"><b>F-11 · تشخیص قافیه و ردیف</b><span class="pri">اولویت ۳</span></div>کنار وزن، قافیه و ردیف هر بیت رنگ‌آمیزی و نام‌گذاری شود؛ سرود از «وزن‌یاب» به «عروض و قافیه» ارتقا می‌یابد. <span class="id">S-13</span><br><span class="mi">حداقل: برجسته‌کردن واژهٔ پایانی مشترک.</span> <span class="idl">ایده‌آل: تشخیص حروف قافیه و عیوب رایج.</span></div>
     <div class="fcard"><div class="ft"><b>F-12 · PWA و کار آفلاین</b><span class="pri">اولویت ۳</span></div>نصب روی موبایل، کش پوسته و فهرست اوزان؛ در قطعی سرور (<span class="id">S-02</span>) دست‌کم راهنما و فهرست اوزان در دسترس می‌ماند.<br><span class="mi">حداقل: manifest و آیکون.</span> <span class="idl">ایده‌آل: service worker با کش صفحات ایستا.</span></div>
     <div class="fcard"><div class="ft"><b>F-13 · صفحهٔ وزن با «تمرین»</b><span class="pri">اولویت ۳</span></div>در هر صفحهٔ وزن، یک تمرین: «این بیت را تقطیع کنید» با پاسخ پنهان؛ برای کلاس‌ها و ماندگاری کاربر. <span class="id">S-20</span><br><span class="mi">حداقل: یک تمرین ایستا.</span> <span class="idl">ایده‌آل: تمرین تصادفی از پیکرهٔ گنجور.</span></div>
-    <div class="fcard"><div class="ft"><b>F-14 · بخش نیمایی (اختیاری)</b><span class="pri">اولویت ۲</span></div>تشخیص و نمایش وزن نیمایی با سطرهای کوتاه و بلند؛ تمایز رقابتی که هیچ رقیبی ساخت‌یافته ارائه نمی‌دهد. <span class="id">S-13</span><br><span class="mi">حداقل و ایده‌آل در بخش ۱۶.</span></div>
+    <div class="fcard"><div class="ft"><b>F-14 · بخش نیمایی (اختیاری)</b><span class="pri">اولویت ۲</span></div>تشخیص و نمایش وزن نیمایی با سطرهای کوتاه و بلند؛ تمایزی که در صفحات ایندکس‌شدهٔ رقبا دیده نشد (فرضِ نیازمند بررسی مستقیم).<br><span class="mi">حداقل و ایده‌آل در بخش ۱۶.</span></div>
   </div>
   <h3 style="margin-top:5mm">ماتریس اولویت‌بندی</h3>
   <table style="font-size:8.8pt">
@@ -1164,24 +1203,24 @@ plausible('scan_result',
   <div class="head"><span>بخش ۱۶ · بخش اختیاری نیمایی (۱ از ۲)</span><span class="l">S-13 · F-14</span></div>
   <div class="secnum">۱۶</div>
   <h2 class="sec">بخش اختیاری نیمایی</h2>
-  <p style="margin-bottom:1.6mm">امروز اگر کاربر شعری نیمایی وارد کند، سرود یا وزن پیدا نمی‌کند یا سطرها را جداگانه و بی‌ربط می‌سنجد. چون شعر نیمایی «وزن عروضی دارد»، همان موتور هجابندی و شناخت ارکانِ سرود برای آن کافی است؛ تفاوت در قاعدهٔ تطبیق و در نمایش است. این بخش بر پایهٔ منابع درسی و دانشگاهی نوشته شده، نه استنباط شخصی.</p>
+  <p style="margin-bottom:1.6mm">رفتار سرود در برابر شعر نیمایی در ممیزی آزموده نشد؛ اما پوشش اعلام‌شدهٔ آن «۷۱ وزن» کلاسیک است، پس محتمل است سطرهای نابرابرِ نیمایی بی‌پاسخ بمانند یا جداگانه سنجیده شوند. نخستین گام این بخش، آزمودن همین فرض است. چون شعر نیمایی «وزن عروضی دارد»، همان موتور هجابندی و شناخت ارکانِ سرود برای آن کافی است؛ تفاوت در قاعدهٔ تطبیق و در نمایش است. اصول زیر از منابع درسی و دانشگاهی نقل شده، نه استنباط شخصی.</p>
   <h3>اصول وزن نیمایی (مستند)</h3>
-  <table style="font-size:7.9pt">
+  <table style="font-size:7.6pt">
     <thead><tr><th style="width:48mm">اصل</th><th>بیان منبع</th><th style="width:34mm">منبع</th></tr></thead>
     <tbody>
       <tr><td><b>۱ · وزن عروضی است، نه هجایی</b></td><td>«شعر نیمایی وزن عروضی دارد؛ امّا کوتاهی و بلندی مصراع‌ها و نیز تعداد هجاها برابر نیست.»</td><td>علوم و فنون ادبی ۳، درس ۱۱</td></tr>
       <tr><td><b>۲ · رکن در سراسر شعر ثابت است</b></td><td>«اگر شاعر کار خود را در بحری آغاز کرد، تا پایان قطعه باید ارکان عروضی شعر ثابت بمانند… اما انتخاب عددیِ این رکن‌ها در هر قسمت، به تناسب احتیاج شاعر است.»</td><td>ویکی‌پدیای فارسی، «وزن شعر فارسی»</td></tr>
-      <tr><td><b>۳ · تعداد ارکان هر سطر آزاد است</b></td><td>مصراع‌ها «محدود به دو و سه و چهار رکن نیست و می‌تواند کمتر از دو رکن و بیشتر از چهار رکن داشته باشد.» مثال: مفاعیلن در سطری ۴ بار، در سطری ۵ و در سطری ۳ بار.</td><td>جزوه‌های درس ۱۱؛ فرادرس</td></tr>
-      <tr><td><b>۴ · عمدتاً اوزان متفق‌الارکان</b></td><td>تکرار یک رکن: فاعلاتن (رمل)، مفاعیلن (هزج)، مستفعلن (رجز)، فعولن (متقارب)، فعلاتن.</td><td>ویکی‌پدیای فارسی؛ فرادرس</td></tr>
+      <tr><td><b>۳ · تعداد ارکان هر سطر آزاد است</b></td><td>مصراع‌ها «محدود به دو و سه و چهار رکن نیست و می‌تواند کمتر از دو رکن و بیشتر از چهار رکن داشته باشد.» مثال: مفاعیلن در سطری ۴ بار، در سطری ۵ و در سطری ۳ بار.</td><td>جزوه‌های درس ۱۱ (نقل به مضمون)</td></tr>
+      <tr><td><b>۴ · عمدتاً اوزان متفق‌الارکان</b></td><td>تکرار یک رکن: فاعلاتن (رمل)، مفاعیلن (هزج)، مستفعلن (رجز)، فعولن (متقارب)، فعلاتن.</td><td>ویکی‌پدیای فارسی (نقل به مضمون)</td></tr>
       <tr><td><b>۵ · هجای پایان سطر همیشه بلند</b></td><td>«آخرین هجای هر مصراع همیشه بلند است و اگر هجای کشیده یا کوتاه بیاید، حکم بلند دارد.» رکن پایانی می‌تواند ناقص (محذوف) باشد.</td><td>علوم و فنون ادبی ۳، درس ۸ و ۱۱</td></tr>
-      <tr><td><b>۶ · قافیه اختیاری و نامنظم</b></td><td>نیما قید تساوی هجاها و الزام قافیهٔ منظم را برداشت؛ قافیه هرجا لازم باشد می‌آید. نقطهٔ آغاز: «افسانه» (۱۳۰۱).</td><td>ویکی‌پدیا (فا/en)؛ درس ۱۱</td></tr>
+      <tr><td><b>۶ · قافیه اختیاری و نامنظم</b></td><td>نیما قید تساوی هجاها و الزام قافیهٔ منظم را برداشت؛ قافیه هرجا لازم باشد می‌آید. «افسانه» (۱۳۰۱) جهان‌بینی تازه را آورد، اما شکل کامل وزن نیمایی نخستین‌بار در «ققنوس» (۱۳۱۶) دیده می‌شود.</td><td>ویکی‌پدیای فارسی: «ققنوس (شعر)» و «نیما یوشیج»</td></tr>
     </tbody>
   </table>
   <h3>ترجمهٔ اصول به قاعدهٔ تطبیق (بدون تغییر موتور هجابندی)</h3>
   <div class="two">
     <div>
       <ol style="font-size:9.1pt">
-        <li>همهٔ سطرها را با موتور فعلی هجابندی کن (∪ / — / ∪—).</li>
+        <li>همهٔ سطرها را با موتور فعلی هجابندی کن (∪ کوتاه، — بلند، <span class="scan">— ∪</span> کشیده).</li>
         <li>رکن‌های پایه را از ۷۱ وزن موجود استخراج کن: هر وزنِ ساخته‌شده از تکرار یک رکن (اصل ۴) یک «رکن پایه» می‌دهد.</li>
         <li>هر سطر را با <b>k</b> تکرار رکن (k از ۱ تا ۸) + پایانهٔ مجاز (سالم، محذوف، مقصور) بپوشان؛ هجای آخر بلند شمرده شود (اصل ۵).</li>
         <li>رکنی که <b>همهٔ سطرها</b> را بپوشاند برنده است (اصل ۲)؛ در تساوی، رکن با کمترین اختیارات شاعری.</li>
@@ -1230,7 +1269,7 @@ def nimaic(lines, base_feet, endings):
     <div class="nline"><span class="lab">سطر ۱ با ۴ رکن</span><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f part">فعلن</div><div class="f empty"></div><div class="f empty"></div></div>
     <div class="nline"><span class="lab">سطر ۲ با ۲ رکن</span><div class="f">فعلاتن</div><div class="f part">فعلن</div><div class="f empty"></div><div class="f empty"></div><div class="f empty"></div><div class="f empty"></div></div>
     <div class="nline"><span class="lab">سطر ۳ با ۶ رکن</span><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f part">فعلن</div></div>
-    <div class="nline"><span class="lab">سطر ۴ با ۳ رکن</span><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f part">فعلاتن</div><div class="f empty"></div><div class="f empty"></div><div class="f empty"></div></div>
+    <div class="nline"><span class="lab">سطر ۴ با ۳ رکن</span><div class="f">فعلاتن</div><div class="f">فعلاتن</div><div class="f part">فعلن</div><div class="f empty"></div><div class="f empty"></div><div class="f empty"></div></div>
     <div class="nline"><span class="lab">سطر ۵ با ۱ رکن</span><div class="f part">فعلن</div><div class="f empty"></div><div class="f empty"></div><div class="f empty"></div><div class="f empty"></div><div class="f empty"></div></div>
     <div style="font-size:7.8pt;color:var(--ink-2);margin-top:1.5mm">نمونهٔ نمایشیِ ساختار (نه تقطیع یک شعر مشخص) · با کلیک روی هر بلوک، هجاهای همان رکن با نمایش بخش ۵ باز می‌شود · قافیه‌ها با نقطهٔ زعفرانی در انتهای سطر نشان داده می‌شوند.</div>
   </div>

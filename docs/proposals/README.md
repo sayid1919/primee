@@ -21,14 +21,13 @@ font files are **not** committed here, because their redistribution licences
 have not been verified. Put them in a `fonts/` directory beside the HTML:
 
 ```
-fonts/Azar.ttf            display headings and the wordmark
-fonts/Darvish-Light.ttf   body text, weight 300
-fonts/Darvish-Regular.ttf body text, weight 400
-fonts/Darvish-Medium.ttf  body text, weight 500
-fonts/Darvish-SemiBold.ttf
-fonts/Darvish-Bold.ttf
-fonts/Mirza-Regular.ttf   decorative siah-mashq watermarks only, never running text
-fonts/Mirza-Bold.ttf
+fonts/Azar.ttf              display headings and the wordmark
+fonts/Darvish-Light.ttf     body text, weight 300
+fonts/Darvish-Regular.ttf   body text, weight 400
+fonts/Darvish-Medium.ttf    body text, weight 500
+fonts/Darvish-SemiBold.ttf  body text, weight 600
+fonts/Darvish-Bold.ttf      body text, weight 700
+fonts/IranNastaliq.ttf      decorative siah-mashq watermarks only, never running text
 ```
 
 Then print it with a headless Chromium:
@@ -41,6 +40,14 @@ chromium --headless=new --no-pdf-header-footer \
 
 Without the font files the page still renders, but falls back to system faces
 and the line breaks will differ from the committed PDF.
+
+### Checking the layout without opening a viewer
+
+Every page is a fixed A4 box with an absolutely positioned footer, so content that
+grows past the footer is clipped silently rather than reflowing. To catch that,
+render the file in headless Chromium with a script that compares each page's
+deepest laid-out element against its footer's top edge, and treat any negative
+clearance as a defect. The committed version clears the footer on all 24 pages.
 
 ### Review modes built into the HTML
 
