@@ -13,10 +13,10 @@
 @font-face{font-family:"IranNastaliq";src:url("fonts/IranNastaliq.ttf") format("truetype");font-weight:400}
 
 :root{
-  --paper:#F2EEE6; --paper-2:#E9E3D8; --ink:#16191D; --ink-2:#4A5058;
-  --lapis:#23477A; --lapis-2:#1A3559; --saffron:#E3A32E; --copper:#B4532E; --mist:#CBD3D9;
-  --teal:#1F6B78; --violet:#6B4E9B;
-  --line:rgba(22,25,29,.16);
+  --paper:#F3EADA; --paper-2:#EADFCB; --ink:#18273E; --ink-2:#4C5A70;
+  --lapis:#24416B; --lapis-2:#18273E; --saffron:#C9A25A; --copper:#B4532E; --mist:#CFD6DF;
+  --teal:#1F6B78; --violet:#6B4E9B; --navy:#18273E; --cream:#F3EADA; --gold:#C9A25A;
+  --line:rgba(24,39,62,.16);
 }
 @page{size:A4;margin:0}
 *{box-sizing:border-box}
@@ -29,11 +29,37 @@ body{font-family:"Darvish","DejaVu Sans",sans-serif;font-weight:400;color:var(--
 body.review{background:#666;padding:10px}
 body.review .page{zoom:.31;display:inline-block;vertical-align:top;margin:5px;box-shadow:0 0 0 2px #000;page-break-after:auto}
 
+/* brand */
+.page{counter-increment:pg}
+.foot .num::before{content:counter(pg,persian)}
+.foot .brand{font-family:"IranNastaliq";font-size:12pt;color:var(--ink-2);line-height:1}
+.head .mk{height:4.2mm;width:auto;vertical-align:middle;margin-inline-end:2mm;opacity:.9}
+.gold-rule{height:2px;background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold) 70%,transparent);margin:2mm 0 4mm}
+.pillar{border:1px solid var(--line);border-radius:3mm;background:rgba(255,255,255,.5);padding:4mm;position:relative;overflow:hidden}
+.pillar .n{font-family:"Azar";font-size:34pt;line-height:.9;color:var(--gold)}
+.pillar h4{margin:1.5mm 0 1mm;font-size:12pt}
+.pillar ul{font-size:9pt;margin:0;padding-inline-start:4mm}
+.pillar .to{position:absolute;left:3mm;bottom:2.5mm;font-size:7.6pt;color:var(--ink-2)}
+.rhyme{display:flex;flex-wrap:wrap;gap:1.2mm;direction:rtl;align-items:baseline;font-size:11pt;font-weight:500;line-height:1.7}
+.rhyme .w{padding:.4mm 1.6mm;border-radius:1.2mm}
+.rhyme .q{background:rgba(201,162,90,.28);border-bottom:2.5px solid var(--gold)}
+.rhyme .r{background:rgba(24,39,62,.10);border-bottom:2.5px dotted var(--navy)}
+.rhyme .m{color:var(--ink-2);font-size:9pt}
+.fcard.hero{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.fcard.hero .ft b{color:var(--gold);font-size:11pt}
+.fcard.hero .mi{color:rgba(243,234,218,.75)}
+.fcard.hero .idl{color:var(--gold)}
+.fcard.hero .id{border-color:var(--gold);color:var(--gold);background:rgba(201,162,90,.12)}
+.fcard.hero .pri{color:var(--gold)}
+.fcard.hero code{background:rgba(255,255,255,.12);color:#fff}
+.forms{font-size:7.9pt;line-height:1.5}
+.forms td:first-child{font-weight:700;white-space:nowrap}
+.forms .pat{font-family:"DejaVu Sans Mono",monospace;font-size:7.8pt;direction:ltr;unicode-bidi:isolate;letter-spacing:.06em}
 /* running head/foot */
 .head{display:flex;justify-content:space-between;align-items:center;font-size:8.2pt;color:var(--ink-2);border-bottom:1px solid var(--line);padding-bottom:2mm;margin-bottom:4.5mm;letter-spacing:.02em}
 .head .l{font-family:"DejaVu Sans Mono",monospace;direction:ltr;font-size:7.5pt}
 .foot{position:absolute;bottom:8mm;right:15mm;left:15mm;display:flex;justify-content:space-between;align-items:center;font-size:7.8pt;color:var(--ink-2)}
-.foot .num{font-family:"Azar";font-size:14pt;color:var(--lapis);line-height:1}
+.foot .num{font-family:"Azar";font-size:14pt;color:var(--navy);line-height:1;min-width:6mm;text-align:left}
 .mbar{display:inline-flex;gap:3px;align-items:center;direction:ltr}
 .mbar i{display:inline-block;height:3px;background:var(--lapis);border-radius:2px}
 .mbar i.s{width:5px;height:5px;border-radius:50%;background:var(--copper)}
@@ -42,14 +68,14 @@ body.review .page{zoom:.31;display:inline-block;vertical-align:top;margin:5px;bo
 /* type */
 h1,h2,h3{margin:0;font-weight:400}
 .display{font-family:"Azar";line-height:1.15;color:var(--ink)}
-h2.sec{font-family:"Azar";font-size:24pt;line-height:1.25;margin:0 0 2.4mm;color:var(--ink)}
+h2.sec{font-family:"Azar";font-size:24pt;line-height:1.25;margin:0 0 2.4mm;color:var(--navy)}
 h3{font-family:"Darvish";font-weight:700;font-size:12.5pt;margin:4mm 0 1.6mm;color:var(--lapis)}
 h4{font-family:"Darvish";font-weight:600;font-size:10.8pt;margin:2.6mm 0 .9mm;color:var(--ink)}
 p{margin:0 0 2.2mm}
 .lead{font-size:11.6pt;font-weight:500;color:var(--ink);line-height:1.8}
 .muted{color:var(--ink-2)}
 .eyebrow{font-size:8.6pt;font-weight:600;color:var(--lapis);letter-spacing:.04em;margin-bottom:1.5mm}
-.secnum{font-family:"Azar";font-size:42pt;line-height:.9;color:var(--saffron);margin-bottom:1.4mm}
+.secnum{font-family:"Azar";font-size:42pt;line-height:.9;color:var(--gold);margin-bottom:1.4mm}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
 .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5mm}
 ul,ol{margin:0 0 2.6mm;padding-inline-start:5mm}
@@ -63,7 +89,7 @@ pre .fa{unicode-bidi:isolate;direction:rtl}
 /* chips */
 .id{display:inline-block;font-family:"DejaVu Sans Mono",monospace;font-size:7.6pt;direction:ltr;border:1px solid var(--copper);color:var(--copper);border-radius:3px;padding:0 4px;line-height:1.55;margin-inline-start:2px;vertical-align:middle;background:rgba(180,83,46,.06)}
 .tag{display:inline-block;background:var(--ink);color:var(--paper);border-radius:20px;padding:.5mm 3.2mm;font-size:8.4pt;font-weight:500;line-height:1.6}
-.tag.sf{background:var(--saffron);color:var(--ink)}
+.tag.sf{background:var(--gold);color:var(--navy)}
 .tag.lp{background:var(--lapis)}
 .tag.cp{background:var(--copper)}
 .tag.ms{background:var(--mist);color:var(--ink)}
@@ -75,8 +101,8 @@ pre .fa{unicode-bidi:isolate;direction:rtl}
 .opt .t{font-weight:700;font-size:9.4pt;margin-bottom:1.2mm;display:flex;align-items:center;gap:2mm}
 .opt.min{background:var(--paper-2);border:1px solid var(--line)}
 .opt.min .t{color:var(--ink-2)}
-.opt.ideal{background:var(--lapis);color:#EEF1F5}
-.opt.ideal .t{color:var(--saffron)}
+.opt.ideal{background:var(--navy);color:#EEF1F5}
+.opt.ideal .t{color:var(--gold)}
 .opt.ideal code{background:rgba(255,255,255,.12);color:#fff}
 .opt ul{margin:0;padding-inline-start:4mm}
 .opt li{margin-bottom:.6mm}
@@ -86,14 +112,14 @@ pre .fa{unicode-bidi:isolate;direction:rtl}
 /* blocks */
 .box{border:1px solid var(--line);border-radius:3mm;padding:3mm 3.5mm;background:rgba(255,255,255,.45)}
 .box.dark{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.callout{border-inline-start:3px solid var(--saffron);padding:1mm 3.5mm;background:rgba(227,163,46,.09);margin:2mm 0 3mm;font-size:9.8pt}
+.callout{border-inline-start:3px solid var(--gold);padding:1mm 3.5mm;background:rgba(201,162,90,.12);margin:2mm 0 3mm;font-size:9.8pt}
 code{font-family:"DejaVu Sans Mono",monospace;font-size:8.4pt;background:rgba(22,25,29,.07);padding:0 3px;border-radius:2px;direction:ltr;unicode-bidi:embed}
-pre{direction:ltr;text-align:left;font-family:"DejaVu Sans Mono",monospace;font-size:6.7pt;line-height:1.45;background:var(--ink);color:#E9E3D8;border-radius:2.5mm;padding:2.6mm 3mm;margin:1.6mm 0 2.4mm;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden}
+pre{direction:ltr;text-align:left;font-family:"DejaVu Sans Mono",monospace;font-size:6.7pt;line-height:1.45;background:var(--navy);color:#EFE6D4;border-radius:2.5mm;padding:2.6mm 3mm;margin:1.6mm 0 2.4mm;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden}
 pre .c{color:#9DB0C7}
-pre .y{color:var(--saffron)}
+pre .y{color:var(--gold)}
 table{border-collapse:collapse;width:100%;font-size:9pt;line-height:1.6}
 th,td{padding:1.15mm 2mm;border-bottom:1px solid var(--line);vertical-align:top;text-align:right}
-th{background:var(--ink);color:var(--paper);font-weight:600;font-size:8.6pt}
+th{background:var(--navy);color:var(--cream);font-weight:600;font-size:8.6pt}
 tr:nth-child(even) td{background:rgba(255,255,255,.35)}
 td.c,th.c{text-align:center}
 
@@ -141,15 +167,15 @@ td.c,th.c{text-align:center}
 .road{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:3mm}
 .road div{border-top:4px solid var(--lapis);padding-top:2mm;font-size:9pt;line-height:1.65}
 .road div:nth-child(1){border-color:var(--copper)}
-.road div:nth-child(2){border-color:var(--saffron)}
+.road div:nth-child(2){border-color:var(--gold)}
 .road div:nth-child(3){border-color:var(--lapis)}
 .road div:nth-child(4){border-color:var(--teal)}
 .road b{display:block;font-size:10pt;margin-bottom:1mm}
 .road .ph{font-family:"Azar";font-size:20pt;line-height:1;color:var(--ink);display:block;margin-bottom:1mm}
 
 /* TOC */
-.toc{columns:2;column-gap:8mm;font-size:9.1pt}
-.toc div{break-inside:avoid;display:flex;justify-content:space-between;border-bottom:1px dotted var(--line);padding:.7mm 0}
+.toc{columns:2;column-gap:8mm;font-size:8.5pt}
+.toc div{break-inside:avoid;display:flex;justify-content:space-between;border-bottom:1px dotted var(--line);padding:.5mm 0}
 .toc div b{font-weight:600}
 .toc .n{font-family:"DejaVu Sans Mono",monospace;font-size:8pt;color:var(--ink-2)}
 .toc .h{font-weight:700;color:var(--lapis);border-bottom:0;margin-top:2mm}
@@ -171,79 +197,118 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
 </script>
 
 <!-- ============ 1. COVER ============ -->
-<section class="page" style="padding:0;background:var(--ink);color:var(--paper)">
-  <div class="gridbg" style="opacity:.18;background-image:linear-gradient(rgba(242,238,230,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(242,238,230,.25) 1px,transparent 1px)"></div>
-  <div class="mashq" style="font-size:210pt;color:var(--paper);opacity:.07;right:-18mm;top:22mm;transform:rotate(-8deg)">سرود</div>
-  <div class="mashq" style="font-size:150pt;color:var(--saffron);opacity:.10;right:14mm;top:70mm;transform:rotate(-14deg)">وزن</div>
-  <div class="mashq" style="font-size:120pt;color:var(--paper);opacity:.06;left:-10mm;top:118mm;transform:rotate(-10deg)">بررسیِ وزنِ شعر</div>
-  <div class="mashq" style="font-size:170pt;color:var(--paper);opacity:.05;right:-6mm;top:150mm;transform:rotate(-6deg)">سرود</div>
-  <div class="mashq" style="font-size:96pt;color:var(--saffron);opacity:.08;left:6mm;top:205mm;transform:rotate(-12deg)">عروض</div>
-  <div style="position:absolute;right:16mm;top:18mm;display:flex;gap:2mm;align-items:center">
-    <span class="tag sf">پروپوزال اجرایی</span><span class="tag" style="background:rgba(242,238,230,.16);color:var(--paper)">نسخهٔ ۱.۰ · شهریور ۱۴۰۵</span>
+<section class="page" style="padding:0;background:var(--navy);color:var(--cream)">
+  <div class="gridbg" style="opacity:.14;background-image:linear-gradient(rgba(243,234,218,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(243,234,218,.3) 1px,transparent 1px)"></div>
+  <div class="mashq" style="font-size:190pt;color:var(--cream);opacity:.05;right:-14mm;top:26mm;transform:rotate(-8deg)">سرود</div>
+  <div class="mashq" style="font-size:150pt;color:var(--gold);opacity:.08;right:10mm;top:96mm;transform:rotate(-12deg)">وزن</div>
+  <div class="mashq" style="font-size:120pt;color:var(--cream);opacity:.05;left:-8mm;top:150mm;transform:rotate(-9deg)">بررسیِ وزنِ شعر</div>
+  <div class="mashq" style="font-size:96pt;color:var(--gold);opacity:.07;left:8mm;top:214mm;transform:rotate(-11deg)">عروض</div>
+  <div style="position:absolute;right:16mm;top:14mm;display:flex;align-items:center;gap:4mm">
+    <img src="brand/logo.png" alt="استودیو سرمه" style="height:24mm;width:auto">
+    <div style="border-inline-start:1px solid rgba(243,234,218,.35);padding-inline-start:4mm;line-height:1.5">
+      <div style="font-family:'Azar';font-size:15pt;color:var(--cream)">استودیو سرمه</div>
+      <div style="font-family:'IranNastaliq';font-size:14pt;color:var(--gold);line-height:1.2">زیبای اصیل</div>
+    </div>
   </div>
-  <div style="position:absolute;right:16mm;left:16mm;top:92mm">
-    <div style="font-size:11pt;color:var(--saffron);font-weight:500;margin-bottom:3mm">پیشنهاد بازطراحی و بهبود تجربهٔ کاربری</div>
-    <h1 class="display" style="font-size:62pt;color:var(--paper);line-height:1.05">سرودِ تازه</h1>
-    <div style="font-family:'Azar';font-size:23pt;color:var(--paper);opacity:.85;margin-top:2mm">تارنمای بررسیِ وزنِ شعر · sorud.info</div>
-    <div class="mbar" style="margin-top:8mm;gap:5px"><i class="l" style="background:var(--saffron)"></i><i class="s" style="background:var(--paper)"></i><i class="l" style="background:var(--saffron)"></i><i class="l" style="background:var(--saffron)"></i><i class="l" style="background:var(--saffron)"></i><i class="s" style="background:var(--paper)"></i><i class="l" style="background:var(--saffron)"></i><i class="l" style="background:var(--saffron)"></i><i class="l" style="background:var(--saffron)"></i><i class="s" style="background:var(--paper)"></i><i class="l" style="background:var(--saffron)"></i><i class="l" style="background:var(--saffron)"></i></div>
-    <div class="scan" style="font-size:8.4pt;color:var(--paper);opacity:.7;margin-top:1.5mm;text-align:right">— ∪ — — / — ∪ — — / — ∪ — —</div>
+  <div style="position:absolute;right:16mm;left:16mm;top:88mm">
+    <div style="display:flex;gap:2mm;align-items:center;margin-bottom:5mm"><span class="tag sf">پروپوزال اجرایی</span><span class="tag" style="background:rgba(243,234,218,.14);color:var(--cream)">نسخهٔ ۲.۰ · شهریور ۱۴۰۵</span></div>
+    <div style="font-size:11pt;color:var(--gold);font-weight:500;margin-bottom:2mm">پیشنهاد بازطراحی ظاهر، رابط و تجربهٔ کاربری، و افزودن شعر نو</div>
+    <h1 class="display" style="font-size:66pt;color:var(--cream);line-height:1.05">سرودِ تازه</h1>
+    <div style="font-family:'Azar';font-size:22pt;color:var(--cream);opacity:.85;margin-top:2mm">تارنمای بررسیِ وزنِ شعر · sorud.info</div>
+    <div class="mbar" style="margin-top:8mm;gap:5px"><i class="l" style="background:var(--gold)"></i><i class="s" style="background:var(--cream)"></i><i class="l" style="background:var(--gold)"></i><i class="l" style="background:var(--gold)"></i><i class="l" style="background:var(--gold)"></i><i class="s" style="background:var(--cream)"></i><i class="l" style="background:var(--gold)"></i><i class="l" style="background:var(--gold)"></i><i class="l" style="background:var(--gold)"></i><i class="s" style="background:var(--cream)"></i><i class="l" style="background:var(--gold)"></i></div>
+    <div class="scan" style="font-size:8.4pt;color:var(--cream);opacity:.7;margin-top:1.5mm;text-align:right">— ∪ — — / — ∪ — — / — ∪ —</div>
   </div>
-  <div style="position:absolute;right:16mm;left:16mm;bottom:18mm;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(242,238,230,.25);padding-top:4mm">
-    <div style="font-size:9.4pt;line-height:1.7;color:var(--paper);opacity:.85">
-      تهیه‌شده برای: طراح و نگهدارندهٔ تارنمای سرود<br>
+  <div style="position:absolute;right:16mm;left:16mm;bottom:16mm;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid rgba(243,234,218,.25);padding-top:4mm">
+    <div style="font-size:9.4pt;line-height:1.7;color:var(--cream);opacity:.85">
+      تهیه‌شده برای: دکتر نوید فاضل، طراح و نگهدارندهٔ تارنمای سرود<br>
       مبتنی بر: گزارش ممیزی ۲۰ شهریور ۱۴۰۵ (شناسه‌های S-01 تا S-20)
     </div>
-    <div style="font-family:'Azar';font-size:15pt;color:var(--saffron)">۲۴ صفحه</div>
+    <div style="font-family:'Azar';font-size:15pt;color:var(--gold);white-space:nowrap">۲۸ صفحه</div>
   </div>
 </section>
 
 <!-- ============ 2. THANK-YOU LETTER ============ -->
 <section class="page">
   <div class="mashq" style="font-size:140pt;opacity:.045;right:-8mm;bottom:20mm;transform:rotate(-9deg)">سپاس</div>
-  <div class="head"><span>نامهٔ سپاس</span><span class="l">sorud.info · proposal v1.0</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">نامهٔ سپاس</span><span class="l">sorud.info · proposal v1.0</span></div>
   <div style="max-width:150mm;margin:6mm auto 0">
     <div class="eyebrow">به</div>
     <p class="lead" style="margin-bottom:6mm">جناب آقای دکتر نوید فاضل، طراح تارنمای «سرود»<br><span class="muted" style="font-weight:400;font-size:10pt">و همهٔ کسانی که در نگه‌داشتنِ این ابزار سهیم بوده‌اند</span></p>
     <p>با سلام و احترام،</p>
     <p>پیش از هر پیشنهادی، لازم می‌دانیم از شما سپاس‌گزاری کنیم. «سرود» در سال‌هایی ساخته شد که تشخیص ماشینیِ وزن عروضیِ شعر فارسی نه ابزار آماده‌ای داشت و نه بازار روشنی؛ شما با تکیه بر دانش ادبی و دستوری‌تان، ۷۱ وزن و ۵٬۲۱۲ ساختار آهنگی را به زبانی درآوردید که رایانه بفهمد و کاربر ببیند. این کار، به گواهی معرفی رسمی گنجور در آذر ۱۳۹۶ و به‌کارگیری موتور سرود در وزن‌یابی ماشینیِ پیکره‌ای با بیش از یک‌ونیم میلیون بیت، یک خدمت عمومی به ادبیات فارسی بوده است، نه صرفاً یک وب‌سایت.</p>
-    <p>ما به‌عنوان تیم ممیزی، از بیرون به سرود نگاه کردیم و آنچه دیدیم را بی‌تعارف نوشتیم. اما بی‌تعارف بودن، به معنای نادیده‌گرفتن ارزشِ کاری نیست که یک نفر، سال‌ها، بی‌سروصدا و بی‌چشم‌داشت نگه داشته است. برعکس؛ اگر این پروپوزال نوشته شده، دقیقاً به این دلیل است که سرود ارزش آن را دارد که دیده شود، دوام بیاورد و به نسل تازه‌ای از شاعران و دانشجویان برسد.</p>
+    <p>ما در استودیو سرمه، از بیرون به سرود نگاه کردیم و آنچه دیدیم را بی‌تعارف نوشتیم. اما بی‌تعارف بودن، به معنای نادیده‌گرفتن ارزشِ کاری نیست که یک نفر، سال‌ها، بی‌سروصدا و بی‌چشم‌داشت نگه داشته است. برعکس؛ اگر این پروپوزال نوشته شده، دقیقاً به این دلیل است که سرود ارزش آن را دارد که دیده شود، دوام بیاورد و به نسل تازه‌ای از شاعران و دانشجویان برسد.</p>
     <p>آنچه در صفحات بعد می‌آید، تلاش ما برای تبدیل تشخیص‌های گزارش ممیزی به راه‌حل‌های عملی است: بیشتر بر طراحی و تجربهٔ کاربری تمرکز دارد، ساختار فنی سایت را دست‌نخورده می‌گذارد و برای هر مورد دو گزینه پیش رو می‌نهد تا انتخاب، با شما بماند. هرجا از سرود انتقاد کرده‌ایم، با ارجاع به شناسهٔ مشکل در گزارش ممیزی بوده است تا هیچ پیشنهادی بی‌پشتوانه نماند.</p>
     <p>امیدواریم این سند، بیش از آن‌که فهرستی از «باید»ها باشد، دعوتی به گفت‌وگو باشد. سرود را شما ساخته‌اید؛ ما فقط پیشنهاد می‌کنیم چگونه بدرخشد.</p>
-    <p style="margin-top:6mm">با احترام و قدردانی،<br><b>تیم ممیزی و طراحی</b><br><span class="muted">شهریور ۱۴۰۵</span></p>
+    <div style="margin-top:6mm;display:flex;justify-content:space-between;align-items:flex-end">
+      <p style="margin:0">با احترام و قدردانی،<br><b>استودیو سرمه</b><br><span class="muted">شهریور ۱۴۰۵</span></p>
+      <div style="text-align:center"><img src="brand/logo-navy.png" alt="" style="height:16mm;width:auto;opacity:.9"><div style="font-family:'IranNastaliq';font-size:12pt;color:var(--gold);line-height:1">زیبای اصیل</div></div>
+    </div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۲</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
+</section>
+
+<!-- ============ STUDIO ============ -->
+<section class="page">
+  <div class="mashq" style="font-size:150pt;opacity:.05;left:-10mm;bottom:10mm;transform:rotate(-8deg)">سرمه</div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">دربارهٔ استودیو سرمه</span><span class="l">studio sormeh</span></div>
+  <div style="display:flex;align-items:center;gap:8mm;margin:4mm 0 5mm">
+    <img src="brand/logo-navy.png" alt="استودیو سرمه" style="height:40mm;width:auto">
+    <div>
+      <div class="eyebrow">استودیو طراحی و محصول دیجیتال</div>
+      <h2 class="sec" style="font-size:30pt;margin:0">استودیو سرمه</h2>
+      <div style="font-family:'IranNastaliq';font-size:22pt;color:var(--gold);line-height:1.3;margin-top:1mm">زیبای اصیل</div>
+    </div>
+  </div>
+  <div class="gold-rule"></div>
+  <p class="lead">سرمه، رنگِ مرکبِ کهن است؛ تیره، عمیق و ماندگار. ما با همین نگاه کار می‌کنیم: محصول دیجیتالی که ریشه در فرهنگ و زبان فارسی دارد، باید هم امروزی باشد و هم اصیل. زیبایی برای ما تزئین نیست؛ حاصل درست‌خواندنِ محتوا، مخاطب و سنتِ بصریِ پشت آن است.</p>
+  <div class="three" style="margin-top:4mm">
+    <div class="box"><h4 style="margin-top:0">چه می‌کنیم</h4><ul style="font-size:9.2pt;margin:0"><li>ممیزی مبتنی بر شواهد وب‌سایت و محصول</li><li>سیستم طراحی، هویت بصری و تایپوگرافی فارسی</li><li>طراحی رابط و تجربهٔ کاربری راست‌به‌چپ</li><li>پیاده‌سازی فرانت‌اند، سئوی فنی و دسترس‌پذیری</li></ul></div>
+    <div class="box"><h4 style="margin-top:0">چگونه کار می‌کنیم</h4><ul style="font-size:9.2pt;margin:0"><li><b>می‌سنجیم</b>، نه حدس می‌زنیم: هر ادعا با شاهد.</li><li><b>دو گزینه</b> می‌دهیم تا انتخاب با شما بماند.</li><li><b>ساختار را نگه می‌داریم</b>؛ پوسته را نو می‌کنیم.</li><li><b>با عدد تحویل می‌دهیم</b>: کنتراست، بودجهٔ عملکرد، پوشش ایندکس.</li></ul></div>
+    <div class="box"><h4 style="margin-top:0">چرا سرود</h4><ul style="font-size:9.2pt;margin:0"><li>سرود یک ابزار نیست؛ یک میراث محاسباتی برای عروض فارسی است.</li><li>گنجور به موتور آن تکیه می‌کند؛ کاربرانش دانش‌آموز و شاعر و پژوهشگرند.</li><li>چنین محصولی سزاوار پوسته‌ای هم‌تراز با محتوایش است.</li></ul></div>
+  </div>
+  <h3>سه لایهٔ این پیشنهاد</h3>
+  <div class="three">
+    <div class="pillar"><div class="n">۱</div><h4>ظاهر</h4><ul><li>هویت بصری و نشانه</li><li>پالت با کنتراست سنجیده</li><li>تایپوگرافی فارسی و سیاه‌مشق</li><li>حالت تاریک</li></ul><span class="to">بخش‌های ۱، ۲، ۹</span></div>
+    <div class="pillar"><div class="n">۲</div><h4>رابط و تجربه</h4><ul><li>صفحهٔ اصلی و گرید</li><li>فرم ورودی و هفت حالت</li><li>نمایش هجاها و کارت وزن</li><li>صفحات پشتیبان، ۴۰۴، دسترس‌پذیری</li></ul><span class="to">بخش‌های ۳ تا ۹</span></div>
+    <div class="pillar"><div class="n">۳</div><h4>قابلیت‌ها</h4><ul><li><b>شعر نو (نیمایی)</b> به‌عنوان قابلیت شاخص</li><li>قافیه و ردیف، تشخیص قالب</li><li>لینک دائمی، اشتراک، بازخورد</li><li>API مستند برای گنجور و دیگران</li></ul><span class="to">بخش‌های ۱۵ و ۱۶</span></div>
+  </div>
+  <p class="muted" style="font-size:8.8pt;margin-top:4mm">این سند سه بخش فنی هم دارد (زیرساخت، عملکرد، تحلیل) چون بدون آن‌ها هیچ طراحی‌ای به دست کاربر نمی‌رسد؛ اما تمرکز و بیشترین صفحات، بر همین سه لایه است.</p>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 3. TOC + HOW TO READ ============ -->
 <section class="page">
-  <div class="head"><span>فهرست و راهنمای خواندن</span><span class="l">contents</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">فهرست و راهنمای خواندن</span><span class="l">contents</span></div>
   <h2 class="sec">فهرست مطالب</h2>
   <div class="toc">
     <div class="h">بخش‌های پایه</div>
     <div><span>نامهٔ سپاس</span><span class="n">۲</span></div>
-    <div><span>فهرست و راهنمای خواندن</span><span class="n">۳</span></div>
-    <div><span>خلاصهٔ اجرایی و نقشهٔ راه</span><span class="n">۴</span></div>
-    <div><span>نقشهٔ ارجاع: مشکل → راه‌حل</span><span class="n">۵</span></div>
-    <div class="h">طراحی (تمرکز اصلی)</div>
-    <div><span>۱ · هویت بصری و پالت رنگ</span><span class="n">۶</span></div>
-    <div><span>۲ · تایپوگرافی فارسی</span><span class="n">۷</span></div>
-    <div><span>۳ · گرید، لی‌اوت و صفحهٔ اصلی</span><span class="n">۸</span></div>
-    <div><span>۴ · فرم ورودی و حالت‌ها</span><span class="n">۹</span></div>
-    <div><span>۵ · نمایش نتیجه و هجاها</span><span class="n">۱۰</span></div>
-    <div><span>۶ · کارت وزن و نمونهٔ آشنا</span><span class="n">۱۱</span></div>
-    <div><span>۷ · صفحات پشتیبان</span><span class="n">۱۲</span></div>
-    <div><span>۸ · صفحهٔ ۴۰۴، خطا و حالت خالی</span><span class="n">۱۳</span></div>
-    <div><span>۹ · دسترس‌پذیری و حالت تاریک</span><span class="n">۱۴</span></div>
+    <div><span>دربارهٔ استودیو سرمه</span><span class="n">۳</span></div>
+    <div><span>فهرست و راهنمای خواندن</span><span class="n">۴</span></div>
+    <div><span>خلاصهٔ اجرایی و نقشهٔ راه</span><span class="n">۵</span></div>
+    <div><span>چشم‌انداز: سرود در سه لایه</span><span class="n">۶</span></div>
+    <div><span>نقشهٔ ارجاع: مشکل → راه‌حل</span><span class="n">۷</span></div>
+    <div class="h">ظاهر، رابط و تجربه</div>
+    <div><span>۱ · هویت بصری و پالت رنگ</span><span class="n">۸</span></div>
+    <div><span>۲ · تایپوگرافی فارسی</span><span class="n">۹</span></div>
+    <div><span>۳ · گرید، لی‌اوت و صفحهٔ اصلی</span><span class="n">۱۰</span></div>
+    <div><span>۴ · فرم ورودی و حالت‌ها</span><span class="n">۱۱</span></div>
+    <div><span>۵ · نمایش نتیجه و هجاها</span><span class="n">۱۲</span></div>
+    <div><span>۶ · کارت وزن و نمونهٔ آشنا</span><span class="n">۱۳</span></div>
+    <div><span>۷ · صفحات پشتیبان</span><span class="n">۱۴</span></div>
+    <div><span>۸ · صفحهٔ ۴۰۴، خطا و حالت خالی</span><span class="n">۱۵</span></div>
+    <div><span>۹ · دسترس‌پذیری و حالت تاریک</span><span class="n">۱۶</span></div>
     <div class="h">فنی و محتوایی</div>
-    <div><span>۱۰ · سئوی فنی و داده ساختاریافته</span><span class="n">۱۵</span></div>
-    <div><span>۱۱ · زیرساخت، HTTPS و امنیت</span><span class="n">۱۶</span></div>
-    <div><span>۱۲ · عملکرد و بارگذاری</span><span class="n">۱۷</span></div>
-    <div><span>۱۳ · تحلیل و ردیابی</span><span class="n">۱۸</span></div>
-    <div><span>۱۴ · محتوا، اعتبار و روایت دقت</span><span class="n">۱۹</span></div>
-    <div class="h">افزوده‌ها</div>
-    <div><span>۱۵ · فیچرهای پیشنهادی</span><span class="n">۲۰–۲۱</span></div>
-    <div><span>۱۶ · بخش اختیاری نیمایی</span><span class="n">۲۲–۲۳</span></div>
-    <div><span>پیوست: جدول کامل مشکل → گزینه‌ها</span><span class="n">۲۴</span></div>
+    <div><span>۱۰ · سئوی فنی و داده ساختاریافته</span><span class="n">۱۷</span></div>
+    <div><span>۱۱ · زیرساخت، HTTPS و امنیت</span><span class="n">۱۸</span></div>
+    <div><span>۱۲ · عملکرد و بارگذاری</span><span class="n">۱۹</span></div>
+    <div><span>۱۳ · تحلیل و ردیابی</span><span class="n">۲۰</span></div>
+    <div><span>۱۴ · محتوا، اعتبار و روایت دقت</span><span class="n">۲۱</span></div>
+    <div class="h">قابلیت‌ها</div>
+    <div><span>۱۵ · فیچرهای پیشنهادی</span><span class="n">۲۲–۲۴</span></div>
+    <div><span>۱۶ · شعر نو (نیمایی)</span><span class="n">۲۵–۲۶</span></div>
+    <div><span>پیوست: جدول کامل مشکل → گزینه‌ها</span><span class="n">۲۷</span></div>
+    <div><span>منابع و راه گفت‌وگو</span><span class="n">۲۸</span></div>
   </div>
 
   <h3 style="margin-top:8mm">راهنمای خواندن این سند</h3>
@@ -253,8 +318,8 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
       <p style="font-size:9.4pt">هر پیشنهاد با یک یا چند شناسه مانند <span class="id">S-05</span> علامت خورده است؛ این شناسه‌ها همان ردیف‌های جدول مشکلات در گزارش ممیزی ۲۰ شهریور ۱۴۰۵ هستند.</p>
       <h4>دو گزینه برای هر مورد</h4>
       <div class="opts" style="margin:1.5mm 0 0">
-        <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div>کم‌هزینه‌ترین تغییری که مشکل را واقعاً حل می‌کند، نه پنهان.</div>
-        <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div>گزینه‌ای که سرود را از «کار می‌کند» به «مرجع است» می‌رساند.</div>
+        <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div>کم‌ترین تغییری که مشکل را واقعاً حل می‌کند.</div>
+        <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div>گزینه‌ای که سرود را به «مرجع» می‌رساند.</div>
       </div>
     </div>
     <div class="box">
@@ -263,18 +328,18 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
         <li><b>ساختار سایت عوض نمی‌شود.</b> موتور، مسیرها و منطق حفظ می‌شوند؛ پیشنهادها فقط لایهٔ طراحی، محتوا و پیکربندی را هدف می‌گیرند.</li>
         <li><b>نمونهٔ کد واقعی.</b> هرجا ممکن بوده، CSS، HTML، JSON-LD یا پیکربندی دقیق سرور آمده است.</li>
         <li><b>هر تصمیم رنگی با عدد.</b> نسبت‌های کنتراست محاسبه شده‌اند، نه حدس.</li>
-        <li><b>فیچرها جدا از طراحی.</b> بخش ۱۵ فقط قابلیت‌های تازه را فهرست می‌کند.</li>
+        <li><b>فیچرها جدا از طراحی.</b> بخش ۱۵ (سه صفحه) قابلیت‌های تازه را با محوریت شعر نو، قافیه و قالب فهرست می‌کند.</li>
         <li><b>نیمایی، اختیاری.</b> بخش ۱۶ بر پایهٔ منابع درسی و دانشگاهی نوشته شده و اجرای آن به تصمیم شما وابسته است.</li>
         <li><b>مرز دانسته و فرض.</b> ممیزی هیچ صفحه‌ای از سرود را باز نکرد (شبکه مسدود بود)؛ پس هر گزاره دربارهٔ وضع فعلی یا از شواهد بیرونی (عنوان ایندکس‌شده، DNS، معرفی گنجور) می‌آید یا صریحاً «فرض» نامیده شده است.</li>
       </ul>
     </div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۳</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 4. EXECUTIVE SUMMARY + ROADMAP ============ -->
 <section class="page">
-  <div class="head"><span>خلاصهٔ اجرایی</span><span class="l">executive summary</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">خلاصهٔ اجرایی</span><span class="l">executive summary</span></div>
   <h2 class="sec">خلاصهٔ اجرایی و نقشهٔ راه</h2>
   <p class="lead">سرود یک موتور قوی با پوستهٔ نادیده است. پیشنهاد ما، بدون دست‌زدن به موتور، پوسته را به سطح یک مرجع ادبیِ معاصر می‌رساند و هم‌زمان چهار ریسک زیرساختی و سئویی گزارش ممیزی را می‌بندد.</p>
   <div class="three" style="margin-top:4mm">
@@ -299,12 +364,46 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
     <div><span class="ph">۲</span><b>محتوا و سئو</b>فهرست اوزان، راهنما، درباره، دقت و روش‌شناسی، تغییرات، ۴۰۴، داده ساختاریافته، تحلیل.<br><small class="muted">S-05، S-10، S-11، S-12، S-13، S-14، S-19، S-20</small></div>
     <div><span class="ph">۳</span><b>افزوده‌ها</b>لینک دائمی، اشتراک‌گذاری، بازخورد، API مستند، حالت آموزشی و بخش اختیاری نیمایی.<br><small class="muted">بخش‌های ۱۵ و ۱۶</small></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۴</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
+</section>
+
+<!-- ============ VISION ============ -->
+<section class="page">
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">چشم‌انداز</span><span class="l">vision · three layers</span></div>
+  <h2 class="sec">چشم‌انداز: سرودِ تازه در سه لایه</h2>
+  <p class="lead">این پیشنهاد سه چیز را به‌روشنی هدف می‌گیرد: <b>ظاهرِ</b> سرود، <b>رابط و تجربهٔ کاربریِ</b> آن، و <b>قابلیت‌های تازه</b> با محوریت شعر نو. موتور تشخیص وزن دست‌نخورده می‌ماند؛ آنچه عوض می‌شود، شیوهٔ دیدن، فهمیدن و به‌کاربردنِ خروجی آن است.</p>
+  <div class="two" style="grid-template-columns:1fr 1fr;margin-top:3mm">
+    <div>
+      <div class="eyebrow">برداشت از معرفی گنجور (نه مشاهدهٔ مستقیم)</div>
+      <div class="wire" style="min-height:52mm">
+        <div class="bar"><span class="lbl">سرود: بررسیِ وزنِ شعر - عروض</span></div>
+        <div class="blk"><div class="lbl">متن شعر</div><div style="height:9mm;background:rgba(24,39,62,.05);border-radius:1mm;margin:1mm 0"></div><span class="btn ghost">بررسی</span></div>
+        <div class="blk"><div class="lbl">هجاها با رنگ‌های گوناگون · نمونه‌ای آشنا از همان وزن</div><div style="display:flex;gap:1mm;margin-top:1mm"><i style="flex:1;height:4mm;background:#c33;opacity:.5"></i><i style="flex:1;height:4mm;background:#36c;opacity:.5"></i><i style="flex:1;height:4mm;background:#3a3;opacity:.5"></i><i style="flex:1;height:4mm;background:#c33;opacity:.5"></i></div></div>
+        <div class="lbl" style="margin-top:2mm">تک‌صفحه · بدون راهنما، فهرست اوزان، درباره، ۴۰۴ (S-05، S-20)</div>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow" style="color:var(--gold)">سرودِ تازه</div>
+      <div class="wire" style="min-height:52mm;border-style:solid;border-color:var(--navy)">
+        <div class="bar" style="background:var(--navy);color:var(--cream)"><span style="font-family:'Azar';font-size:9pt">سرود</span><span class="lbl" style="color:var(--cream)">فهرست اوزان · راهنما · شعر نو · API</span></div>
+        <div class="blk pri"><div class="lbl">شعر را بنویسید؛ هر مصراع در یک خط · <b>خودکار / کلاسیک / نیمایی</b></div><div style="height:8mm;background:rgba(24,39,62,.05);border-radius:1mm;margin:1mm 0"></div><span class="btn">بررسی</span> <span class="btn ghost">نمونه</span></div>
+        <div class="blk"><div class="lbl">هجاها: رنگ + نشانه + خط زیرین · ارکان نام‌دار · کارت وزن · قافیه و ردیف · قالب</div><div style="display:flex;gap:1mm;margin-top:1mm"><i style="flex:1;height:4mm;background:var(--teal);opacity:.7;border-bottom:2px solid var(--teal)"></i><i style="flex:.6;height:4mm;background:var(--copper);opacity:.7;border-bottom:2px dotted var(--copper)"></i><i style="flex:1;height:4mm;background:var(--teal);opacity:.7;border-bottom:2px solid var(--teal)"></i><i style="flex:1;height:4mm;background:var(--teal);opacity:.7;border-bottom:2px solid var(--teal)"></i></div></div>
+        <div class="lbl" style="margin-top:1.5mm">لینک دائمی · تصویر اشتراک · گزارش خطا · حالت تاریک · WCAG AA</div>
+      </div>
+    </div>
+  </div>
+  <div class="three" style="margin-top:5mm">
+    <div class="pillar"><div class="n">۱</div><h4>ارتقای ظاهر</h4><ul><li>واژه‌نشان و «خط وزن» به‌عنوان هویت</li><li>پالت هشت‌توکنی با کنتراست ≥ ۴٫۹۷</li><li>قلم متن + قلم نمایشی + سیاه‌مشق نستعلیق</li><li>حالت تاریک با همان دقت</li></ul><span class="to">بخش‌های ۱، ۲، ۹</span></div>
+    <div class="pillar"><div class="n">۲</div><h4>ارتقای رابط و تجربه</h4><ul><li>ابزار در بالای صفحه، نه زیر یک بنر</li><li>هفت حالت فرم؛ هیچ صفحهٔ ساکتی</li><li>هجاهایی که در چاپ و اسکرین‌شات هم معنا دارند</li><li>راهنما، فهرست اوزان، درباره، ۴۰۴ طراحی‌شده</li></ul><span class="to">بخش‌های ۳ تا ۸</span></div>
+    <div class="pillar"><div class="n">۳</div><h4>قابلیت‌های تازه</h4><ul><li><b>شعر نو:</b> تشخیص رکن پایه و نمایش سطرهای نابرابر</li><li><b>قافیه و ردیف:</b> حروف قافیه، مصوت و صامت پایانی، عیوب</li><li><b>قالب:</b> غزل، مثنوی، رباعی، دوبیتی، قطعه…</li><li>لینک دائمی، تصویر، بازخورد، API</li></ul><span class="to">بخش‌های ۱۵ و ۱۶</span></div>
+  </div>
+  <div class="callout" style="margin-top:4mm">ترتیب اجرا مهم است: اول لایهٔ ظاهر و رابط (چون هر قابلیت تازه‌ای روی همین پوسته می‌نشیند)، سپس شعر نو به‌عنوان قابلیت شاخص، و بعد بقیهٔ فیچرها به ترتیب اولویت بخش ۱۵.</div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 5. MAPPING TABLE ============ -->
 <section class="page">
-  <div class="head"><span>نقشهٔ ارجاع</span><span class="l">issue → section map</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">نقشهٔ ارجاع</span><span class="l">issue → section map</span></div>
   <h2 class="sec">نقشهٔ ارجاع: از مشکل تا راه‌حل</h2>
   <p class="muted" style="font-size:9.2pt;margin-bottom:1.6mm">هر ۲۰ شناسهٔ گزارش ممیزی در این سند صاحب راه‌حل است؛ مواردی هم که «قابل اندازه‌گیری نبود» پیش‌دستانه پوشش یافته‌اند.</p>
   <table style="font-size:7.5pt;line-height:1.45">
@@ -332,13 +431,13 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
       <tr><td><span class="id">S-20</span></td><td>نبود راهنما/درباره/فهرست اوزان</td><td class="c"><span class="tag ms" style="font-size:7.4pt">متوسط</span></td><td>۷ · صفحات پشتیبان</td><td class="c">۲</td></tr>
     </tbody>
   </table>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۵</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 6. VISUAL IDENTITY + PALETTE ============ -->
 <section class="page">
   <div class="mashq" style="font-size:120pt;opacity:.05;left:-4mm;top:8mm;transform:rotate(-8deg)">سرود</div>
-  <div class="head"><span>بخش ۱ · هویت بصری و پالت رنگ</span><span class="l">S-10 · S-18</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱ · هویت بصری و پالت رنگ</span><span class="l">S-10 · S-18</span></div>
   <div class="secnum">۱</div>
   <h2 class="sec">هویت بصری و پالت رنگ</h2>
   <p>سرود امروز با عنوان «سرود: بررسیِ وزنِ شعر - عروض» شناخته می‌شود و در نتایج جستجو کنار sorud.com و sorud.net می‌نشیند (<span class="id">S-10</span>). یک نشانهٔ بصری ثابت، پالت اختصاصی و صفحهٔ «درباره» با نام طراح، این ابهام را برای کاربر و موتور جستجو می‌بندد. پالت زیر طوری چیده شده که سه نقش «متن»، «تأکید» و «سه نوع هجا» با هم تداخل نکنند و همهٔ جفت‌ها WCAG AA را رد کنند (<span class="id">S-18</span>).</p>
@@ -389,12 +488,12 @@ if(m){document.addEventListener('DOMContentLoaded',function(){var ps=document.qu
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>تعریف ۸ توکن رنگ بالا در <code>:root</code> و ارجاع دادن رنگ‌های موجود به آن‌ها.</li><li>واژه‌نشان متنی «سرود» با فونت نمایشی + خط وزن، به‌جای لوگوی تصویری.</li><li>favicon و آیکون ۵۱۲px از همان واژه‌نشان.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>پروندهٔ هویت: نشانه، حالت تک‌رنگ/معکوس، فاصلهٔ امن، کاربرد روی تصویر OG.</li><li>توکن‌های معنایی (<code>--syl-short/long/ext</code>) جدا از توکن‌های برند، تا تغییر برند رنگ هجاها را نشکند.</li><li>نسخهٔ تاریک با کنتراست‌های محاسبه‌شده (بخش ۹).</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۶</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 7. TYPOGRAPHY ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۲ · تایپوگرافی فارسی</span><span class="l">S-17 · S-18</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۲ · تایپوگرافی فارسی</span><span class="l">S-17 · S-18</span></div>
   <div class="secnum">۲</div>
   <h2 class="sec">تایپوگرافی فارسی</h2>
   <p>کاربر در سرود شعر می‌خواند و هجا می‌شمارد؛ خوانایی فارسی این‌جا هستهٔ محصول است، نه آرایش. پیشنهاد: یک قلم متنِ آزاد برای بدنه و رابط، یک قلم نمایشی برای عنوان‌ها، و یک قلم تک‌عرض لاتین برای نشانه‌های عروضی (∪ و —). قلم‌های ارسالی شما (آذر، درویش) در همین سند به کار رفته‌اند.</p>
@@ -450,12 +549,12 @@ h1,h2{font-family:var(--font-display);font-weight:700}
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>یک قلم (Vazirmatn) برای همه‌چیز؛ مقیاس ۶پله‌ای بالا؛ ارتفاع خط ۱٫۹؛ بدون justify.</li><li>یک فایل WOFF2 متغیر (~۹۰KB) به‌جای چند وزن جدا.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>جفت Estedad + Vazirmatn، یا آذر + درویش با مجوز وب.</li><li>زیرمجموعه‌سازی فونت به محدودهٔ فارسی + ارقام؛ <code>size-adjust</code> برای فونت جایگزین تا CLS صفر بماند.</li><li>سبک چاپی <code>@media print</code> با نشانه‌های سیاه‌وسفید.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۷</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 8. GRID + HOMEPAGE ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۳ · گرید، لی‌اوت و صفحهٔ اصلی</span><span class="l">S-05 · S-18 · S-20</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۳ · گرید، لی‌اوت و صفحهٔ اصلی</span><span class="l">S-05 · S-18 · S-20</span></div>
   <div class="secnum">۳</div>
   <h2 class="sec">گرید، لی‌اوت و صفحهٔ اصلی</h2>
   <p>صفحهٔ اصلی سرود یک ابزار است؛ پس «قهرمان» صفحه خودِ کادر ورودی است، نه یک تصویر بزرگ. چیدمان پیشنهادی: ستون محتوای ۷۲۰px برای ابزار و نتیجه، ستون کناری برای فهرست اوزان و راهنما در دسکتاپ، و تک‌ستون در موبایل با کادر ورودی در بالای صفحه. سرصفحه سه پیوند ثابت دارد تا موتورهای جستجو بتوانند صفحات پشتیبان را پیدا کنند (<span class="id">S-05</span><span class="id">S-20</span>).</p>
@@ -500,12 +599,12 @@ h1,h2{font-family:var(--font-display);font-weight:700}
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>تک‌ستون ۷۲۰px مرکز، سرصفحه با ۴ پیوند، پاصفحه با نام طراح و پیوند گنجور.</li><li>کادر ورودی بالای صفحه، نتیجه زیر آن؛ بدون ستون کناری.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>لی‌اوت دو‌ستونه با ستون کناریِ زنده (اوزان پرکاربرد از آمار خودِ سایت).</li><li>حالت «تمرکز»: با شروع تایپ، ستون کناری محو می‌شود و بعد از نتیجه برمی‌گردد.</li><li>سیاه‌مشق نستعلیق در پس‌زمینه با <code>mix-blend-mode: multiply</code> و شفافیت ۶٪.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۸</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 9. INPUT FORM ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۴ · فرم ورودی و حالت‌ها</span><span class="l">S-18</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۴ · فرم ورودی و حالت‌ها</span><span class="l">S-18</span></div>
   <div class="secnum">۴</div>
   <h2 class="sec">فرم ورودی و حالت‌های آن</h2>
   <p>جریانی که گنجور توصیف کرده («متن → دکمهٔ بررسی → نتیجه») درست است و نباید عوض شود. رفتار سایت در حالت‌های مرزی در ممیزی آزموده نشد (<span class="id">S-18</span>)؛ آنچه در هر ابزارِ از این دست باید طراحی شود، همین لحظه‌های ریزش است: کاربر نمی‌داند چه بنویسد، مصراعی ناقص می‌فرستد، یا شعری خارج از ۷۱ وزن وارد می‌کند.</p>
@@ -558,12 +657,12 @@ h1,h2{font-family:var(--font-display);font-weight:700}
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>برچسب واقعی، دکمهٔ نمونه، پیام «وزن پیدا نشد» و حالت بارگذاری.</li><li>حفظ ورودی بعد از خطا.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>همهٔ ۷ حالت جدول + نرمال‌سازی با گزارش تغییرات.</li><li>پیشنهاد زندهٔ وزن پس از تایپ مصراع اول (debounce ۶۰۰ms) بدون فشردن دکمه.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۹</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 10. RESULT / SYLLABLES ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۵ · نمایش نتیجه و هجاها</span><span class="l">S-18</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۵ · نمایش نتیجه و هجاها</span><span class="l">S-18</span></div>
   <div class="secnum">۵</div>
   <h2 class="sec">نمایش نتیجه و هجاها</h2>
   <p>معرفی رسمی سرود می‌گوید هجاها «با رنگ‌های گوناگون» نمایش داده می‌شوند. اگر رنگ تنها کانال باشد، معیار WCAG 1.4.1 نقض می‌شود و در چاپ سیاه‌وسفید یا اسکرین‌شات فشرده معنا از بین می‌رود (<span class="id">S-18</span>). پیشنهاد: هر هجا سه کانال هم‌زمان داشته باشد: <b>رنگ</b>، <b>شکل خط زیرین</b> (نقطه‌چین/پیوسته/دوتایی) و <b>نشانهٔ متنی</b> (∪ / — / ∪—). گروه‌بندی ارکان با کادر خط‌چین و نام رکن بالای آن.</p>
@@ -617,12 +716,12 @@ h1,h2{font-family:var(--font-display);font-weight:700}
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>افزودن نشانهٔ متنی زیر هر هجا و خط زیرین متمایز، با حفظ رنگ‌های فعلی.</li><li>راهنمای رنگ‌ها (legend) بالای نتیجه.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>گروه‌بندی ارکان با نام، نشانه‌گذاری هجاهای ناهم‌خوان، کلید «فقط نشانه‌ها»، خروجی متنی و چاپی.</li><li>انیمیشن ورود هجاها (۳۰ms فاصله) با احترام به <code>prefers-reduced-motion</code>.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۰</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 11. METER CARD ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۶ · کارت وزن و نمونهٔ آشنا</span><span class="l">S-13 · S-18 · S-20</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۶ · کارت وزن و نمونهٔ آشنا</span><span class="l">S-13 · S-18 · S-20</span></div>
   <div class="secnum">۶</div>
   <h2 class="sec">کارت وزن و نمونهٔ آشنا</h2>
   <p>سرود همین حالا «نمونه‌ای آشنا از همان وزن» می‌دهد؛ این قوی‌ترین لحظهٔ آموزشی محصول است و باید به یک شیء طراحی‌شده تبدیل شود: کارتی با نام وزن به دو زبان (عروضی و ارکانی)، بحر و زحاف، الگوی نشانه‌ای، نمونهٔ آشنا با نام شاعر، و اقدام‌های بعدی. این کارت همان چیزی است که کاربر اسکرین‌شات می‌گیرد و به اشتراک می‌گذارد؛ پس هویت سایت باید روی آن باشد.</p>
@@ -661,12 +760,12 @@ h1,h2{font-family:var(--font-display);font-weight:700}
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>کارت با نام دوگانهٔ وزن، الگو، نمونه با نام شاعر، و دکمهٔ کپی.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>لینک دائمی، تصویر OG خودکار، پیوند به صفحهٔ وزن و گنجور، گزارش خطا، خط اعتماد با عدد دقت.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۱</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 12. SUPPORT PAGES ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۷ · صفحات پشتیبان</span><span class="l">S-05 · S-12 · S-13 · S-20</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۷ · صفحات پشتیبان</span><span class="l">S-05 · S-12 · S-13 · S-20</span></div>
   <div class="secnum">۷</div>
   <h2 class="sec">صفحات پشتیبان</h2>
   <p>گزارش ممیزی تنها یک URL ایندکس‌شده از سرود پیدا کرد (<span class="id">S-05</span>). شش صفحهٔ زیر بدون تغییر در موتور، سرود را از «یک فرم» به «یک مرجع» تبدیل می‌کنند و هر کدام هدف جستجویی مشخص دارند (<span class="id">S-20</span>).</p>
@@ -705,12 +804,12 @@ h1,h2{font-family:var(--font-display);font-weight:700}
       </div>
     </div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۲</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 13. 404 / ERROR / EMPTY ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۸ · صفحهٔ ۴۰۴، خطا و حالت خالی</span><span class="l">S-04 · S-18</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۸ · صفحهٔ ۴۰۴، خطا و حالت خالی</span><span class="l">S-04 · S-18</span></div>
   <div class="secnum">۸</div>
   <h2 class="sec">صفحهٔ ۴۰۴، خطا و حالت خالی</h2>
   <p>یک رقیب (prosody.ir) صفحهٔ ۴۰۴ خود را در گوگل ایندکس کرده است؛ سرود نباید همین اشتباه را تکرار کند. صفحهٔ ۴۰۴ باید کد وضعیت واقعی ۴۰۴ بدهد، در نقشهٔ سایت نباشد و کاربر را با یک کادر ورودی به ابزار برگرداند. مسیرهای تاریخی مانند <code>/sorud/</code> روی IP خام باید با ۳۰۱ به دامنهٔ اصلی بروند، نه ۴۰۴ (<span class="id">S-04</span>).</p>
@@ -754,12 +853,12 @@ error_page 502 503 504 /offline.html;</pre>
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>صفحهٔ ۴۰۴ با کد واقعی، noindex، پیوندهای اصلی؛ ریدایرکت <code>/sorud/</code>.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>۴۰۴ با کادر ورودی و هویت؛ صفحهٔ آفلاین روی CDN؛ حالت خالیِ آموزنده؛ گزارش ۴۰۴های پرتکرار.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۳</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 14. ACCESSIBILITY + DARK ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۹ · دسترس‌پذیری و حالت تاریک</span><span class="l">S-18</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۹ · دسترس‌پذیری و حالت تاریک</span><span class="l">S-18</span></div>
   <div class="secnum">۹</div>
   <h2 class="sec">دسترس‌پذیری (WCAG 2.1 AA) و حالت تاریک</h2>
   <p>مخاطب سرود شامل دانش‌آموزان، دانشجویان و مدرسانی است که ممکن است با صفحه‌خوان، بزرگ‌نمایی یا فقط کیبورد کار کنند. فهرست زیر معیارهای WCAG را به تصمیم‌های طراحی سرود ترجمه می‌کند؛ هر ردیف قابل آزمون با axe یا Lighthouse است (<span class="id">S-18</span>).</p>
@@ -813,12 +912,12 @@ error_page 502 503 504 /offline.html;</pre>
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>نشانه‌های متنی هجا، فوکوس مرئی، برچسب فرم، <code>lang/dir</code>، بازچینی موبایل.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>همهٔ ۹ ردیف + حالت تاریک + آزمون دوره‌ای axe در CI و بیانیهٔ دسترس‌پذیری در صفحهٔ درباره.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۴</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 15. SEO ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۱۰ · سئوی فنی و داده ساختاریافته</span><span class="l">S-05 · S-07 · S-08 · S-09 · S-10</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۰ · سئوی فنی و داده ساختاریافته</span><span class="l">S-05 · S-07 · S-08 · S-09 · S-10</span></div>
   <div class="secnum">۱۰</div>
   <h2 class="sec">سئوی فنی و داده ساختاریافته</h2>
   <p>سرود برای کوئری‌های هدف («تشخیص وزن شعر آنلاین»، «تقطیع شعر») دیده نمی‌شود و عنوان ایندکس‌شده‌اش ۲۸ نویسه است (<span class="id">S-05</span><span class="id">S-07</span>). بستهٔ زیر بدون تغییر ساختار، فقط با تگ‌های سر صفحه و دو فایل متنی، پوشش ایندکس را از ۱ به ۷۰+ صفحه می‌رساند.</p>
@@ -893,12 +992,12 @@ Sitemap: https://sorud.info/sitemap.xml
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>عنوان و توضیح صفحهٔ اصلی، canonical، robots و sitemap با ۷ صفحه، ثبت در Search Console.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>۷۱ صفحهٔ وزن با schema، تصویر OG خودکار، HowTo برای راهنما، پایش ماهانهٔ پوشش ایندکس.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۵</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 16. INFRA + HTTPS + SECURITY ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۱۱ · زیرساخت، HTTPS و امنیت</span><span class="l">S-01 · S-02 · S-03 · S-06 · S-15 · S-16</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۱ · زیرساخت، HTTPS و امنیت</span><span class="l">S-01 · S-02 · S-03 · S-06 · S-15 · S-16</span></div>
   <div class="secnum">۱۱</div>
   <h2 class="sec">زیرساخت، HTTPS و امنیت</h2>
   <p>یگانه مشکل «بحرانی» گزارش، میزبانی روی IP پویای خانگی است (<span class="id">S-01</span>) که سابقهٔ قطعی و تغییر IP دارد (<span class="id">S-02</span>)، بین دو ISP دوپاره است (<span class="id">S-03</span>) و IP اپراتور را فاش می‌کند (<span class="id">S-15</span>). هر دو گزینهٔ زیر برنامه را همان‌جا که هست نگه می‌دارند؛ فقط لبهٔ شبکه عوض می‌شود.</p>
@@ -966,12 +1065,12 @@ server_tokens off;   <span class="c"># <span class="fa">نسخهٔ سرور را
     </div>
   </div>
   <div class="callout">بدون بلوک سوم و <code>default_server</code>، درخواستِ <code>https://sorud.info</code> به بلوک www می‌افتد و حلقهٔ ریدایرکت می‌سازد. تنها تغییر لازم در خود برنامه، خواندن IP کاربر از <code>X-Forwarded-For</code> است.</div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۶</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 17. PERFORMANCE ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۱۲ · عملکرد و بارگذاری</span><span class="l">S-17</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۲ · عملکرد و بارگذاری</span><span class="l">S-17</span></div>
   <div class="secnum">۱۲</div>
   <h2 class="sec">عملکرد و بارگذاری</h2>
   <p>Core Web Vitals سرود در ممیزی قابل اندازه‌گیری نبود (<span class="id">S-17</span>). یک واقعیتِ اندازه‌گیری‌شده و یک فرضِ قابل آزمون بر آن اثر می‌گذارند: سرور روی خط مصرفی در آلمان است و مخاطب اصلی در ایران (<span class="id">S-01</span>)؛ و اگر صفحه قلم فارسی سفارشی بارگذاری کند — که تأیید نشد — هزینهٔ قلم مستقیم به LCP و CLS افزوده می‌شود. بستهٔ زیر، بودجهٔ عملکرد و راه رسیدن به آن را مشخص می‌کند تا در دور دوم ممیزی با عدد سنجیده شود.</p>
@@ -1043,12 +1142,12 @@ location /api/ {
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>فشرده‌سازی، کش یک‌ساله برای دارایی‌های هش‌دار، یک قلم WOFF2 و <code>defer</code>.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>بودجهٔ جدول در CI با Lighthouse؛ CDN با کش HTML؛ قلم زیرمجموعه.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۷</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 18. ANALYTICS ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۱۳ · تحلیل و ردیابی</span><span class="l">S-19 · S-14</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۳ · تحلیل و ردیابی</span><span class="l">S-19 · S-14</span></div>
   <div class="secnum">۱۳</div>
   <h2 class="sec">تحلیل و ردیابی</h2>
   <p>هیچ ابزار تحلیلی در ممیزی قابل تأیید نبود (<span class="id">S-19</span>). سرود به آمار بازدید ساده نیاز ندارد؛ به دانستن این نیاز دارد که کاربران چه می‌فرستند، کجا وزن پیدا نمی‌شود و کدام وزن‌ها بیشترین تقاضا را دارند. این داده مستقیماً به صفحهٔ دقت و اولویت‌بندی بهبود موتور می‌خورد (<span class="id">S-14</span>). پیشنهاد: تحلیل حریم‌خصوصی‌محور، بدون کوکی، خودمیزبان، سازگار با CSP بخش ۱۱.</p>
@@ -1104,13 +1203,13 @@ form.addEventListener('submit', async e =&gt; {
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>Search Console + یک ابزار بدون‌کوکی با سه رویداد: submit، result، none.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>هر ۸ رویداد، داشبورد ماهانه، خروجی خودکار برای صفحهٔ دقت و سیاست حفظ داده ۱۲ ماهه در صفحهٔ درباره.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۸</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 19. CONTENT + CREDIBILITY ============ -->
 <section class="page">
   <div class="mashq" style="font-size:110pt;opacity:.045;left:-6mm;bottom:14mm;transform:rotate(-8deg)">اعتبار</div>
-  <div class="head"><span>بخش ۱۴ · محتوا، اعتبار و روایت دقت</span><span class="l">S-11 · S-12 · S-13 · S-14</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۴ · محتوا، اعتبار و روایت دقت</span><span class="l">S-11 · S-12 · S-13 · S-14</span></div>
   <div class="secnum">۱۴</div>
   <h2 class="sec">محتوا، اعتبار و روایت دقت</h2>
   <p>رقبا عدد می‌گویند: وزن‌یاب نوسخن «۹۷٫۸٪ روی بیش از ۶۰ هزار بیت در ۵۰ وزن»، وبگاه عروض «مقالهٔ کنفرانسی». برای سرود، با موتوری که گنجور به آن تکیه می‌کند، هیچ عدد دقتی در نتایج جستجو یافت نشد؛ در عوض جملهٔ «بعضاً خطا دارد» گنجور در ده‌ها صفحه تکرار می‌شود (<span class="id">S-13</span><span class="id">S-14</span>). این بخش، روایت را به دست سرود برمی‌گرداند.</p>
@@ -1151,58 +1250,102 @@ form.addEventListener('submit', async e =&gt; {
     <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>صفحهٔ دقت با یک سنجش روی ۲ هزار بیت، صفحهٔ تغییرات، دکمهٔ گزارش خطا با ایمیل.</li></ul></div>
     <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>سنجش ۱۰ هزار بیتی فصلی، حلقهٔ بازخورد ساخت‌یافته، گزارش سالانه، پیوند متقابل با گنجور و ویجت.</li></ul></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۱۹</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 20. FEATURES 1 ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۱۵ · فیچرهای پیشنهادی (۱ از ۲)</span><span class="l">features</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۵ · فیچرهای پیشنهادی (۱ از ۳)</span><span class="l">features</span></div>
   <div class="secnum">۱۵</div>
   <h2 class="sec">فیچرهای پیشنهادی</h2>
-  <p>این بخش عمداً از بازطراحی جدا شده است. هر فیچر با شناسهٔ F و اولویت (۱ = بیشترین بازده به کار) آمده و به مشکلی در گزارش ممیزی گره خورده است. هیچ‌کدام موتور تشخیص را تغییر نمی‌دهد؛ همه لایه‌ای روی خروجی فعلی‌اند.</p>
+  <p>این بخش عمداً از بازطراحی جدا شده است. هر فیچر با شناسهٔ F و اولویت (۱ = بیشترین بازده به کار) آمده و به مشکلی در گزارش ممیزی گره خورده است. هیچ‌کدام موتور تشخیص وزن را تغییر نمی‌دهد؛ همه لایه‌ای روی خروجی فعلی‌اند. سه فیچرِ اول، ستون فقرات «سرودِ تازه» هستند و پیش از نوشتن، اصول ادبی‌شان با منابع درسی و دانشنامه‌ای بازبینی شده است.</p>
   <div class="fgrid">
+    <div class="fcard hero"><div class="ft"><b>F-14 · شعر نو (نیمایی)</b><span class="pri">شاخص</span></div>تشخیص رکن پایه و نمایش سطرهای کوتاه و بلند روی یک شبکهٔ مشترک؛ حالت «خودکار / کلاسیک / نیمایی» در فرم. اصول، قاعدهٔ تطبیق و طراحی نمایش در بخش ۱۶. <span class="id">S-13</span><span class="id">S-18</span></div>
+    <div class="fcard hero"><div class="ft"><b>F-11 · قافیه و ردیف</b><span class="pri">شاخص</span></div>در هر بیت، <b>ردیف</b> (واژهٔ عیناً تکرارشونده پس از قافیه) و <b>قافیه</b> جدا و رنگ‌آمیزی می‌شود؛ سپس <b>حروف قافیه</b> نام‌گذاری می‌شود: روی، ردف، تأسیس، دخیل، قید، وصل، خروج. خروجی ساده برای کاربر عمومی: «قافیه به مصوت بلند <i>ā</i> + صامت <i>n</i> ختم می‌شود». برای پژوهشگر: الگوی قافیهٔ کل شعر و <b>عیوب قافیه</b> (اقوا، اکفا، سناد، ایطا). <span class="id">S-13</span><span class="id">S-20</span></div>
+  </div>
+  <div class="box" style="margin-top:3mm;padding:3.5mm 4mm">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2mm"><b>نمونهٔ نمایش قافیه و ردیف</b><span class="legend" style="font-size:7.8pt"><span><i style="background:rgba(201,162,90,.5);border-bottom:2px solid var(--gold)"></i>قافیه</span><span><i style="background:rgba(24,39,62,.15);border-bottom:2px dotted var(--navy)"></i>ردیف</span></span></div>
+    <div class="rhyme"><span class="w">خمی که ابروی شوخ تو در</span><span class="w q">کمان</span><span class="w r">انداخت</span><span class="m">/</span><span class="w">به قصد جان من زار</span><span class="w q">ناتوان</span><span class="w r">انداخت</span></div>
+    <div style="display:flex;gap:5mm;flex-wrap:wrap;font-size:8.6pt;margin-top:2mm;color:var(--ink-2)">
+      <span><b style="color:var(--ink)">ردیف:</b> انداخت</span>
+      <span><b style="color:var(--ink)">قافیه:</b> کمان / ناتوان</span>
+      <span><b style="color:var(--ink)">حروف قافیه:</b> ردف «ا» + روی «ن» ← «ـان»</span>
+      <span><b style="color:var(--ink)">پایانه:</b> مصوت بلند <span class="ltr">ā</span> + صامت <span class="ltr">n</span></span>
+      <span><b style="color:var(--ink)">شاعر:</b> حافظ</span>
+    </div>
+  </div>
+  <div class="fgrid" style="margin-top:3mm">
+    <div class="fcard hero"><div class="ft"><b>F-15 · تشخیص قالب شعر</b><span class="pri">شاخص</span></div>از ترکیب <b>الگوی قافیه</b>، <b>تعداد بیت</b> و <b>وزن</b>، قالب حدس زده می‌شود و با درجهٔ اطمینان نمایش می‌یابد. جدول قواعد در صفحهٔ بعد؛ در تساوی الگو (غزل/قصیده، رباعی/دوبیتی) به‌جای حکم قطعی، دو گزینه با دلیل داده می‌شود. <span class="id">S-13</span><span class="id">S-20</span></div>
+    <div class="fcard"><div class="ft"><b>F-16 · نام‌گذاری اختیارات شاعری</b><span class="pri">اولویت ۲</span></div>وقتی هجایی به‌کمک اختیار شاعری با وزن هم‌خوان شده (بلندشمردنِ هجای پایان، ابدال، قلب، حذف همزه، تغییر کمیت مصوت)، نام همان اختیار زیر هجا می‌آید؛ برای دانش‌آموز علوم و فنون ادبی، همین اسم مسئله‌ی امتحان است. <span class="id">S-18</span><span class="id">S-20</span><br><span class="mi">حداقل: علامت «اختیار» بدون نام.</span> <span class="idl">ایده‌آل: نام + پیوند به راهنما.</span></div>
     <div class="fcard"><div class="ft"><b>F-01 · لینک دائمی نتیجه</b><span class="pri">اولویت ۱</span></div>هر نتیجه یک URL کوتاه می‌گیرد (<code>/r/8k2f</code>) که همان کارت وزن را باز می‌کند؛ پایهٔ اشتراک‌گذاری و بک‌لینک. <span class="id">S-05</span><span class="id">S-11</span><br><span class="mi">حداقل: URL با پارامتر متن رمزشده.</span> <span class="idl">ایده‌آل: ذخیرهٔ سرور، تاریخ انقضا اختیاری، تصویر OG.</span></div>
     <div class="fcard"><div class="ft"><b>F-02 · کپی و خروجی</b><span class="pri">اولویت ۱</span></div>کپی متنی (نام وزن + الگو + متن)، PNG کارت با هویت سایت، و چاپ سیاه‌وسفید با نشانه‌ها. <span class="id">S-18</span><br><span class="mi">حداقل: کپی متنی.</span> <span class="idl">ایده‌آل: تصویر با Canvas در مرورگر، بدون بار سرور.</span></div>
-    <div class="fcard"><div class="ft"><b>F-03 · تاریخچهٔ محلی</b><span class="pri">اولویت ۲</span></div>۱۰ بررسی اخیر در <code>localStorage</code> با امکان پاک‌کردن؛ بدون حساب کاربری، بدون سرور. <span class="id">S-18</span><br><span class="mi">حداقل: فهرست متنی.</span> <span class="idl">ایده‌آل: کارت‌های کوچک با نام وزن و بازگشایی یک‌کلیکی.</span></div>
-    <div class="fcard"><div class="ft"><b>F-04 · تصحیح دستی و بازخورد</b><span class="pri">اولویت ۱</span></div>کاربر می‌تواند روی هجایی کلیک کند و کوتاه/بلند بودنش را عوض کند؛ سرود دوباره وزن را می‌سنجد و اختلاف را به‌عنوان بازخورد ثبت می‌کند. <span class="id">S-13</span><span class="id">S-14</span><br><span class="mi">حداقل: فرم «گزارش خطا».</span> <span class="idl">ایده‌آل: ویرایش درجا + صف بازبینی.</span></div>
-    <div class="fcard"><div class="ft"><b>F-05 · چند وزن محتمل با اطمینان</b><span class="pri">اولویت ۲</span></div>وقتی هم‌خوانی کامل نیست، ۲ تا ۳ گزینه با نسبت هجاهای منطبق؛ انتخاب کاربر ثبت می‌شود. <span class="id">S-14</span><span class="id">S-18</span><br><span class="mi">حداقل: نمایش گزینهٔ دوم.</span> <span class="idl">ایده‌آل: نوار اطمینان و یادگیری از انتخاب‌ها.</span></div>
-    <div class="fcard"><div class="ft"><b>F-06 · API عمومی مستند</b><span class="pri">اولویت ۲</span></div>همان رابطی که گنجور استفاده می‌کند، با مستند OpenAPI، کلید رایگان و محدودیت نرخ؛ هر مصرف‌کننده یک ارجاع. <span class="id">S-11</span><span class="id">S-15</span><br><span class="mi">حداقل: صفحهٔ مستند + محدودیت نرخ.</span> <span class="idl">ایده‌آل: کلید API، نسخه‌بندی، نمونه‌کد.</span></div>
-    <div class="fcard"><div class="ft"><b>F-07 · ویجت قابل جاسازی</b><span class="pri">اولویت ۳</span></div>یک <code>&lt;iframe&gt;</code> یا اسکریپت سبک برای وبلاگ‌های شعر و کلاس‌های مجازی؛ برند سرود روی هر جاسازی. <span class="id">S-11</span><br><span class="mi">حداقل: iframe صفحهٔ اصلی در حالت فشرده.</span> <span class="idl">ایده‌آل: ویجت سفارشی‌پذیر با رنگ میزبان.</span></div>
-    <div class="fcard"><div class="ft"><b>F-08 · اشعار هم‌وزن از گنجور</b><span class="pri">اولویت ۲</span></div>پس از تشخیص، ۳ بیت مشهور با همان وزن از API گنجور؛ پیوند دوطرفه و تجربهٔ آموزشی. <span class="id">S-11</span><span class="id">S-20</span><br><span class="mi">حداقل: پیوند به صفحهٔ آمار وزن در گنجور.</span> <span class="idl">ایده‌آل: نمایش درجا با کش سمت سرود.</span></div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۲۰</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 21. FEATURES 2 ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۱۵ · فیچرهای پیشنهادی (۲ از ۲)</span><span class="l">features</span></div>
-  <div class="fgrid">
-    <div class="fcard"><div class="ft"><b>F-09 · حالت آموزشی گام‌به‌گام</b><span class="pri">اولویت ۲</span></div>نمایش تقطیع در سه گام: هجابندی → تعیین کوتاه/بلند → تطبیق با ارکان؛ برای دانش‌آموزان علوم و فنون ادبی. <span class="id">S-13</span><span class="id">S-20</span><br><span class="mi">حداقل: کلید «نمایش مراحل» با سه بلوک متنی.</span> <span class="idl">ایده‌آل: انیمیشن مرحله‌ای و تمرین تعاملی.</span></div>
-    <div class="fcard"><div class="ft"><b>F-10 · تحلیل کل شعر</b><span class="pri">اولویت ۲</span></div>برای ورودی چندبیتی، گزارش یکپارچه: وزن غالب، ابیات ناهم‌خوان، جدول هجا به تفکیک بیت؛ همان چیزی که گنجور برای بخش‌های چندوزنی نیاز دارد. <span class="id">S-14</span><br><span class="mi">حداقل: نشانه‌گذاری ابیات ناهم‌خوان.</span> <span class="idl">ایده‌آل: خروجی CSV/JSON برای پژوهشگران.</span></div>
-    <div class="fcard"><div class="ft"><b>F-11 · تشخیص قافیه و ردیف</b><span class="pri">اولویت ۳</span></div>کنار وزن، قافیه و ردیف هر بیت رنگ‌آمیزی و نام‌گذاری شود؛ سرود از «وزن‌یاب» به «عروض و قافیه» ارتقا می‌یابد. <span class="id">S-13</span><br><span class="mi">حداقل: برجسته‌کردن واژهٔ پایانی مشترک.</span> <span class="idl">ایده‌آل: تشخیص حروف قافیه و عیوب رایج.</span></div>
-    <div class="fcard"><div class="ft"><b>F-12 · PWA و کار آفلاین</b><span class="pri">اولویت ۳</span></div>نصب روی موبایل، کش پوسته و فهرست اوزان؛ در قطعی سرور (<span class="id">S-02</span>) دست‌کم راهنما و فهرست اوزان در دسترس می‌ماند.<br><span class="mi">حداقل: manifest و آیکون.</span> <span class="idl">ایده‌آل: service worker با کش صفحات ایستا.</span></div>
-    <div class="fcard"><div class="ft"><b>F-13 · صفحهٔ وزن با «تمرین»</b><span class="pri">اولویت ۳</span></div>در هر صفحهٔ وزن، یک تمرین: «این بیت را تقطیع کنید» با پاسخ پنهان؛ برای کلاس‌ها و ماندگاری کاربر. <span class="id">S-20</span><br><span class="mi">حداقل: یک تمرین ایستا.</span> <span class="idl">ایده‌آل: تمرین تصادفی از پیکرهٔ گنجور.</span></div>
-    <div class="fcard"><div class="ft"><b>F-14 · بخش نیمایی (اختیاری)</b><span class="pri">اولویت ۲</span></div>تشخیص و نمایش وزن نیمایی با سطرهای کوتاه و بلند؛ تمایزی که در صفحات ایندکس‌شدهٔ رقبا دیده نشد (فرضِ نیازمند بررسی مستقیم).<br><span class="mi">حداقل و ایده‌آل در بخش ۱۶.</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۵ · فیچرهای پیشنهادی (۲ از ۳)</span><span class="l">features · forms</span></div>
+  <h2 class="sec" style="font-size:20pt">قواعد تشخیص قالب (F-15)</h2>
+  <p style="font-size:9.2pt">حروف در ستون «الگوی قافیه» بیت‌ها را نشان می‌دهند؛ حرف یکسان یعنی هم‌قافیه. قواعد از منابع درسی و دانشنامه‌ای است و آن‌جا که الگوها یکسان‌اند، سرود مثل خود منابع، تفکیک را به تعداد بیت، وزن و محتوا می‌سپارد.</p>
+  <div class="tbl"><table class="forms">
+    <thead><tr><th style="width:18mm">قالب</th><th style="width:34mm">الگوی قافیه</th><th>قاعدهٔ تشخیص در سرود</th><th style="width:38mm">تفکیک از قالب هم‌الگو</th></tr></thead>
+    <tbody>
+      <tr><td>مثنوی</td><td><span class="pat">aa bb cc dd</span></td><td>هر بیت قافیهٔ مستقل؛ دو مصراع هر بیت هم‌قافیه؛ وزن واحد؛ تعداد بیت آزاد.</td><td>—</td></tr>
+      <tr><td>غزل</td><td><span class="pat">aa ba ca da</span></td><td>مصراع اول با همهٔ مصراع‌های دوم هم‌قافیه (مطلع مصرّع)؛ وزن واحد.</td><td>قصیده: معمولاً بلندتر و با محتوای مدح/وصف؛ سرود فقط «غزل یا قصیده» می‌گوید و تعداد بیت را نشان می‌دهد.</td></tr>
+      <tr><td>قصیده</td><td><span class="pat">aa ba ca …</span></td><td>همان الگوی غزل با شمار بیت بیشتر.</td><td>همان بالا.</td></tr>
+      <tr><td>قطعه</td><td><span class="pat">ab cb db</span></td><td>مطلع مصرّع ندارد؛ فقط مصراع‌های دوم هم‌قافیه‌اند.</td><td>—</td></tr>
+      <tr><td>رباعی</td><td><span class="pat">aaba</span> یا <span class="pat">aaaa</span></td><td>دو بیت؛ الگوی بالا؛ وزن از خانوادهٔ «لا حول ولا قوة الا بالله» (شجرهٔ اخرب و اخرم بحر هزج؛ به قول شمیسا یک وزن با یازده وزن فرعی).</td><td>دوبیتی: همان الگو، اما وزن «مفاعیلن مفاعیلن فعولن» (هزج مسدس محذوف). این‌جا وزن حکم قطعی می‌دهد.</td></tr>
+      <tr><td>دوبیتی</td><td><span class="pat">aaba</span></td><td>دو بیت با وزن مفاعیلن مفاعیلن فعولن.</td><td>همان بالا.</td></tr>
+      <tr><td>ترجیع‌بند / ترکیب‌بند</td><td>بندهای غزل‌گونه + بیتِ برگردان</td><td>چند بند با الگوی غزل؛ اگر بیتِ میان‌بند یکسان تکرار شود ترجیع‌بند، اگر هر بار متفاوت باشد ترکیب‌بند.</td><td>سرود بندها را جدا می‌کند و برگردان را برجسته می‌کند.</td></tr>
+      <tr><td>مسمّط</td><td>بندهای چندمصراعی با مصراع پایانیِ هم‌قافیه</td><td>تشخیص بند و مصراع بند.</td><td>—</td></tr>
+      <tr><td>نیمایی</td><td>آزاد / نامنظم</td><td>سطرهای نابرابر با رکن ثابت (بخش ۱۶)؛ قافیه اختیاری است و اگر باشد برجسته می‌شود.</td><td>سپید: بی‌وزن؛ سرود صریحاً «خارج از پوشش» می‌گوید.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="opts" style="margin-top:3mm">
+    <div class="opt min"><div class="t"><span class="k"></span>حداقل قابل قبول</div><ul><li>ردیف و قافیه با مقایسهٔ پایانهٔ مصراع‌ها؛ الگوی قافیه به حروف؛ تشخیص مثنوی، غزل/قصیده، قطعه، رباعی/دوبیتی.</li><li>حروف قافیه فقط «روی» و «ردف».</li></ul></div>
+    <div class="opt ideal"><div class="t"><span class="k"></span>راه‌حل ایده‌آل</div><ul><li>همهٔ حروف قافیه و عیوب چهارگانه؛ تفکیک رباعی/دوبیتی با وزن؛ بندبندی ترجیع/ترکیب/مسمط.</li><li>مجموعهٔ آزمون قافیه و قالب از پیکرهٔ گنجور (که برچسب قالب دارد) و گزارش دقت در صفحهٔ «دقت» (بخش ۱۴).</li></ul></div>
   </div>
-  <h3 style="margin-top:5mm">ماتریس اولویت‌بندی</h3>
-  <table style="font-size:8.8pt">
+  <h3 style="margin-top:2mm">ماتریس اولویت‌بندی</h3>
+  <table style="font-size:8.2pt;line-height:1.5">
     <thead><tr><th>اولویت</th><th>فیچرها</th><th>چرا</th></tr></thead>
     <tbody>
+      <tr><td class="c"><span class="pri">شاخص</span></td><td>F-14، F-11، F-15</td><td>تمایز محصول: شعر نو، قافیه و ردیف، قالب. با هم یک «تحلیل‌گر شعر» می‌سازند، نه فقط وزن‌یاب.</td></tr>
       <tr><td class="c"><span class="pri">۱</span></td><td>F-01، F-02، F-04</td><td>کم‌کار، بدون تغییر موتور، مستقیماً به اشتراک‌گذاری و اعتبار (S-11، S-14) می‌خورند.</td></tr>
-      <tr><td class="c"><span class="pri">۲</span></td><td>F-03، F-05، F-06، F-08، F-09، F-10، F-14</td><td>ارزش آموزشی و رقابتی بالا؛ به صفحات پشتیبان و داده‌های تحلیل وابسته‌اند.</td></tr>
-      <tr><td class="c"><span class="pri">۳</span></td><td>F-07، F-11، F-12، F-13</td><td>گسترش دامنهٔ محصول؛ بعد از تثبیت پایه معنا دارند.</td></tr>
+      <tr><td class="c"><span class="pri">۲</span></td><td>F-05، F-06، F-08، F-09، F-10، F-16</td><td>ارزش آموزشی و رقابتی بالا؛ به صفحات پشتیبان و داده‌های تحلیل وابسته‌اند.</td></tr>
+      <tr><td class="c"><span class="pri">۳</span></td><td>F-03، F-07، F-12، F-13</td><td>گسترش دامنهٔ محصول؛ بعد از تثبیت پایه معنا دارند.</td></tr>
     </tbody>
   </table>
+  
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
+</section>
+
+<!-- ============ 21b. FEATURES 3 ============ -->
+<section class="page">
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۵ · فیچرهای پیشنهادی (۳ از ۳)</span><span class="l">features · backlog</span></div>
+  <div class="fgrid">
+            <div class="fcard"><div class="ft"><b>F-04 · تصحیح دستی و بازخورد</b><span class="pri">اولویت ۱</span></div>کاربر روی هجایی کلیک می‌کند و کوتاه/بلند بودنش را عوض می‌کند؛ سرود دوباره می‌سنجد و اختلاف را به‌عنوان بازخورد ثبت می‌کند. <span class="id">S-13</span><span class="id">S-14</span><br><span class="mi">حداقل: فرم «گزارش خطا».</span> <span class="idl">ایده‌آل: ویرایش درجا + صف بازبینی.</span></div>
+    <div class="fcard"><div class="ft"><b>F-05 · چند وزن محتمل با اطمینان</b><span class="pri">اولویت ۲</span></div>وقتی هم‌خوانی کامل نیست، ۲ تا ۳ گزینه با نسبت هجاهای منطبق؛ انتخاب کاربر ثبت می‌شود. <span class="id">S-14</span><span class="id">S-18</span><br><span class="mi">حداقل: نمایش گزینهٔ دوم.</span> <span class="idl">ایده‌آل: نوار اطمینان و یادگیری از انتخاب‌ها.</span></div>
+    <div class="fcard"><div class="ft"><b>F-06 · API عمومی مستند</b><span class="pri">اولویت ۲</span></div>همان رابطی که گنجور استفاده می‌کند، با مستند OpenAPI، کلید رایگان و محدودیت نرخ؛ هر مصرف‌کننده یک ارجاع. <span class="id">S-11</span><span class="id">S-15</span><br><span class="mi">حداقل: صفحهٔ مستند + محدودیت نرخ.</span> <span class="idl">ایده‌آل: کلید API، نسخه‌بندی، پارامتر <code>mode</code> برای نیمایی و قافیه.</span></div>
+    <div class="fcard"><div class="ft"><b>F-08 · اشعار هم‌وزن از گنجور</b><span class="pri">اولویت ۲</span></div>پس از تشخیص، ۳ بیت مشهور با همان وزن از API گنجور؛ پیوند دوطرفه و تجربهٔ آموزشی. <span class="id">S-11</span><span class="id">S-20</span><br><span class="mi">حداقل: پیوند به صفحهٔ آمار وزن در گنجور.</span> <span class="idl">ایده‌آل: نمایش درجا با کش سمت سرود.</span></div>
+    <div class="fcard"><div class="ft"><b>F-09 · حالت آموزشی گام‌به‌گام</b><span class="pri">اولویت ۲</span></div>تقطیع در سه گام: هجابندی → کوتاه/بلند → تطبیق با ارکان؛ برای دانش‌آموزان علوم و فنون ادبی. <span class="id">S-13</span><span class="id">S-20</span><br><span class="mi">حداقل: کلید «نمایش مراحل».</span> <span class="idl">ایده‌آل: تمرین تعاملی با پاسخ پنهان.</span></div>
+    <div class="fcard"><div class="ft"><b>F-10 · تحلیل کل شعر</b><span class="pri">اولویت ۲</span></div>برای ورودی چندبیتی: وزن غالب، ابیات ناهم‌خوان، جدول هجا به تفکیک بیت؛ همان چیزی که گنجور برای بخش‌های چندوزنی نیاز دارد. <span class="id">S-14</span><br><span class="mi">حداقل: نشانه‌گذاری ابیات ناهم‌خوان.</span> <span class="idl">ایده‌آل: خروجی CSV/JSON برای پژوهشگران.</span></div>
+    <div class="fcard"><div class="ft"><b>F-03 · تاریخچهٔ محلی</b><span class="pri">اولویت ۳</span></div>۱۰ بررسی اخیر در <code>localStorage</code> با امکان پاک‌کردن؛ بدون حساب کاربری. <span class="id">S-18</span><br><span class="mi">حداقل: فهرست متنی.</span> <span class="idl">ایده‌آل: کارت‌های کوچک با بازگشایی یک‌کلیکی.</span></div>
+    <div class="fcard"><div class="ft"><b>F-07 · ویجت قابل جاسازی</b><span class="pri">اولویت ۳</span></div>یک <code>&lt;iframe&gt;</code> یا اسکریپت سبک برای وبلاگ‌های شعر و کلاس‌های مجازی؛ برند سرود روی هر جاسازی. <span class="id">S-11</span><br><span class="mi">حداقل: iframe صفحهٔ اصلی.</span> <span class="idl">ایده‌آل: ویجت سفارشی‌پذیر با رنگ میزبان.</span></div>
+    <div class="fcard"><div class="ft"><b>F-12 · PWA و کار آفلاین</b><span class="pri">اولویت ۳</span></div>نصب روی موبایل، کش پوسته و فهرست اوزان؛ در قطعی سرور دست‌کم راهنما در دسترس می‌ماند. <span class="id">S-02</span><br><span class="mi">حداقل: manifest و آیکون.</span> <span class="idl">ایده‌آل: service worker با کش صفحات ایستا.</span></div>
+    <div class="fcard"><div class="ft"><b>F-13 · صفحهٔ وزن با «تمرین»</b><span class="pri">اولویت ۳</span></div>در هر صفحهٔ وزن یک تمرین: «این بیت را تقطیع کنید» با پاسخ پنهان. <span class="id">S-20</span><br><span class="mi">حداقل: یک تمرین ایستا.</span> <span class="idl">ایده‌آل: تمرین تصادفی از پیکرهٔ گنجور.</span></div>
+  </div>
+  
   <div class="callout" style="margin-top:4mm">قاعدهٔ اجرا: هیچ فیچری بدون رویداد تحلیلی (بخش ۱۳) و بدون ردیف در صفحهٔ «تغییرات» (بخش ۷) منتشر نشود؛ این دو، ارزان‌ترین راه اثبات زنده‌بودن سرود هستند.</div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۲۱</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 22. NIMAIC 1 ============ -->
 <section class="page">
   <div class="mashq" style="font-size:96pt;opacity:.05;left:-4mm;top:6mm;transform:rotate(-7deg)">نیما</div>
-  <div class="head"><span>بخش ۱۶ · بخش اختیاری نیمایی (۱ از ۲)</span><span class="l">S-13 · F-14</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۶ · شعر نو، نیمایی (۱ از ۲)</span><span class="l">S-13 · F-14</span></div>
   <div class="secnum">۱۶</div>
-  <h2 class="sec">بخش اختیاری نیمایی</h2>
+  <h2 class="sec">شعر نو: بخش نیمایی</h2>
   <p style="margin-bottom:1.6mm">رفتار سرود در برابر شعر نیمایی در ممیزی آزموده نشد؛ اما پوشش اعلام‌شدهٔ آن «۷۱ وزن» کلاسیک است، پس محتمل است سطرهای نابرابرِ نیمایی بی‌پاسخ بمانند یا جداگانه سنجیده شوند. نخستین گام این بخش، آزمودن همین فرض است. چون شعر نیمایی «وزن عروضی دارد»، همان موتور هجابندی و شناخت ارکانِ سرود برای آن کافی است؛ تفاوت در قاعدهٔ تطبیق و در نمایش است. اصول زیر از منابع درسی و دانشگاهی نقل شده، نه استنباط شخصی.</p>
   <h3>اصول وزن نیمایی (مستند)</h3>
   <table style="font-size:7.6pt">
@@ -1253,12 +1396,12 @@ def nimaic(lines, base_feet, endings):
       <p style="font-size:8.4pt;margin-top:1.2mm"><b>محدودیت اعلام‌شدنی:</b> شعر سپید (بی‌وزن) و اشعارِ دارای تغییر رکن در میانهٔ شعر، خارج از این تعریف‌اند و باید با پیام روشن رد شوند، نه با خطای خاموش.</p>
     </div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۲۲</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 23. NIMAIC 2 ============ -->
 <section class="page">
-  <div class="head"><span>بخش ۱۶ · بخش اختیاری نیمایی (۲ از ۲)</span><span class="l">S-13 · S-18 · F-14</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">بخش ۱۶ · شعر نو، نیمایی (۲ از ۲)</span><span class="l">S-13 · S-18 · F-14</span></div>
   <h2 class="sec" style="font-size:20pt">طراحی نمایش نیمایی</h2>
   <p>نمایش نیمایی باید ناهم‌اندازگی سطرها را <b>نشان بدهد</b> نه پنهان کند؛ این ناهم‌اندازگی خودِ زیبایی‌شناسی نیمایی است. هر سطر روی یک شبکهٔ مشترک از رکن‌ها چیده می‌شود؛ رکن کامل با بلوک پُر، رکن ناقص پایانی با بلوک هاشورخورده، و خانه‌های خالی با خط‌چین. کاربر در یک نگاه می‌بیند سطر سوم دو رکن دارد و سطر پنجم شش رکن.</p>
   <div class="box" style="padding:4mm">
@@ -1298,14 +1441,14 @@ def nimaic(lines, base_feet, endings):
       </div>
     </div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۲۳</span></div>
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
 </section>
 
 <!-- ============ 24. APPENDIX ============ -->
 <section class="page">
-  <div class="head"><span>پیوست · جدول کامل مشکل → گزینه‌ها</span><span class="l">appendix</span></div>
+  <div class="head"><span><img class="mk" src="brand/mark-navy.png" alt="">پیوست · جدول کامل مشکل → گزینه‌ها</span><span class="l">appendix</span></div>
   <h2 class="sec" style="font-size:20pt">پیوست: هر مشکل، دو گزینه</h2>
-  <table style="font-size:7.9pt;line-height:1.5">
+  <table style="font-size:8pt;line-height:1.55">
     <thead><tr><th style="width:12mm">شناسه</th><th style="width:34mm">مشکل</th><th>حداقل قابل قبول</th><th>راه‌حل ایده‌آل</th></tr></thead>
     <tbody>
       <tr><td><span class="id">S-01</span></td><td>IP پویای مصرفی</td><td>تونل + CDN رایگان، IP خانگی از DNS حذف شود</td><td>VPS کوچک پشت CDN با WAF و پایش</td></tr>
@@ -1330,11 +1473,55 @@ def nimaic(lines, base_feet, endings):
       <tr><td><span class="id">S-20</span></td><td>نبود راهنما/درباره/اوزان</td><td>راهنما، درباره، فهرست اوزان تک‌صفحه‌ای</td><td>۶ صفحهٔ پشتیبان + صفحهٔ مستقل هر وزن + تمرین</td></tr>
     </tbody>
   </table>
-  <div style="position:absolute;right:15mm;left:15mm;bottom:20mm;border-top:1px solid var(--line);padding-top:3mm;display:flex;justify-content:space-between;align-items:flex-end">
-    <div style="font-size:8.6pt;color:var(--ink-2);line-height:1.7">منابع بخش نیمایی: کتاب علوم و فنون ادبی ۳ (درس ۸ و ۱۱)، ویکی‌پدیای فارسی «وزن شعر فارسی»، فرادرس «وزن عروضی چیست»، ویکی‌پدیای انگلیسی «She'r-e Nimaa'i».<br>منبع همهٔ شناسه‌ها: گزارش ممیزی sorud.info، ۲۰ شهریور ۱۴۰۵.</div>
-    <div style="font-family:'Azar';font-size:18pt;color:var(--lapis)">سرودِ تازه</div>
+  
+  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span class="brand">استودیو سرمه · زیبای اصیل</span><span class="num"></span></div>
+</section>
+
+
+<!-- ============ CLOSING ============ -->
+<section class="page" style="background:var(--navy);color:var(--cream)">
+  <div class="gridbg" style="opacity:.12;background-image:linear-gradient(rgba(243,234,218,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(243,234,218,.3) 1px,transparent 1px)"></div>
+  <div class="mashq" style="font-size:170pt;color:var(--cream);opacity:.05;right:-12mm;top:20mm;transform:rotate(-8deg)">سرمه</div>
+  <div class="head" style="border-color:rgba(243,234,218,.25);color:rgba(243,234,218,.75)"><span><img class="mk" src="brand/mark.png" alt="">منابع و راه گفت‌وگو</span><span class="l">sources · contact</span></div>
+  <h2 class="sec" style="color:var(--cream)">منابع این سند</h2>
+  <div class="two" style="font-size:8.9pt;line-height:1.75;color:rgba(243,234,218,.9)">
+    <div>
+      <h4 style="color:var(--gold)">شواهد سرود و رقبا</h4>
+      <ul style="padding-inline-start:4mm">
+        <li>گزارش ممیزی sorud.info، ۲۰ شهریور ۱۴۰۵ (منبع همهٔ شناسه‌های S)</li>
+        <li>تازه‌های گنجور، «تارنمای سرود: بررسی وزن و آهنگ شعر»، ۸ آذر ۱۳۹۶</li>
+        <li>گنجور، صفحات «آمار اوزان عروضی» و فهرست اشعار به تفکیک وزن</li>
+        <li>وبگاه عروض (prosody.ir)، وزن‌یاب نوسخن، خیالستان، شعرنو: صفحات ایندکس‌شده</li>
+      </ul>
+      <h4 style="color:var(--gold)">عروض، قافیه و قالب</h4>
+      <ul style="padding-inline-start:4mm">
+        <li>علوم و فنون ادبی ۳ (پایهٔ دوازدهم)، درس‌های ۸ و ۱۱</li>
+        <li>ویکی‌پدیای فارسی: «وزن شعر فارسی»، «رباعی»، «ققنوس (شعر)»، «نیما یوشیج»</li>
+        <li>فرادرس: «انواع قالب شعر»، «ردیف و قافیه چیست»، «رباعی چیست»</li>
+        <li>کانال شعر و دانشنامهٔ اسلامی: حروف و عیوب قافیه</li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="color:var(--gold)">فنی</h4>
+      <ul style="padding-inline-start:4mm">
+        <li>WCAG 2.1: معیارهای 1.4.1، 1.4.3، 1.4.11، 2.4.7، 4.1.3</li>
+        <li>مستندات nginx (add_header، http2، error_page)، Cloudflare Tunnel</li>
+        <li>schema.org: WebApplication، DefinedTerm، HowTo</li>
+        <li>web.dev: Core Web Vitals و بارگذاری فونت</li>
+      </ul>
+      <h4 style="color:var(--gold)">قلم‌های این سند</h4>
+      <ul style="padding-inline-start:4mm">
+        <li>آذر (عنوان‌ها)، درویش (متن)، ایران‌نستعلیق (سیاه‌مشق)</li>
+      </ul>
+    </div>
   </div>
-  <div class="foot"><span class="mbar"><i class="l"></i><i class="s"></i><i class="l"></i><i class="l"></i></span><span>پروپوزال بازطراحی سرود</span><span class="num">۲۴</span></div>
+  <div style="position:absolute;right:15mm;left:15mm;bottom:22mm;text-align:center">
+    <img src="brand/logo.png" alt="استودیو سرمه" style="height:46mm;width:auto">
+    <div style="font-family:'Azar';font-size:20pt;color:var(--cream);margin-top:3mm">استودیو سرمه</div>
+    <div style="font-family:'IranNastaliq';font-size:20pt;color:var(--gold);line-height:1.2">زیبای اصیل</div>
+    <div style="font-size:9pt;color:rgba(243,234,218,.75);margin-top:4mm;line-height:1.8">برای گفت‌وگو دربارهٔ این پیشنهاد و آغاز فاز صفر، پاسخ همین نامه کافی است.<br>سرودِ تازه را با هم بسازیم.</div>
+  </div>
+  <div class="foot" style="color:rgba(243,234,218,.7)"><span class="mbar"><i class="l" style="background:var(--gold)"></i><i class="s" style="background:var(--cream)"></i><i class="l" style="background:var(--gold)"></i><i class="l" style="background:var(--gold)"></i></span><span class="brand" style="color:rgba(243,234,218,.7)">استودیو سرمه · زیبای اصیل</span><span class="num" style="color:var(--gold)"></span></div>
 </section>
 
 </body>

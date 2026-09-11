@@ -5,7 +5,7 @@ Client-facing proposals built from the audit reports in `docs/audits/`.
 ## sorud-info-proposal-2026-09-11
 
 An executable redesign proposal for <https://sorud.info>, written in Persian and
-laid out as a 24-page A4 document. Every recommendation cites a problem ID
+laid out as a 28-page A4 document and presented by Studio Sormeh (brand assets in `brand/`). Every recommendation cites a problem ID
 (`S-01` .. `S-20`) from `docs/audits/sorud-info-audit-2026-09-11.md`, and every
 recommendation carries two options: a minimum acceptable one and an ideal one.
 
@@ -13,6 +13,8 @@ recommendation carries two options: a minimum acceptable one and an ideal one.
 | --- | --- |
 | `sorud-info-proposal-2026-09-11.pdf` | The deliverable. Fonts are embedded, so it renders identically anywhere. |
 | `sorud-info-proposal-2026-09-11.html` | The source the PDF is printed from. |
+| `brand/` | Studio Sormeh logo and mark, cream and navy variants, transparent PNG. |
+| `email-to-navid-fazel.md` | Verified public contact channels for the site author and a draft cover email (Persian, short form, German). |
 
 ### Rebuilding the PDF
 
@@ -33,7 +35,7 @@ fonts/IranNastaliq.ttf      decorative siah-mashq watermarks only, never running
 Then print it with a headless Chromium:
 
 ```sh
-chromium --headless=new --no-pdf-header-footer \
+chromium --headless=new --allow-file-access-from-files --no-pdf-header-footer \
   --print-to-pdf=sorud-info-proposal-2026-09-11.pdf \
   "file://$PWD/sorud-info-proposal-2026-09-11.html"
 ```
@@ -53,5 +55,5 @@ clearance as a defect. The committed version clears the footer on all 24 pages.
 
 Open the file with a query string to inspect it without printing:
 
-- `?review` lays all 24 pages out as a contact sheet.
+- `?review` lays all 28 pages out as a contact sheet.
 - `?page=12` renders a single page at A4 size.
