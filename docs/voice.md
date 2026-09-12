@@ -110,7 +110,46 @@ Hash kinds are never mixed:
 A matching hash is a content match against what the publisher indexed. It is
 not a security guarantee and not an independent signature.
 
-## Installing — only after the manifest is approved
+## One-click Windows setup
+
+For a person who wants no terminal at all:
+
+```
+Download the branch ZIP → extract → double-click START_PRIMEE_VOICE_WINDOWS.cmd
+→ read the Persian summary → type YES → hear the Haaniye test sentence
+```
+
+`START_PRIMEE_VOICE_WINDOWS.cmd` starts `tools\voice\Start-PrimeeVoice.ps1`
+in Windows PowerShell 5.1 with a process-scoped execution policy (no system
+setting is changed). The orchestrator, in order: checks Windows 10/11 and
+refuses to run elevated; locates the repository next to the launcher; finds
+Python 3.11 64-bit; proves Primee Core runs in text-only mode; checks free
+disk space; generates the pinned manifest from public metadata (nothing
+downloaded); validates it automatically (runtime 1.13.7, exact wheel names,
+sizes and reviewed SHA-256 values, 40-character model revision, every required
+model file including `espeak-ng-data/`, upstream `LICENSE` still `CC-0`);
+shows a Persian summary with all licence and provenance warnings; asks for one
+`YES`; only then calls `Install-PrimeeVoice.ps1 -Approve` with that manifest;
+confirms the installed runtime version; runs `primee voice speak` for one
+Persian test sentence (played through `winsound`, temporary WAV deleted by
+Primee); writes the seven-phrase benchmark to `%LOCALAPPDATA%\Primee\benchmarks`
+for listening. A sanitised diagnostic report (no account name, no home path,
+no spoken text) is written to `%LOCALAPPDATA%\Primee\diagnostics` on every run.
+
+The launcher never edits the repository's `config\*.local.toml` files: the test
+and the benchmark use a launcher-owned configuration folder under
+`%LOCALAPPDATA%\Primee\launcher`. It never deletes a pre-existing folder; if a
+runtime or model folder exists that the installer did not create, it stops and
+says so. `ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd` removes only what the installer and
+the launcher recorded as created, after one confirmation, without any Git
+command.
+
+`tests/test_voice_launcher.py` pins these properties statically (order of
+validate → summary → confirm → install, PowerShell 5.1 compatibility, UTF-8
+BOM for the Persian text, no policy or PATH change, no elevation). The first
+real Windows execution has not happened yet.
+
+## Installing by hand — only after the manifest is approved
 
 ```powershell
 # 1. read everything it would do; changes nothing
@@ -158,6 +197,7 @@ fallback stay; Haaniye does not become a default.
   half-duplex handling — none of it exists yet. `primee voice` prints a notice.
 - No Schweizerdeutsch text-to-speech.
 - Nothing in this step has run on the target Windows computer yet. The
-  PowerShell tools were reviewed statically (tests assert what they must not
-  contain) but not executed; the worker was not run against a real model.
+  PowerShell tools and the one-click launchers were reviewed statically (tests
+  assert what they must and must not contain) but not executed; the worker was
+  not run against a real model.
 - Performance is unknown until the benchmark runs on the i5-5300U.

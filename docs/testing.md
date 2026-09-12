@@ -55,6 +55,7 @@ invented.
 | `test_voice_service.py` | permission gate, disabled config, fallbacks, temp WAV deletion, audit without words, summary, transcript policy, benchmark |
 | `test_voice_cli.py` | `primee voice` notice, status, profile, speak fallback, benchmark refusal inside the repo, `doctor` |
 | `test_voice_hygiene.py` | no model or audio tracked, runtime and models ignored, sources not ignored, static checks on the PowerShell tools |
+| `test_voice_launcher.py` | the one-click Windows launchers: CRLF `.cmd` files, PowerShell 5.1 compatibility, UTF-8 BOM, validate → summary → confirm → install order, no elevation, no policy or PATH change, rollback limited to recorded paths |
 
 ## Platform-dependent results
 
