@@ -191,13 +191,48 @@ person listens and decides: **Accept**, **Accept temporarily**, or **Reject**.
 Primee does not decide. If rejected, the generic adapter and the text-only
 fallback stay; Haaniye does not become a default.
 
+## First listening result and tuning (2026-09-14)
+
+The complete one-click flow ran on the target Windows 10 computer: 362 model
+files verified, runtime created, sherpa-onnx 1.13.7 imported, the test
+sentence spoken through `winsound`, temporary audio deleted. The person's
+verdict, recorded in `profiles.py` as `listening_result`:
+
+| Question | Answer |
+| --- | --- |
+| Intelligible | yes |
+| Perceived gender | female (by listening; the documentation says nothing) |
+| Fluency | choppy, broken delivery |
+| Pronunciation | some words wrong |
+| Classification | **accept temporarily** |
+
+Two causes are under Primee's control and two are not:
+
+- the worker synthesised sentence by sentence (`max_num_sentences=1`), which
+  inserts pauses at every boundary: now `sentence_batch` (default 0 = whole
+  text at once);
+- the VITS sampling parameters were the engine defaults: now `speed`,
+  `noise_scale`, `noise_scale_w` in `[voice]`, passed to the worker per request;
+- the model is "low quality" by its own name: not fixable by settings;
+- Persian writing omits short vowels, so the espeak-ng phonemiser guesses them
+  for unknown words: mitigated, not solved, by an editable pronunciation
+  lexicon (`config/voice-lexicon.example.toml`, `[voice] lexicon = ...`) that
+  changes only what the engine hears, never what is shown or logged.
+
+`primee voice tune --output <dir>` (or `TUNE_PRIMEE_VOICE_WINDOWS.cmd`) writes
+the same sentence with five settings, opens the folder, and leaves the choice
+to the listener; the chosen values go into `voice.local.toml`. Primee does not
+choose. If the result stays unsatisfying, the next candidate is a Piper
+`fa_IR` medium voice (22.05 kHz), which needs a separate licence decision: its
+dataset licences are CC0 but the per-voice model licence is stated only at
+repository level.
+
 ## Not yet done, and not claimed
 
 - Speech-to-text, push-to-talk (F9 / Esc), the tkinter window, FFmpeg capture,
   half-duplex handling — none of it exists yet. `primee voice` prints a notice.
 - No Schweizerdeutsch text-to-speech.
-- Nothing in this step has run on the target Windows computer yet. The
-  PowerShell tools and the one-click launchers were reviewed statically (tests
-  assert what they must and must not contain) but not executed; the worker was
-  not run against a real model.
+- The install and test flow has run once on the target Windows computer
+  (2026-09-14). The tuning launcher and the lexicon have not run there yet;
+  they are covered by tests with a stand-in worker only.
 - Performance is unknown until the benchmark runs on the i5-5300U.

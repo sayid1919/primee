@@ -19,8 +19,9 @@ POWERSHELL_FILES = (
     "Install-PrimeeVoice.ps1",
     "Start-PrimeeVoice.ps1",
     "Rollback-PrimeeVoice.ps1",
+    "Tune-PrimeeVoice.ps1",
 )
-LAUNCHERS = ("START_PRIMEE_VOICE_WINDOWS.cmd", "ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd")
+LAUNCHERS = ("START_PRIMEE_VOICE_WINDOWS.cmd", "ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd", "TUNE_PRIMEE_VOICE_WINDOWS.cmd")
 
 #: Syntax or cmdlets that exist only in PowerShell 6/7 and would break 5.1.
 PS7_ONLY = (
@@ -61,7 +62,7 @@ class LauncherFileTests(unittest.TestCase):
             self.assertNotIn(b"\n", raw.replace(b"\r\n", b""), msg=f"{name} has a bare LF")
 
     def test_launchers_start_the_right_script_without_a_command_string(self):
-        for name, script in (("START_PRIMEE_VOICE_WINDOWS.cmd", "Start-PrimeeVoice.ps1"), ("ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd", "Rollback-PrimeeVoice.ps1")):
+        for name, script in (("START_PRIMEE_VOICE_WINDOWS.cmd", "Start-PrimeeVoice.ps1"), ("ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd", "Rollback-PrimeeVoice.ps1"), ("TUNE_PRIMEE_VOICE_WINDOWS.cmd", "Tune-PrimeeVoice.ps1")):
             text = (REPO_ROOT / name).read_text(encoding="ascii")
             self.assertIn("%~dp0tools\\voice\\" + script, text)
             self.assertIn('"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"', text)
@@ -296,6 +297,16 @@ class LauncherSafetyTests(unittest.TestCase):
         self.assertIn("function Test-Elevated", start)
         self.assertIn("if (Test-Elevated) { Stop-Launcher", start)
         self.assertIn("$osVersion.Major -lt 10", start)
+
+    def test_tune_launcher_only_writes_outside_the_repository_and_plays_nothing(self):
+        tune = strip_comments(read("Tune-PrimeeVoice.ps1"))
+        self.assertIn("'voice', 'tune', '--output', $benchmarkDir", tune)
+        self.assertIn("'--config', $launcherCfg", tune)
+        self.assertNotIn("Remove-Item", tune)
+        self.assertNotIn("'speak'", tune)
+        self.assertNotIn("winsound", tune)
+        self.assertIn("explorer.exe", tune)
+        self.assertIn("START_PRIMEE_VOICE_WINDOWS.cmd", tune, msg="must point at the installer when nothing is installed")
 
     def test_rollback_only_removes_recorded_paths_with_confirmation(self):
         rollback = strip_comments(read("Rollback-PrimeeVoice.ps1"))

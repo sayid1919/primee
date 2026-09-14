@@ -1,0 +1,16 @@
+# Primee - example pronunciation lexicon for the local text-to-speech engine.
+#
+# Copy to `voice-lexicon.local.toml` (git-ignored), then set in voice.local.toml:
+#   lexicon = "config/voice-lexicon.local.toml"
+#
+# Persian writing omits short vowels, so the phonemiser guesses them for words
+# outside its dictionary and sometimes guesses wrong. Map the written word to a
+# spelling that SOUNDS right, usually by adding vowel marks (َ ِ ُ) or a
+# hyphenated split. Rules are whole-word and never chained.
+#
+# These entries are illustrations of the mechanism, not verified pronunciations:
+# listen, then keep only what actually sounds right on your machine.
+
+[words]
+"پرایمی" = "پِرایمی"
+"metrics" = "مِتریکس"

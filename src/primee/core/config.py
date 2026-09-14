@@ -128,6 +128,14 @@ class VoiceSettings:
     max_spoken_chars: int = 240
     timeout_seconds: int = 60
     save_transcripts: bool = False
+    #: Synthesis tuning. Defaults are the engine defaults; the listening
+    #: benchmark (`primee voice tune`) exists to choose better ones by ear.
+    speed: float = 1.0
+    noise_scale: float = 0.667
+    noise_scale_w: float = 0.8
+    sentence_batch: int = 0
+    #: Optional pronunciation lexicon (TOML), applied to the spoken text only.
+    lexicon: Optional[str] = None
 
     @property
     def configured(self) -> bool:
@@ -216,6 +224,13 @@ class PrimeeConfig:
                 "player": self.voice.player,
                 "speak_summary_only": self.voice.speak_summary_only,
                 "save_transcripts": self.voice.save_transcripts,
+                "tuning": {
+                    "speed": self.voice.speed,
+                    "noise_scale": self.voice.noise_scale,
+                    "noise_scale_w": self.voice.noise_scale_w,
+                    "sentence_batch": self.voice.sentence_batch,
+                },
+                "lexicon_configured": bool(self.voice.lexicon),
             },
             "source_files": list(self.source_files),
         }
@@ -428,7 +443,31 @@ def _voice_settings(raw: Mapping[str, Any]) -> VoiceSettings:
         max_spoken_chars=_positive_int(raw.get("max_spoken_chars"), 240, "voice.max_spoken_chars"),
         timeout_seconds=_positive_int(raw.get("timeout_seconds"), 60, "voice.timeout_seconds"),
         save_transcripts=bool(raw.get("save_transcripts", False)),
+        speed=_bounded_float(raw.get("speed"), 1.0, 0.5, 2.0, "voice.speed"),
+        noise_scale=_bounded_float(raw.get("noise_scale"), 0.667, 0.0, 1.5, "voice.noise_scale"),
+        noise_scale_w=_bounded_float(raw.get("noise_scale_w"), 0.8, 0.0, 1.5, "voice.noise_scale_w"),
+        sentence_batch=_bounded_int(raw.get("sentence_batch"), 0, 0, 50, "voice.sentence_batch"),
+        lexicon=_optional_path("lexicon"),
     )
+
+
+def _bounded_float(value: Any, default: float, low: float, high: float, name: str) -> float:
+    if value is None:
+        return default
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        raise ConfigError(f"Setting '{name}' must be a number between {low} and {high}.")
+    number = float(value)
+    if not (low <= number <= high):
+        raise ConfigError(f"Setting '{name}' must be between {low} and {high}.")
+    return number
+
+
+def _bounded_int(value: Any, default: int, low: int, high: int, name: str) -> int:
+    if value is None:
+        return default
+    if not isinstance(value, int) or isinstance(value, bool) or not (low <= value <= high):
+        raise ConfigError(f"Setting '{name}' must be an integer between {low} and {high}.")
+    return value
 
 
 def _section(data: Mapping[str, Any], name: str) -> dict:

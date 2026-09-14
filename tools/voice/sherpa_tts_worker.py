@@ -81,6 +81,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--speed", type=float, default=1.0)
     parser.add_argument("--max-chars", type=int, default=240)
     parser.add_argument("--threads", type=int, default=1)
+    # VITS sampling parameters. Lower noise tends to sound steadier; noise_scale_w
+    # shapes phoneme-duration variance. 0 sentences = synthesise the whole text at
+    # once instead of sentence by sentence (fewer artificial pauses).
+    parser.add_argument("--noise-scale", type=float, default=0.667)
+    parser.add_argument("--noise-scale-w", type=float, default=0.8)
+    parser.add_argument("--max-sentences", type=int, default=0)
     return parser.parse_args(argv)
 
 
@@ -136,6 +142,10 @@ def main(argv: list[str]) -> int:
         _fail("BAD_ARGUMENTS", "speed must be between 0.5 and 2.0")
     if not (1 <= args.threads <= 4):
         _fail("BAD_ARGUMENTS", "threads must be between 1 and 4")
+    if not (0.0 <= args.noise_scale <= 1.5) or not (0.0 <= args.noise_scale_w <= 1.5):
+        _fail("BAD_ARGUMENTS", "noise scales must be between 0.0 and 1.5")
+    if not (0 <= args.max_sentences <= 50):
+        _fail("BAD_ARGUMENTS", "max sentences must be between 0 and 50")
 
     text = read_text(args.max_chars)
 
@@ -152,13 +162,16 @@ def main(argv: list[str]) -> int:
                     lexicon="",
                     tokens=str(args.tokens),
                     data_dir=str(args.data_dir),
+                    noise_scale=float(args.noise_scale),
+                    noise_scale_w=float(args.noise_scale_w),
+                    length_scale=1.0,
                 ),
                 provider="cpu",
                 debug=False,
                 num_threads=args.threads,
             ),
             rule_fsts="",
-            max_num_sentences=1,
+            max_num_sentences=int(args.max_sentences),
         )
         if not config.validate():
             _fail("MODEL_CONFIG_INVALID", "sherpa-onnx rejected the model configuration", status=4)
@@ -196,6 +209,12 @@ def main(argv: list[str]) -> int:
                 "peak_memory_kb": peak_kb,
                 "peak_memory_note": peak_note,
                 "characters": len(text),
+                "parameters": {
+                    "speed": args.speed,
+                    "noise_scale": args.noise_scale,
+                    "noise_scale_w": args.noise_scale_w,
+                    "max_sentences": args.max_sentences,
+                },
             },
             ensure_ascii=True,
         )

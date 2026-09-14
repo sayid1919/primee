@@ -36,6 +36,9 @@ p.add_argument("--speaker-id", type=int, default=0)
 p.add_argument("--speed", type=float, default=1.0)
 p.add_argument("--max-chars", type=int, default=240)
 p.add_argument("--threads", type=int, default=1)
+p.add_argument("--noise-scale", type=float, default=0.667)
+p.add_argument("--noise-scale-w", type=float, default=0.8)
+p.add_argument("--max-sentences", type=int, default=0)
 a = p.parse_args()
 text = sys.stdin.buffer.read().decode("utf-8")
 behaviour_file = os.path.join(os.path.dirname(a.model), "behaviour.txt")
@@ -54,6 +57,9 @@ if behaviour == "env":
     sys.stdout.write(json.dumps({"schema": "env-dump", "env": dict(os.environ), "argv0": sys.argv[0], "flags": {"isolated": sys.flags.isolated}}) + "\n"); sys.exit(0)
 if behaviour == "echo":
     sys.stdout.write(json.dumps({"schema": "echo", "text": text}) + "\n"); sys.exit(0)
+if behaviour == "record":
+    with open(os.path.join(os.path.dirname(a.model), "last-request.json"), "w", encoding="utf-8") as h:
+        json.dump({"text": text, "speed": a.speed, "noise_scale": a.noise_scale, "noise_scale_w": a.noise_scale_w, "max_sentences": a.max_sentences}, h, ensure_ascii=False)
 rate = 16000
 frames = int(rate * 0.25)
 if behaviour != "nowav":

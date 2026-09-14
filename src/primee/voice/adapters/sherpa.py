@@ -193,6 +193,12 @@ class SherpaTtsAdapter:
             f"{float(request.speed):.2f}",
             "--max-chars",
             str(len(request.text)),
+            "--noise-scale",
+            f"{float(request.noise_scale):.3f}",
+            "--noise-scale-w",
+            f"{float(request.noise_scale_w):.3f}",
+            "--max-sentences",
+            str(int(request.sentence_batch)),
         )
         outcome = self.runner().run(
             ProcessSpec(
@@ -246,6 +252,7 @@ class SherpaTtsAdapter:
             peak_memory_kb=payload.get("peak_memory_kb"),
             peak_memory_note=str(payload.get("peak_memory_note", ""))[:200],
             warnings=tuple(warnings),
+            parameters=request.parameters(),
         )
 
 

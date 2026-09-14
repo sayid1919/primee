@@ -135,7 +135,9 @@ benchmark recording also live outside Git. Speech is off by default; see
 On Windows, `START_PRIMEE_VOICE_WINDOWS.cmd` sets up the optional Haaniye
 text-to-speech foundation without a terminal: it validates a pinned manifest,
 shows a Persian summary, asks for one confirmation, installs, and plays a test
-sentence. `ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd` removes exactly what it created.
+sentence. `TUNE_PRIMEE_VOICE_WINDOWS.cmd` writes one sentence with five
+synthesis settings for listening. `ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd` removes
+exactly what it created.
 Speech-to-text and push-to-talk are not built yet.
 
 The real Vault, the audit log and your local configuration all live **outside**

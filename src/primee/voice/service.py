@@ -25,6 +25,7 @@ from ..core.permissions import APPROVAL, AUTO
 from ..core.result_types import SkillResult
 from .adapters.text_only import TextOnlyFallback
 from .interfaces import Availability, SpeechRequest, SpeechResult, TextToSpeech
+from .lexicon import EMPTY, Lexicon, load_lexicon
 from .playback import select_player
 from .profiles import VoiceProfile, get_profile
 from .summarize import shorten_for_speech, spoken_summary
@@ -80,6 +81,8 @@ class VoiceService:
         self._adapter = adapter
         self._player = player if player is not None else select_player(self.settings.player)
         self._temp_dir = temp_dir or (config.state_directory() / "voice" / "tmp")
+        self._lexicon: Optional[Lexicon] = None
+        self._lexicon_error: Optional[str] = None
 
     # -- wiring ---------------------------------------------------------
     def adapter(self) -> TextToSpeech:
@@ -100,6 +103,32 @@ class VoiceService:
     def permission_mode(self) -> str:
         return self.config.permissions.mode_for(PLAYBACK_PERMISSION)
 
+    def lexicon(self) -> Lexicon:
+        """The optional pronunciation lexicon; a broken file means no lexicon, never a crash."""
+        if self._lexicon is None:
+            self._lexicon = EMPTY
+            if self.settings.lexicon:
+                from ..core.config import expand
+
+                try:
+                    self._lexicon = load_lexicon(Path(expand(self.settings.lexicon)))
+                except VoiceError as exc:
+                    self._lexicon_error = exc.sanitized_message()
+        return self._lexicon
+
+    def synthesis_parameters(self, overrides: Optional[dict] = None) -> dict:
+        parameters = {
+            "speed": self.settings.speed,
+            "noise_scale": self.settings.noise_scale,
+            "noise_scale_w": self.settings.noise_scale_w,
+            "sentence_batch": self.settings.sentence_batch,
+        }
+        for key, value in (overrides or {}).items():
+            if key not in parameters:
+                raise VoiceError(ErrorCode.INVALID_INPUT, f"Unknown synthesis parameter {key!r}.")
+            parameters[key] = value
+        return parameters
+
     # -- status ---------------------------------------------------------
     def status(self) -> dict:
         availability: Availability = self.adapter().availability()
@@ -116,6 +145,8 @@ class VoiceService:
             "speak_summary_only": self.settings.speak_summary_only,
             "max_spoken_chars": self.settings.max_spoken_chars,
             "save_transcripts": self.settings.save_transcripts,
+            "tuning": self.synthesis_parameters(),
+            "lexicon": {**self.lexicon().describe(), "error": self._lexicon_error},
             "network": "none: no voice code opens a socket",
         }
 
@@ -132,11 +163,16 @@ class VoiceService:
         approved: bool = False,
         keep_output: Optional[Path] = None,
         play: bool = True,
+        parameters: Optional[dict] = None,
     ) -> SpeechOutcome:
         request_id = request_id or self.audit.new_request_id()
         shown = text if isinstance(text, str) else ""
         if self.settings.speak_summary_only:
             shown = shorten_for_speech(shown, max_chars=self.settings.max_spoken_chars)
+        try:
+            tuning = self.synthesis_parameters(parameters)
+        except VoiceError as exc:
+            return self._fallback(request_id, shown, exc)
 
         gate = self._gate(approved)
         if gate is not None:
@@ -152,11 +188,22 @@ class VoiceService:
         if not shown.strip():
             return self._fallback(request_id, shown, VoiceError(ErrorCode.VOICE_TEXT_REJECTED, "Nothing to speak."))
 
+        # The lexicon changes only what the engine hears, never what is shown or logged.
+        spoken_text = self.lexicon().apply(shown)
+
         keep = keep_output is not None
         with TemporaryWav(keep_output if keep else self._temp_dir, keep=keep) as output:
             try:
                 result = adapter.synthesize(
-                    SpeechRequest(text=shown, output_path=output, timeout_seconds=float(self.settings.timeout_seconds))
+                    SpeechRequest(
+                        text=spoken_text,
+                        output_path=output,
+                        timeout_seconds=float(self.settings.timeout_seconds),
+                        speed=float(tuning["speed"]),
+                        noise_scale=float(tuning["noise_scale"]),
+                        noise_scale_w=float(tuning["noise_scale_w"]),
+                        sentence_batch=int(tuning["sentence_batch"]),
+                    )
                 )
             except VoiceError as exc:
                 return self._fallback(request_id, shown, exc, engine=adapter.name)

@@ -51,3 +51,21 @@ timeout_seconds = 60
 # memory only and saved solely with explicit per-transcript approval AND this
 # switch. Keep it false.
 save_transcripts = false
+
+# Synthesis tuning. The first Haaniye listening (2026-09-14) was intelligible but
+# choppy. `primee voice tune --output <folder>` writes the same sentence with
+# several settings; listen, pick one, and copy its values here. Ranges:
+# speed 0.5..2.0 (lower = slower), noise_scale and noise_scale_w 0.0..1.5
+# (lower = steadier, less expressive), sentence_batch 0 = whole text at once,
+# 1 = sentence by sentence (what the first run used).
+speed = 1.0
+noise_scale = 0.667
+noise_scale_w = 0.8
+sentence_batch = 0
+
+# Optional pronunciation lexicon: a TOML file with a [words] table mapping a
+# written word to the spelling that sounds right (e.g. with vowel marks). It
+# changes only what the engine hears, never what is shown, logged or stored.
+# Copy voice-lexicon.example.toml to voice-lexicon.local.toml and point here:
+#   lexicon = "config/voice-lexicon.local.toml"
+lexicon = ""

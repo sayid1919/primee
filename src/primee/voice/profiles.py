@@ -9,7 +9,7 @@ used.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Mapping, Optional
 
 
 @dataclass(frozen=True)
@@ -45,6 +45,7 @@ class VoiceProfile:
     approved_use: str
     warnings: tuple[str, ...] = ()
     notes: tuple[str, ...] = field(default_factory=tuple)
+    listening_result: Mapping[str, str] = field(default_factory=dict)
 
     def license_for(self, subject: str) -> Optional[LicenseRecord]:
         for record in self.licenses:
@@ -87,6 +88,7 @@ class VoiceProfile:
             "approved_use": self.approved_use,
             "warnings": list(self.warnings),
             "notes": list(self.notes),
+            "listening_result": dict(self.listening_result),
         }
 
 
@@ -157,7 +159,7 @@ HAANIYE = VoiceProfile(
         "The upstream SOURCE file contains only 'TBD'. The exact dataset provenance "
         "is therefore incomplete."
     ),
-    speaker_gender="not stated in the official documentation; confirm by listening",
+    speaker_gender="not stated in the official documentation; perceived as female by listening on 2026-09-14",
     redistribution_status="not assessed; no claim of redistribution or commercial clearance",
     approved_use="private local benchmark only",
     warnings=(
@@ -171,6 +173,15 @@ HAANIYE = VoiceProfile(
         "Converted for sherpa-onnx by csukuangfj; the conversion adds no licence metadata.",
         "The sherpa-onnx wheel only exposes a text2token CLI, so Primee runs its own worker script.",
     ),
+    listening_result={
+        "date": "2026-09-14",
+        "classification": "accept temporarily",
+        "intelligible": "yes",
+        "perceived_gender": "female (by listening; not stated by the documentation)",
+        "fluency": "choppy; sentence-by-sentence delivery and a low-quality model",
+        "pronunciation": "some words wrong; the phonemiser guesses unwritten short vowels",
+        "next": "listening comparison of synthesis settings (primee voice tune) and an editable pronunciation lexicon",
+    },
 )
 
 PROFILES: dict[str, VoiceProfile] = {HAANIYE.key: HAANIYE}

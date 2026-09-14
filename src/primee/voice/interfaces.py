@@ -30,6 +30,9 @@ class SpeechRequest:
     speaker_id: int = 0
     speed: float = 1.0
     timeout_seconds: float = 60.0
+    noise_scale: float = 0.667
+    noise_scale_w: float = 0.8
+    sentence_batch: int = 0
 
     def validate(self) -> None:
         from ..core.errors import ErrorCode, VoiceError
@@ -55,6 +58,19 @@ class SpeechRequest:
             raise VoiceError(ErrorCode.VOICE_TEXT_REJECTED, "Speed must be between 0.5 and 2.0.")
         if not (1 <= float(self.timeout_seconds) <= 600):
             raise VoiceError(ErrorCode.VOICE_TEXT_REJECTED, "Timeout must be between 1 and 600 seconds.")
+        for name in ("noise_scale", "noise_scale_w"):
+            if not (0.0 <= float(getattr(self, name)) <= 1.5):
+                raise VoiceError(ErrorCode.VOICE_TEXT_REJECTED, f"{name} must be between 0.0 and 1.5.")
+        if not isinstance(self.sentence_batch, int) or not (0 <= self.sentence_batch <= 50):
+            raise VoiceError(ErrorCode.VOICE_TEXT_REJECTED, "sentence_batch must be between 0 and 50.")
+
+    def parameters(self) -> dict:
+        return {
+            "speed": round(float(self.speed), 3),
+            "noise_scale": round(float(self.noise_scale), 3),
+            "noise_scale_w": round(float(self.noise_scale_w), 3),
+            "sentence_batch": int(self.sentence_batch),
+        }
 
 
 @dataclass(frozen=True)
@@ -72,6 +88,7 @@ class SpeechResult:
     peak_memory_kb: Optional[int] = None
     peak_memory_note: str = ""
     warnings: tuple[str, ...] = ()
+    parameters: dict = field(default_factory=dict)
 
     @property
     def real_time_factor(self) -> Optional[float]:
@@ -93,6 +110,7 @@ class SpeechResult:
             "peak_memory_kb": self.peak_memory_kb,
             "peak_memory_note": self.peak_memory_note,
             "warnings": list(self.warnings),
+            "parameters": dict(self.parameters),
         }
 
 

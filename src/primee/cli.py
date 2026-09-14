@@ -147,6 +147,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Pre-approve audio.playback for this run only.",
     )
     bench.add_argument("--no-audit", action="store_true", help="Do not write to the audit log file.")
+    tune = voice_sub.add_parser(
+        "tune", parents=[common],
+        help="Synthesise one sentence with several synthesis settings, outside the repository, for listening.",
+    )
+    tune.add_argument("--output", required=True, help="Absolute directory OUTSIDE the repository for the WAV files and report.")
+    tune.add_argument(
+        "--approve", action="append", default=[], metavar="PERMISSION",
+        help="Pre-approve audio.playback for this run only.",
+    )
+    tune.add_argument("--no-audit", action="store_true", help="Do not write to the audit log file.")
     return parser
 
 
@@ -497,6 +507,10 @@ def _voice(config: PrimeeConfig, args: argparse.Namespace) -> int:
         print("  licences :")
         for record in profile.licenses:
             print(f"    {record.subject:<28} {record.license or 'not stated':<12} {record.statement}")
+        if profile.listening_result:
+            print("  listening result:")
+            for key, value in profile.listening_result.items():
+                print(f"    {key:<18} {value}")
         print(f"  provenance SOURCE file: {profile.provenance_source_file}  -> {profile.provenance_note}")
         print(f"  speaker gender        : {profile.speaker_gender}")
         print(f"  redistribution        : {profile.redistribution_status}")
@@ -545,6 +559,26 @@ def _voice(config: PrimeeConfig, args: argparse.Namespace) -> int:
                 print(f"  {case.key:<16} FAILED [{case.error_code}] {case.fallback_reason}")
         print(f"Report: {report.report_path}")
         print("Listen to every file, then classify: Accept / Accept temporarily / Reject.")
+        return 0 if report.ok else 1
+
+    if command == "tune":
+        from .voice.tune import run_tuning
+
+        report = run_tuning(service, Path(args.output), clock=service.clock, approved=approved)
+        if as_json:
+            print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+            return 0 if report.ok else 1
+        if not report.ok and not report.variants:
+            print(f"Tuning did not run: {report.reason}", file=sys.stderr)
+            return 1
+        print(f"Tuning files: {report.output_dir}")
+        for variant in report.variants:
+            if variant["ok"]:
+                print(f"  {variant['key']:<34} {variant['description']}")
+            else:
+                print(f"  {variant['key']:<34} FAILED [{variant['error_code']}] {variant['fallback_reason']}")
+        print(f"Report: {report.report_path}")
+        print("Listen, pick the best variant, and copy its parameters into config/voice.local.toml.")
         return 0 if report.ok else 1
 
     print(f"Unknown voice command {command!r}.", file=sys.stderr)
