@@ -361,12 +361,14 @@ if ([string]::IsNullOrWhiteSpace($PythonExe)) {
 }
 $PythonExe = [System.IO.Path]::GetFullPath($PythonExe)
 if (-not (Test-Path -LiteralPath $PythonExe)) { Stop-WithReason ('Python interpreter not found at ' + $PythonExe) }
-$versionProbe = Invoke-Python -Interpreter $PythonExe -Arguments @('-I', '-c', 'import sys; print("%d.%d" % sys.version_info[:2]); print(sys.maxsize > 2**32)')
+# No double quotes inside inline Python: Windows PowerShell 5.1 strips them when calling a native program.
+$versionProbe = Invoke-Python -Interpreter $PythonExe -Arguments @('-I', '-c', 'import sys; print(sys.version_info[0], sys.version_info[1]); print(sys.maxsize > 2**32)')
 $probeLines = @($versionProbe.StdOut -split "`r?`n" | Where-Object { $_ -ne '' })
 if ($versionProbe.ExitCode -ne 0 -or $probeLines.Count -lt 2) { Stop-WithReason 'Could not query the Python interpreter.' }
-if ($probeLines[0] -ne $RequiredPythonMajorMinor) { Stop-WithReason ('The wheels are pinned for Python ' + $RequiredPythonMajorMinor + ' but ' + $PythonExe + ' is ' + $probeLines[0] + '.') }
-if ($probeLines[1] -ne 'True') { Stop-WithReason 'A 64-bit Python is required for the win_amd64 wheels.' }
-Write-Output (' Python           : ' + $PythonExe + ' (' + $probeLines[0] + ', 64-bit)')
+$foundVersion = (([string]$probeLines[0]).Trim() -replace ' ', '.')
+if ($foundVersion -ne $RequiredPythonMajorMinor) { Stop-WithReason ('The wheels are pinned for Python ' + $RequiredPythonMajorMinor + ' but ' + $PythonExe + ' is ' + $foundVersion + '.') }
+if (([string]$probeLines[1]).Trim() -ne 'True') { Stop-WithReason 'A 64-bit Python is required for the win_amd64 wheels.' }
+Write-Output (' Python           : ' + $PythonExe + ' (' + $foundVersion + ', 64-bit)')
 
 # ---------------------------------------------------------------- plan
 $plan = @()
@@ -440,9 +442,9 @@ try {
     Write-Output ' pip      install pinned wheels (offline, hashes required, no deps)'
     $pip = Invoke-Python -Interpreter $venvPython -Arguments @('-I', '-m', 'pip', 'install', '--no-index', '--no-deps', '--require-hashes', '--no-cache-dir', '--disable-pip-version-check', '--find-links', $wheelDir, '-r', $requirementsPath)
     if ($pip.ExitCode -ne 0) { throw ('pip install failed: ' + $pip.StdErr) }
-    $check = Invoke-Python -Interpreter $venvPython -Arguments @('-I', '-c', 'import sherpa_onnx, sys; print(getattr(sherpa_onnx, "__version__", "unknown"))')
+    $check = Invoke-Python -Interpreter $venvPython -Arguments @('-I', '-c', 'import sys; from importlib.metadata import version; import sherpa_onnx; print(version(sys.argv[1]))', 'sherpa-onnx')
     if ($check.ExitCode -ne 0) { throw ('sherpa_onnx does not import in the new runtime: ' + $check.StdErr) }
-    Write-Output (' runtime  sherpa_onnx ' + $check.StdOut.Trim() + ' imports')
+    Write-Output (' runtime  sherpa-onnx ' + $check.StdOut.Trim() + ' imports')
 
     # 3. model files
     New-Item -ItemType Directory -Path $modelDir | Out-Null

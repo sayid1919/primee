@@ -112,6 +112,15 @@ class PowerShell51CompatibilityTests(unittest.TestCase):
             self.assertIn("Set-StrictMode -Version 2.0", text, name)
             self.assertIn("$ErrorActionPreference = 'Stop'", text, name)
 
+    def test_inline_python_snippets_contain_no_double_quotes(self):
+        # Windows PowerShell 5.1 strips embedded double quotes from arguments handed to a
+        # native program, so python -c 'print("x")' arrives as print(x). Found on the first
+        # real run; every inline snippet must be quote-free and pass values via sys.argv.
+        pattern = re.compile(r"'-c',\s*'([^']*)'")
+        for name in POWERSHELL_FILES:
+            for match in pattern.finditer(read(name)):
+                self.assertNotIn('"', match.group(1), msg=f"{name}: {match.group(1)}")
+
     def test_write_host_never_concatenates_outside_parentheses(self):
         # `Write-Host 'a' + $b` prints three arguments; the launcher must wrap concatenations.
         pattern = re.compile(r"^\s*Write-(Host|Output)\s+'[^']*'\s*\+", re.M)
@@ -179,8 +188,8 @@ class LauncherSafetyTests(unittest.TestCase):
 
     def test_runtime_version_is_checked_after_installation(self):
         start = read("Start-PrimeeVoice.ps1")
-        self.assertIn('version("sherpa-onnx")', start)
-        self.assertIn('version("sherpa-onnx-core")', start)
+        self.assertIn("print(version(sys.argv[1])); print(version(sys.argv[2]))', 'sherpa-onnx', 'sherpa-onnx-core'", start)
+        self.assertIn("-ne $SherpaVersion", start)
 
     def test_test_and_benchmark_go_through_primee_itself(self):
         start = read("Start-PrimeeVoice.ps1")

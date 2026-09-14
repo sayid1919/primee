@@ -196,9 +196,10 @@ function Find-Python311 {
         if ($seen.ContainsKey($full.ToLower())) { continue }
         $seen[$full.ToLower()] = $true
         if (-not (Test-Path -LiteralPath $full)) { continue }
-        $probe = Invoke-Child -Exe $full -Arguments @('-I', '-c', 'import sys; print("%d.%d" % sys.version_info[:2]); print(sys.maxsize > 2**32)') -Label ('python probe')
+        # No double quotes inside inline Python: Windows PowerShell 5.1 strips them when calling a native program.
+        $probe = Invoke-Child -Exe $full -Arguments @('-I', '-c', 'import sys; print(sys.version_info[0], sys.version_info[1]); print(sys.maxsize > 2**32)') -Label ('python probe')
         if ($probe.ExitCode -ne 0 -or $probe.Lines.Count -lt 2) { continue }
-        if ([string]$probe.Lines[0] -eq '3.11' -and [string]$probe.Lines[1] -eq 'True') { return $full }
+        if (([string]$probe.Lines[0]).Trim() -eq '3 11' -and ([string]$probe.Lines[1]).Trim() -eq 'True') { return $full }
     }
     return $null
 }
@@ -452,8 +453,9 @@ try {
 
     # ---- 8. runtime version check ------------------------------------
     $venvPython = Join-Path $runtimePath 'Scripts\python.exe'
-    $ver = Invoke-Child -Exe $venvPython -Arguments @('-I', '-c', 'from importlib.metadata import version; print(version("sherpa-onnx")); print(version("sherpa-onnx-core"))') -Label 'runtime version check'
-    if ($ver.ExitCode -ne 0 -or $ver.Lines.Count -lt 2 -or [string]$ver.Lines[0] -ne $SherpaVersion -or [string]$ver.Lines[1] -ne $SherpaVersion) {
+    # Package names travel as separate arguments so the inline Python needs no quotes at all.
+    $ver = Invoke-Child -Exe $venvPython -Arguments @('-I', '-c', 'import sys; from importlib.metadata import version; print(version(sys.argv[1])); print(version(sys.argv[2]))', 'sherpa-onnx', 'sherpa-onnx-core') -Label 'runtime version check'
+    if ($ver.ExitCode -ne 0 -or $ver.Lines.Count -lt 2 -or ([string]$ver.Lines[0]).Trim() -ne $SherpaVersion -or ([string]$ver.Lines[1]).Trim() -ne $SherpaVersion) {
         Stop-Launcher ('نسخهٔ موتور نصب‌شده با نسخهٔ قفل‌شده (' + $SherpaVersion + ') مطابقت ندارد.') ('Installed runtime version does not match the pinned ' + $SherpaVersion + '.')
     }
     Say ('       نسخهٔ موتور تأیید شد: ' + $SherpaVersion) ('Runtime version confirmed: ' + $SherpaVersion)
