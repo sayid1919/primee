@@ -40,6 +40,16 @@ function Stop-Rollback {
     exit 1
 }
 
+function Show-Dialog {
+    param([string]$Title, [string]$Text, [string]$Buttons = 'OK', [string]$Icon = 'Information')
+    try {
+        Add-Type -AssemblyName System.Windows.Forms
+        $options = [System.Windows.Forms.MessageBoxOptions]::RtlReading -bor [System.Windows.Forms.MessageBoxOptions]::RightAlign
+        $result = [System.Windows.Forms.MessageBox]::Show($Text, $Title, [System.Windows.Forms.MessageBoxButtons]::$Buttons, [System.Windows.Forms.MessageBoxIcon]::$Icon, [System.Windows.Forms.MessageBoxDefaultButton]::Button2, $options)
+        return [string]$result
+    } catch { return $null }
+}
+
 function Has-Property { param($Object, [string]$Name); if ($null -eq $Object) { return $false }; return ($Object.PSObject.Properties.Name -contains $Name) }
 
 Write-Host ''
@@ -93,8 +103,17 @@ Write-Host ''
 Write-Host 'حذف نمی‌شوند: Vault، گزارش‌های audit، فایل‌های benchmark، پوشه‌هایی که از قبل وجود داشتند.'
 Write-Host 'Not removed: the Vault, audit logs, benchmark recordings, any pre-existing folder.'
 Write-Host ''
-$answer = Read-Host 'برای حذف، کلمهٔ YES را تایپ کنید (هر چیز دیگر = انصراف) / Type YES to remove'
-if (([string]$answer).Trim().ToUpper() -ne 'YES') {
+$listed = @()
+foreach ($marker in $found) {
+    try { $record = Get-Content -LiteralPath $marker -Raw -Encoding UTF8 | ConvertFrom-Json; if (Has-Property $record 'created') { foreach ($path in @($record.created)) { $listed += ('• ' + (Protect-Text -Text ([string]$path))) } } } catch { }
+}
+$dialogText = ('موارد زیر، و فقط این‌ها، حذف می‌شوند:' + "`r`n" + ($listed -join "`r`n") + "`r`n`r`n" + 'حذف نمی‌شوند: Vault، گزارش‌های audit، فایل‌های benchmark، پوشه‌های قبلی.' + "`r`n`r`n" + 'Yes = حذف        No = انصراف' + "`r`n" + 'English: remove only the recorded items above. Yes = remove, No = cancel.')
+$answer = Show-Dialog -Title 'Primee Voice - تأیید حذف / confirm rollback' -Text $dialogText -Buttons 'YesNo' -Icon 'Warning'
+if ($null -eq $answer) {
+    $typed = Read-Host 'برای حذف، کلمهٔ YES را تایپ کنید (هر چیز دیگر = انصراف) / Type YES to remove'
+    if (([string]$typed).Trim().ToUpper() -ne 'YES') { $answer = 'No' } else { $answer = 'Yes' }
+}
+if ($answer -ne 'Yes') {
     Write-Host 'انصراف داده شد. چیزی حذف نشد.'
     Write-Host 'Cancelled. Nothing was removed.'
     exit 0

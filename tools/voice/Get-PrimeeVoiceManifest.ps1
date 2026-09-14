@@ -207,15 +207,28 @@ function Test-Hex {
 }
 
 function Test-RepoPath {
+    <#
+      Safe relative path inside the model repository. espeak-ng-data legitimately
+      contains "voices/!v/" and a file called "Mr serious", so "!" and inner
+      spaces are allowed; traversal, absolute paths, backslashes, control
+      characters, Windows-illegal characters and reserved device names are not.
+    #>
     param([AllowEmptyString()][string]$Path)
     if ([string]::IsNullOrWhiteSpace($Path)) { return $false }
     if ($Path.Length -gt 400) { return $false }
-    if ($Path -notmatch '^[A-Za-z0-9._/-]+$') { return $false }
+    if ($Path -notmatch '^[A-Za-z0-9 ._/!+@=,~-]+$') { return $false }
     if ($Path.StartsWith('/') -or $Path.Contains('//')) { return $false }
+    $depth = 0
     foreach ($segment in ($Path -split '/')) {
+        $depth = $depth + 1
         if ([string]::IsNullOrEmpty($segment)) { return $false }
         if ($segment -eq '.' -or $segment -eq '..') { return $false }
+        if ($segment.StartsWith(' ') -or $segment.EndsWith(' ') -or $segment.EndsWith('.')) { return $false }
+        if ($segment.Length -gt 100) { return $false }
+        $stem = ($segment -split '\.')[0].ToUpper()
+        if ($stem -match '^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$') { return $false }
     }
+    if ($depth -gt 8) { return $false }
     return $true
 }
 

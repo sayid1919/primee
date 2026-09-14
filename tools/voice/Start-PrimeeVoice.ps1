@@ -111,6 +111,9 @@ function Stop-Launcher {
     Write-Host ('ERROR: ' + $English) -ForegroundColor Red
     Log ('STOPPED: ' + $English) -Quiet
     Write-Report -Outcome 'failed'
+    $reportNote = ''
+    if ($null -ne $script:ReportPath) { $reportNote = "`r`n`r`n" + 'گزارش عیب‌یابی (بدون اطلاعات شخصی): ' + (Protect-Text -Text $script:ReportPath) }
+    Show-Dialog -Title 'Primee Voice - خطا' -Text ($Persian + "`r`n`r`n" + 'پرایمی در حالت متنی همچنان کار می‌کند. چیزی خارج از پوشه‌های اعلام‌شده تغییر نکرد.' + $reportNote + "`r`n`r`n" + $English) -Buttons 'OK' -Icon 'Error' | Out-Null
     if ($null -ne $script:ReportPath) {
         Write-Host ''
         Write-Host ('گزارش عیب‌یابی (بدون اطلاعات شخصی) ذخیره شد: ' + (Protect-Text -Text $script:ReportPath))
@@ -120,6 +123,22 @@ function Stop-Launcher {
     Write-Host 'پرایمی در حالت متنی همچنان کار می‌کند. هیچ تغییری خارج از پوشه‌های اعلام‌شده انجام نشد.'
     Write-Host 'Primee keeps working in text-only mode. Nothing outside the announced folders was changed.'
     exit 1
+}
+
+function Show-Dialog {
+    <#
+      The console cannot render Persian with its default font, so the summary,
+      the confirmation and the final messages also go to a Windows dialog
+      (System.Windows.Forms, part of Windows). Returns 'Yes', 'No' or 'OK';
+      returns $null if no dialog can be shown, and the caller falls back to the console.
+    #>
+    param([string]$Title, [string]$Text, [string]$Buttons = 'OK', [string]$Icon = 'Information')
+    try {
+        Add-Type -AssemblyName System.Windows.Forms
+        $options = [System.Windows.Forms.MessageBoxOptions]::RtlReading -bor [System.Windows.Forms.MessageBoxOptions]::RightAlign
+        $result = [System.Windows.Forms.MessageBox]::Show($Text, $Title, [System.Windows.Forms.MessageBoxButtons]::$Buttons, [System.Windows.Forms.MessageBoxIcon]::$Icon, [System.Windows.Forms.MessageBoxDefaultButton]::Button2, $options)
+        return [string]$result
+    } catch { return $null }
 }
 
 function Invoke-Child {
@@ -402,47 +421,60 @@ try {
         $manifestDir = [System.IO.Path]::GetDirectoryName($manifestPath)
         if (-not (Test-Path -LiteralPath $manifestDir)) { New-Item -ItemType Directory -Path $manifestDir -Force | Out-Null }
         $gen = Invoke-Child -Exe $powerShellExe -Arguments @('-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', $manifestTool, '-OutputPath', $manifestPath, '-Force') -Label 'Get-PrimeeVoiceManifest.ps1'
-        if ($gen.ExitCode -ne 0) { Stop-Launcher 'خواندن اطلاعات عمومی ناموفق بود (اتصال اینترنت یا تغییر در منبع). چیزی دانلود یا نصب نشد.' 'Manifest generation failed (network, or the published metadata drifted from the reviewed values). Nothing was downloaded or installed.' }
+        if ($gen.ExitCode -ne 0) {
+            $reason = ''
+            foreach ($line in $gen.Lines) { if (([string]$line).Trim().StartsWith('STOPPED:')) { $reason = ([string]$line).Trim() } }
+            if ($reason -eq '') { $reason = 'no STOPPED line; see the diagnostic report (network, or the published metadata drifted from the reviewed values)' }
+            Stop-Launcher ('خواندن اطلاعات عمومی ناموفق بود. چیزی دانلود یا نصب نشد. علت: ' + $reason) ('Manifest generation failed; nothing was downloaded or installed. Reason: ' + $reason)
+        }
 
         # ---- 5. automatic validation ---------------------------------
         try { $summary = Test-Manifest -Path $manifestPath } catch { Stop-Launcher ('اعتبارسنجی خودکار Manifest ناموفق بود: ' + $_.Exception.Message) ('Manifest validation failed: ' + $_.Exception.Message) }
         Say 'مرحلهٔ ۵: Manifest به‌صورت خودکار اعتبارسنجی شد.' ('Step 5: manifest validated: runtime ' + $SherpaVersion + ', model revision ' + $summary.Revision + ', ' + $summary.ModelFiles + ' model files (' + $summary.EspeakFiles + ' under espeak-ng-data/).')
 
         # ---- 6. Persian summary + ONE confirmation -------------------
+        $summaryLines = @(
+            'چه چیزی نصب می‌شود:',
+            ('• موتور گفتار sherpa-onnx نسخهٔ ' + $SherpaVersion + ' (مجوز Apache-2.0) در پوشهٔ ' + (Protect-Text -Text $runtimePath)),
+            ('• مدل صدای هانیه (فارسی، کیفیت پایین، تک‌گوینده) در پوشهٔ ' + (Protect-Text -Text $modelDir)),
+            ('• حجم کل دانلود: حدود ' + (Format-MB $summary.TotalBytes) + ' (مدل ONNX: ' + (Format-MB $summary.OnnxBytes) + ')'),
+            ('• ' + $summary.ModelFiles + ' فایل مدل شامل ' + $summary.EspeakFiles + ' فایل espeak-ng-data؛ همه با hash ناشر بررسی می‌شوند'),
+            ('• نسخهٔ قفل‌شدهٔ مدل: ' + $summary.Revision),
+            '',
+            'مجوز و منشأ (همان‌طور که در منابع رسمی آمده):',
+            ('• مجوز صدای اصلی (Mycroft): ' + $summary.LicenseText + ' = CC0'),
+            '• Dataset: در README فقط «public domain» توصیف شده است',
+            ('• فایل SOURCE: "' + $summary.SourceText + '" — منشأ دقیق Dataset ناقص است'),
+            ('• مجوز مخزن تبدیل‌شده: ' + $summary.ConvertedLicense + ' — هیچ مجوزی به آن نسبت داده نمی‌شود'),
+            '• جنسیت گوینده در مستندات رسمی ذکر نشده؛ فقط با شنیدن مشخص می‌شود',
+            '• فقط برای آزمایش خصوصی محلی؛ هیچ ادعایی دربارهٔ بازتوزیع یا استفادهٔ تجاری نمی‌شود',
+            '',
+            'انجام نمی‌شود: تغییر PATH یا سیاست ویندوز، Task زمان‌بندی‌شده، اجرای خودکار، دسترسی مدیر، حذف پوشه‌های قبلی.',
+            'این راه‌انداز فقط بنیان متن‌به‌گفتار و آزمایش محلی را نصب می‌کند. تشخیص گفتار، Push-to-Talk و گام سوم کامل نیستند.',
+            '',
+            'تا این لحظه هیچ چیزی دانلود نشده است.',
+            '',
+            'Yes = دانلود و نصب        No = انصراف',
+            ('English: install sherpa-onnx ' + $SherpaVersion + ' (Apache-2.0) into .venv-voice and the Haaniye model (' + (Format-MB $summary.TotalBytes) + ' total). Voice licence CC0; dataset provenance incomplete (SOURCE=TBD); private local benchmark only. Nothing has been downloaded yet. Yes = install, No = cancel.')
+        )
         Write-Host ''
-        Write-Host '----------------------------- خلاصه -----------------------------' -ForegroundColor Yellow
-        Write-Host 'چه چیزی نصب می‌شود:'
-        Write-Host ('  • موتور گفتار sherpa-onnx نسخهٔ ' + $SherpaVersion + ' (مجوز Apache-2.0) در پوشهٔ ' + (Protect-Text -Text $runtimePath))
-        Write-Host ('  • مدل صدای هانیه (فارسی، کیفیت پایین، تک‌گوینده) در پوشهٔ ' + (Protect-Text -Text $modelDir))
-        Write-Host ('  • حجم کل دانلود: حدود ' + (Format-MB $summary.TotalBytes) + '  (مدل ONNX: ' + (Format-MB $summary.OnnxBytes) + ')')
-        Write-Host ('  • فایل‌ها: ' + $summary.ModelFiles + ' فایل مدل شامل ' + $summary.EspeakFiles + ' فایل espeak-ng-data؛ همه با hash ناشر بررسی می‌شوند')
-        Write-Host ('  • نسخهٔ قفل‌شدهٔ مدل: ' + $summary.Revision)
-        Write-Host ''
-        Write-Host 'مجوز و منشأ (به همان شکلی که در منابع رسمی آمده):'
-        Write-Host ('  • مجوز صدای اصلی (Mycroft): ' + $summary.LicenseText + ' = CC0')
-        Write-Host '  • Dataset: در README فقط «public domain» توصیف شده است'
-        Write-Host ('  • فایل SOURCE: "' + $summary.SourceText + '" — منشأ دقیق Dataset ناقص است')
-        Write-Host ('  • مجوز مخزن تبدیل‌شده: ' + $summary.ConvertedLicense + ' — هیچ مجوزی به آن نسبت داده نمی‌شود')
-        Write-Host '  • جنسیت گوینده در مستندات رسمی ذکر نشده؛ فقط با شنیدن مشخص می‌شود'
-        Write-Host '  • فقط برای آزمایش خصوصی محلی؛ هیچ ادعایی دربارهٔ بازتوزیع یا استفادهٔ تجاری نمی‌شود'
-        Write-Host ''
-        Write-Host 'چه چیزی انجام نمی‌شود: تغییر PATH یا سیاست ویندوز، Task زمان‌بندی‌شده، اجرای خودکار، دسترسی مدیر، حذف پوشه‌های قبلی.'
-        Write-Host 'این راه‌انداز فقط بنیان متن‌به‌گفتار و آزمایش محلی را نصب می‌کند. تشخیص گفتار، Push-to-Talk و گام سوم کامل نیستند.'
-        Write-Host ''
-        Write-Host ('What will be installed: sherpa-onnx ' + $SherpaVersion + ' (Apache-2.0) into .venv-voice, and the Haaniye model (' + (Format-MB $summary.TotalBytes) + ' total) into the models folder. Voice licence CC0; dataset provenance incomplete (SOURCE=TBD); private local benchmark only.')
-        Write-Host '-----------------------------------------------------------------' -ForegroundColor Yellow
-        Write-Host ''
-        Write-Host 'تا این لحظه هیچ چیزی دانلود نشده است.' -ForegroundColor Green
+        Write-Host '----------------------------- خلاصه / summary -----------------------------' -ForegroundColor Yellow
+        foreach ($line in $summaryLines) { Log $line }
+        Write-Host '---------------------------------------------------------------------------' -ForegroundColor Yellow
         Write-Host 'Nothing has been downloaded yet.' -ForegroundColor Green
         Write-Host ''
-        $answer = Read-Host 'برای شروع دانلود و نصب، کلمهٔ YES را تایپ کنید و Enter بزنید (هر چیز دیگر = انصراف) / Type YES to install'
-        Log ('confirmation answer length ' + ([string]$answer).Length) -Quiet
-        if (([string]$answer).Trim().ToUpper() -ne 'YES') {
+        $answer = Show-Dialog -Title 'Primee Voice - تأیید نصب / confirm installation' -Text ($summaryLines -join "`r`n") -Buttons 'YesNo' -Icon 'Question'
+        if ($null -eq $answer) {
+            Write-Host '(The Persian summary is in the lines above; the console font may show it as question marks. It is also written to the diagnostic report.)'
+            $typed = Read-Host 'برای شروع دانلود و نصب، کلمهٔ YES را تایپ کنید و Enter بزنید (هر چیز دیگر = انصراف) / Type YES to install'
+            if (([string]$typed).Trim().ToUpper() -ne 'YES') { $answer = 'No' } else { $answer = 'Yes' }
+        }
+        Log ('confirmation: ' + $answer) -Quiet
+        if ($answer -ne 'Yes') {
             Say 'انصراف داده شد. چیزی دانلود یا نصب نشد.' 'Cancelled by the user. Nothing was downloaded or installed.'
             Write-Report -Outcome 'cancelled'
             exit 0
         }
-        Log 'confirmation: YES' -Quiet
 
         # ---- 7. install from exactly this manifest -------------------
         Say 'مرحلهٔ ۶: دانلود و نصب از همان Manifest تأییدشده... (هر فایل قبل از استفاده با hash بررسی می‌شود)' 'Step 6: installing from the approved manifest; every file is verified before use.'
@@ -497,9 +529,9 @@ try {
     Say 'صدای آزمایشی پخش شد و فایل موقت آن حذف شد.' 'Test sentence spoken; the temporary audio was deleted by Primee.'
 
     # ---- 10. benchmark set for listening -----------------------------
+    $benchDir = ''
     if (-not $SkipBenchmark) {
         $bench = Invoke-Child -Exe $python -Arguments @('-I', '-X', 'utf8', $runPrimee, '--config', $launcherCfg, 'voice', 'benchmark', '--output', $benchmarkDir, '--approve', 'audio.playback', '--json') -Label 'primee voice benchmark' -HideOutput
-        $benchDir = ''
         $benchObject = $null
         try { $benchObject = ($bench.Lines -join "`n") | ConvertFrom-Json; $benchDir = [string]$benchObject.output_dir } catch { $benchDir = '' }
         if ($bench.ExitCode -eq 0 -and $benchDir -ne '') {
@@ -518,6 +550,9 @@ try {
     Write-Host 'Reminder: speech-to-text, push-to-talk and the full voice loop are not built; Step Three is not complete.'
     Write-Host 'برای حذف کامل: ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd'
     Write-Report -Outcome 'success'
+    $benchNote = ''
+    if (-not $SkipBenchmark -and $benchDir -ne '') { $benchNote = "`r`n`r`n" + 'هفت جملهٔ آزمایشی برای گوش‌دادن در: ' + (Protect-Text -Text $benchDir) }
+    Show-Dialog -Title 'Primee Voice - انجام شد' -Text ('بنیان متن‌به‌گفتار هانیه نصب و آزمایش شد.' + $benchNote + "`r`n`r`n" + 'تشخیص گفتار، Push-to-Talk و حلقهٔ کامل صوتی هنوز ساخته نشده‌اند؛ گام سوم کامل نیست.' + "`r`n" + 'برای حذف کامل: ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd' + "`r`n`r`n" + 'Done. The Haaniye text-to-speech foundation is installed and tested.') -Buttons 'OK' -Icon 'Information' | Out-Null
     exit 0
 } catch {
     $message = ''

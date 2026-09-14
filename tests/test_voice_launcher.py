@@ -128,6 +128,39 @@ class PowerShell51CompatibilityTests(unittest.TestCase):
             self.assertIsNone(pattern.search(read(name)), name)
 
 
+class RepositoryPathRuleTests(unittest.TestCase):
+    """The manifest tool's path rule, re-applied in Python (same regex dialect for this class)."""
+
+    def rule(self):
+        text = read("Get-PrimeeVoiceManifest.ps1")
+        match = re.search(r"if \(\$Path -notmatch '(\^\[[^']+\]\+\$)'\) \{ return \$false \}", text)
+        self.assertIsNotNone(match, "path character rule not found")
+        return re.compile(match.group(1))
+
+    def test_accepts_the_real_espeak_ng_data_layout(self):
+        rule = self.rule()
+        for path in ("espeak-ng-data/voices/!v/Alex", "espeak-ng-data/voices/!v/Mr serious", "espeak-ng-data/lang/roa/pt-BR",
+                     "espeak-ng-data/fa_dict", "espeak-ng-data/phondata-manifest", "fa-haaniye_low.onnx.json", "tokens.txt"):
+            self.assertIsNotNone(rule.match(path), path)
+        # Found on the first real Windows run: this exact path was rejected and stopped the launcher.
+        self.assertIsNotNone(rule.match("espeak-ng-data/voices/!v/Alex"))
+
+    def test_rejects_escapes_and_windows_illegal_characters(self):
+        rule = self.rule()
+        for path in ("a\\b", "C:/x", "a|b", "a?b", "a*b", 'a"b', "a<b", "a>b", "a:b", "a\tb", "a\nb", "a%b", "a#b"):
+            self.assertIsNone(rule.match(path), path)
+        # Traversal is caught by the per-segment loop, not by the character class.
+        text = read("Get-PrimeeVoiceManifest.ps1")
+        self.assertIn("$segment -eq '.' -or $segment -eq '..'", text)
+        self.assertIn("(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])", text)
+
+    def test_core_manifest_parser_accepts_the_same_paths(self):
+        from primee.core.paths import normalize_relative_path
+
+        for path in ("espeak-ng-data/voices/!v/Alex", "espeak-ng-data/voices/!v/Mr serious", "espeak-ng-data/lang/roa/pt-BR"):
+            self.assertEqual(normalize_relative_path(path), path)
+
+
 class LauncherSafetyTests(unittest.TestCase):
     def test_nothing_forbidden_anywhere(self):
         for name in POWERSHELL_FILES:
@@ -153,15 +186,22 @@ class LauncherSafetyTests(unittest.TestCase):
     def test_validation_and_confirmation_come_before_installation(self):
         start = strip_comments(read("Start-PrimeeVoice.ps1"))
         validate = start.index("Test-Manifest -Path $manifestPath")
-        summary = start.index("خلاصه")
+        summary = start.index("$summaryLines = @(")
         nothing_yet = start.index("Nothing has been downloaded yet.")
+        dialog = start.index("-Buttons 'YesNo'")
         confirm = start.index("Read-Host")
         install = start.index("'-Approve', '-ManifestPath'")
         self.assertLess(validate, summary)
         self.assertLess(summary, nothing_yet)
-        self.assertLess(nothing_yet, confirm)
+        self.assertLess(nothing_yet, dialog)
+        self.assertLess(dialog, confirm)
         self.assertLess(confirm, install)
         self.assertIn(".ToUpper() -ne 'YES'", start)
+        self.assertIn("if ($answer -ne 'Yes')", start)
+        # The Windows console cannot render Persian; the summary must also reach a dialog.
+        self.assertIn("System.Windows.Forms.MessageBox", start)
+        self.assertIn("RtlReading", start)
+        self.assertIn("MessageBoxDefaultButton]::Button2", start, msg="the default button must be the safe one (No / Cancel)")
 
     def test_manifest_validation_pins_the_reviewed_values(self):
         start = read("Start-PrimeeVoice.ps1")
@@ -228,9 +268,12 @@ class LauncherSafetyTests(unittest.TestCase):
 
     def test_rollback_only_removes_recorded_paths_with_confirmation(self):
         rollback = strip_comments(read("Rollback-PrimeeVoice.ps1"))
+        dialog = rollback.index("-Buttons 'YesNo'")
         confirm = rollback.index("Read-Host")
         remove = rollback.index("-Rollback -ModelsPath")
+        self.assertLess(dialog, confirm)
         self.assertLess(confirm, remove)
+        self.assertIn("if ($answer -ne 'Yes')", rollback)
         self.assertIn(".primee-launcher-created.json", rollback)
         self.assertIn("refusing to remove a path outside the launcher folder", rollback)
         self.assertNotIn("Remove-Item -LiteralPath $ModelsPath", rollback)
