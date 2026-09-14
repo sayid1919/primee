@@ -220,8 +220,8 @@ class LauncherSafetyTests(unittest.TestCase):
         validate = start.index("Test-Manifest -Path $manifestPath")
         summary = start.index("$summaryLines = @(")
         nothing_yet = start.index("Nothing has been downloaded yet.")
-        dialog = start.index("-Buttons 'YesNo'")
-        confirm = start.index("Read-Host")
+        dialog = start.index("confirm installation' -Text ($summaryLines")
+        confirm = start.index("Type YES to install")
         install = start.index("'-Approve', '-ManifestPath'")
         self.assertLess(validate, summary)
         self.assertLess(summary, nothing_yet)
@@ -291,6 +291,20 @@ class LauncherSafetyTests(unittest.TestCase):
         self.assertNotIn("permissions.local.toml", start)
         self.assertIn("'launcher'", start)
         self.assertIn(".primee-launcher-created.json", start)
+
+    def test_runtime_lives_outside_the_repository_and_partial_installs_are_healed_with_consent(self):
+        # Found on Windows: a runtime inside the extracted ZIP folder is lost on every re-extract.
+        for name in ("Start-PrimeeVoice.ps1", "Rollback-PrimeeVoice.ps1", "Tune-PrimeeVoice.ps1"):
+            code = strip_comments(read(name))
+            self.assertIn("Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'voice-runtime'", code, name)
+            self.assertNotIn("Join-Path $repoRoot '.venv-voice'", code, name)
+        start = strip_comments(read("Start-PrimeeVoice.ps1"))
+        heal = start.index("-Buttons 'YesNo' -Icon 'Warning'")
+        cleanup = start.index("'-Rollback', '-ModelsPath', $ModelsPath, '-RuntimePath', $runtimePath")
+        self.assertLess(heal, cleanup, msg="cleanup of a partial install needs consent first")
+        self.assertIn("if ($heal -ne 'Yes') { Stop-Launcher", start)
+        installer = read("Install-PrimeeVoice.ps1")
+        self.assertIn("$RuntimePath = Join-Path (Join-Path $localAppData 'Primee') 'voice-runtime'", installer)
 
     def test_elevation_is_refused_and_windows_10_required(self):
         start = read("Start-PrimeeVoice.ps1")

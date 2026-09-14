@@ -44,7 +44,7 @@ module, `primee/voice/process.py`, under additional rules (one `Popen`,
 
 | Component | Where | Never |
 | --- | --- | --- |
-| `sherpa-onnx` + `sherpa-onnx-core` wheels (Apache-2.0) | `<repo>\.venv-voice\` — git-ignored | imported by Core, added to `pyproject.toml` |
+| `sherpa-onnx` + `sherpa-onnx-core` wheels (Apache-2.0) | `%LOCALAPPDATA%\Primee\voice-runtime\` (a `.venv-voice` inside the repository is also ignored by Git) | imported by Core, added to `pyproject.toml` |
 | Haaniye model files + `espeak-ng-data` | `%LOCALAPPDATA%\Primee\models\vits-mimic3-fa-haaniye_low\` or `PRIMEE_MODELS_PATH` | inside the repository |
 | Mycroft provenance files (`LICENSE`, `README.md`, `SOURCE`, `ALIASES`) + `PROVENANCE.json` | next to the model under `PROVENANCE\` | rewritten or re-licensed |
 | `config\voice.local.toml` | git-ignored | committed |
@@ -140,7 +140,11 @@ The launcher never edits the repository's `config\*.local.toml` files: the test
 and the benchmark use a launcher-owned configuration folder under
 `%LOCALAPPDATA%\Primee\launcher`. It never deletes a pre-existing folder; if a
 runtime or model folder exists that the installer did not create, it stops and
-says so. `ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd` removes only what the installer and
+says so; if a *recorded* installation is incomplete (for example the model
+without its runtime), it asks once and removes only the recorded items before
+starting over. The runtime lives under `%LOCALAPPDATA%\Primee\voice-runtime`,
+not in the extracted ZIP folder, so re-extracting a newer ZIP keeps the
+installation. `ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd` removes only what the installer and
 the launcher recorded as created, after one confirmation, without any Git
 command.
 

@@ -67,7 +67,7 @@ if ([string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) { Stop-Tune 'متغیر LOC
 
 $launcherCfg  = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'launcher') 'config'
 $benchmarkDir = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'benchmarks'
-$runtimePath  = Join-Path $repoRoot '.venv-voice'
+$runtimePath  = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'voice-runtime'
 if (-not (Test-Path -LiteralPath (Join-Path $launcherCfg 'voice.toml')) -or -not (Test-Path -LiteralPath (Join-Path $runtimePath 'Scripts\python.exe'))) {
     Stop-Tune 'صدای هانیه هنوز با START_PRIMEE_VOICE_WINDOWS.cmd نصب نشده است. اول آن را اجرا کنید.' 'The Haaniye voice is not installed yet; run START_PRIMEE_VOICE_WINDOWS.cmd first.'
 }

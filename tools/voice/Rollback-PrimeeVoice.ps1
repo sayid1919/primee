@@ -71,7 +71,7 @@ if ([string]::IsNullOrWhiteSpace($ModelsPath)) {
     else { $ModelsPath = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'models' }
 }
 $ModelsPath    = [System.IO.Path]::GetFullPath($ModelsPath)
-$runtimePath   = Join-Path $repoRoot '.venv-voice'
+$runtimePath   = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'voice-runtime'
 $launcherDir   = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'launcher'
 $launcherMark  = Join-Path $launcherDir '.primee-launcher-created.json'
 $runtimeMarker = Join-Path $runtimePath '.primee-installed.json'

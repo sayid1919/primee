@@ -371,7 +371,7 @@ try {
         else { $ModelsPath = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'models' }
     }
     $ModelsPath    = [System.IO.Path]::GetFullPath($ModelsPath)
-    $runtimePath   = Join-Path $repoRoot '.venv-voice'
+    $runtimePath   = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'voice-runtime'
     $manifestPath  = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'manifests') 'haaniye-sherpa.manifest.json'
     $launcherDir   = Join-Path (Join-Path $env:LOCALAPPDATA 'Primee') 'launcher'
     $launcherCfg   = Join-Path $launcherDir 'config'
@@ -406,9 +406,24 @@ try {
     if (-not $alreadyInstalled) {
         if ((Test-Path -LiteralPath $runtimePath) -or (Test-Path -LiteralPath $modelDir)) {
             if ($runtimeInstalled -or $modelInstalled) {
-                Stop-Launcher 'نصب قبلی ناقص است. ابتدا ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd را اجرا کنید و سپس دوباره تلاش کنید.' 'A previous installation is incomplete; run ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd first.'
+                # Half of a recorded installation (for example the model without its runtime).
+                # Offer to remove exactly the recorded items and start over; nothing else is touched.
+                Say 'نصب قبلی ناقص است (بخشی از فایل‌های ثبت‌شده وجود دارد و بخشی نه).' 'A previous recorded installation is incomplete.'
+                $heal = Show-Dialog -Title 'Primee Voice - نصب ناقص' -Text ('نصب قبلی ناقص است. فقط فایل‌هایی که خودِ نصب‌کننده ساخته بود حذف و نصب از نو انجام می‌شود. Vault، گزارش‌ها و پوشه‌های دیگر دست نمی‌خورند.' + "`r`n`r`n" + 'Yes = حذف نصب ناقص و ادامه        No = انصراف' + "`r`n`r`n" + 'English: remove only the recorded, incomplete installation and start over? Yes = continue, No = cancel.') -Buttons 'YesNo' -Icon 'Warning'
+                if ($null -eq $heal) {
+                    $typed = Read-Host 'Type YES to remove the incomplete installation and continue'
+                    if (([string]$typed).Trim().ToUpper() -eq 'YES') { $heal = 'Yes' } else { $heal = 'No' }
+                }
+                Log ('partial-install cleanup answer: ' + $heal) -Quiet
+                if ($heal -ne 'Yes') { Stop-Launcher 'انصراف داده شد؛ نصب ناقص دست نخورد. برای حذف دستی: ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd' 'Cancelled; the incomplete installation was left as is. Use ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd to remove it.' }
+                $cleanup = Invoke-Child -Exe $powerShellExe -Arguments @('-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', $installer, '-Rollback', '-ModelsPath', $ModelsPath, '-RuntimePath', $runtimePath) -Label 'Install-PrimeeVoice.ps1 -Rollback (incomplete installation)'
+                if ($cleanup.ExitCode -ne 0 -or (Test-Path -LiteralPath $modelDir) -or (Test-Path -LiteralPath $runtimePath)) {
+                    Stop-Launcher 'حذف نصب ناقص کامل نشد. ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd را اجرا کنید و دوباره تلاش کنید.' 'Cleanup of the incomplete installation did not finish; run ROLLBACK_PRIMEE_VOICE_WINDOWS.cmd and retry.'
+                }
+                Say '       نصب ناقص حذف شد؛ نصب از نو ادامه می‌یابد.' 'Incomplete installation removed; continuing with a fresh installation.'
+            } else {
+                Stop-Launcher ('پوشه‌ای از قبل وجود دارد که این نصب‌کننده آن را نساخته است (' + (Protect-Text -Text $runtimePath) + ' یا ' + (Protect-Text -Text $modelDir) + '). هیچ پوشه‌ای حذف نمی‌شود؛ آن را خودتان جابه‌جا کنید.') 'A runtime or model folder exists that this installer did not create; nothing is deleted. Move it aside and retry.'
             }
-            Stop-Launcher ('پوشه‌ای از قبل وجود دارد که این نصب‌کننده آن را نساخته است (' + (Protect-Text -Text $runtimePath) + ' یا ' + (Protect-Text -Text $modelDir) + '). هیچ پوشه‌ای حذف نمی‌شود؛ آن را خودتان جابه‌جا کنید.') 'A runtime or model folder exists that this installer did not create; nothing is deleted. Move it aside and retry.'
         }
     }
 
@@ -455,7 +470,7 @@ try {
             'تا این لحظه هیچ چیزی دانلود نشده است.',
             '',
             'Yes = دانلود و نصب        No = انصراف',
-            ('English: install sherpa-onnx ' + $SherpaVersion + ' (Apache-2.0) into .venv-voice and the Haaniye model (' + (Format-MB $summary.TotalBytes) + ' total). Voice licence CC0; dataset provenance incomplete (SOURCE=TBD); private local benchmark only. Nothing has been downloaded yet. Yes = install, No = cancel.')
+            ('English: install sherpa-onnx ' + $SherpaVersion + ' (Apache-2.0) into the voice runtime folder and the Haaniye model (' + (Format-MB $summary.TotalBytes) + ' total). Voice licence CC0; dataset provenance incomplete (SOURCE=TBD); private local benchmark only. Nothing has been downloaded yet. Yes = install, No = cancel.')
         )
         Write-Host ''
         Write-Host '----------------------------- خلاصه / summary -----------------------------' -ForegroundColor Yellow

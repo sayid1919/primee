@@ -4,8 +4,9 @@
 
 .DESCRIPTION
   Windows PowerShell 5.1. No Administrator rights. Everything it creates lives
-  outside Git: an isolated Python environment (RuntimePath), a model folder
-  (ModelsPath) and one git-ignored configuration file (config\voice.local.toml).
+  outside Git: an isolated Python environment (RuntimePath, default
+  %LOCALAPPDATA%\Primee\voice-runtime), a model folder (ModelsPath) and one
+  git-ignored configuration file (config\voice.local.toml).
 
   Modes (exactly one):
     -DryRun    print every planned action, URL, size and hash. Change nothing.
@@ -257,7 +258,11 @@ if ([string]::IsNullOrWhiteSpace($ModelsPath)) {
     elseif (-not [string]::IsNullOrWhiteSpace($localAppData)) { $ModelsPath = Join-Path (Join-Path $localAppData 'Primee') 'models' }
     else { Stop-WithReason 'Neither -ModelsPath, PRIMEE_MODELS_PATH nor LOCALAPPDATA is available.' }
 }
-if ([string]::IsNullOrWhiteSpace($RuntimePath)) { $RuntimePath = Join-Path $repoRoot '.venv-voice' }
+if ([string]::IsNullOrWhiteSpace($RuntimePath)) {
+    # Outside the repository, so re-extracting a ZIP never separates the model from its runtime.
+    if ([string]::IsNullOrWhiteSpace($localAppData)) { Stop-WithReason 'Neither -RuntimePath nor LOCALAPPDATA is available.' }
+    $RuntimePath = Join-Path (Join-Path $localAppData 'Primee') 'voice-runtime'
+}
 if ([string]::IsNullOrWhiteSpace($ManifestPath)) {
     if ([string]::IsNullOrWhiteSpace($localAppData)) { Stop-WithReason 'Pass -ManifestPath explicitly.' }
     $ManifestPath = Join-Path (Join-Path $localAppData 'Primee') (Join-Path 'manifests' 'haaniye-sherpa.manifest.json')
