@@ -161,6 +161,37 @@ class RepositoryPathRuleTests(unittest.TestCase):
             self.assertEqual(normalize_relative_path(path), path)
 
 
+class DownloadHostRuleTests(unittest.TestCase):
+    """The installer's download-host rule, re-applied in Python."""
+
+    def rule(self):
+        text = read("Install-PrimeeVoice.ps1")
+        hosts = re.search(r"\$DownloadHosts = @\(([^)]*)\)", text).group(1)
+        suffixes = re.search(r"\$DownloadHostSuffixes = @\(([^)]*)\)", text).group(1)
+        exact = set(re.findall(r"'([^']+)'", hosts))
+        tails = re.findall(r"'([^']+)'", suffixes)
+
+        def allowed(host: str) -> bool:
+            host = host.lower()
+            return host in exact or any(host.endswith(t) and len(host) > len(t) for t in tails)
+
+        return allowed
+
+    def test_accepts_the_publisher_hosts_seen_on_windows(self):
+        allowed = self.rule()
+        # us.aws.cdn.hf.co was the redirect target that stopped the third real Windows run.
+        for host in ("files.pythonhosted.org", "huggingface.co", "us.aws.cdn.hf.co", "cdn-lfs-us-1.hf.co", "cdn-lfs.huggingface.co", "cas-bridge.xethub.hf.co"):
+            self.assertTrue(allowed(host), host)
+
+    def test_rejects_lookalike_and_foreign_hosts(self):
+        allowed = self.rule()
+        for host in ("hf.co", "huggingface.co.evil.example", "evil-hf.co", "notpythonhosted.org", "github.com", "cdn.example.com", "xhf.co"):
+            self.assertFalse(allowed(host), host)
+        text = read("Install-PrimeeVoice.ps1")
+        self.assertIn("$parsed.Scheme -ne 'https'", text)
+        self.assertIn("Test-FileAgainstEntry -Path $temp -Entry $Entry", text, msg="every download is hash-verified before use")
+
+
 class LauncherSafetyTests(unittest.TestCase):
     def test_nothing_forbidden_anywhere(self):
         for name in POWERSHELL_FILES:

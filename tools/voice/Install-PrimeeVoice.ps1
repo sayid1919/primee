@@ -49,7 +49,13 @@ $SchemaVersion = 1
 $MarkerName    = '.primee-installed.json'
 $ManifestCopy  = 'primee-manifest.json'
 $ProvenanceDir = 'PROVENANCE'
-$DownloadHosts = @('files.pythonhosted.org', 'huggingface.co', 'cdn-lfs.huggingface.co', 'cdn-lfs-us-1.huggingface.co', 'cdn-lfs-eu-1.huggingface.co', 'cas-bridge.xethub.hf.co')
+# Exact hosts, plus Hugging Face's own content-delivery domains: large (LFS)
+# files are served by a redirect to hosts such as us.aws.cdn.hf.co or
+# cdn-lfs-us-1.hf.co, whose names change over time. Every downloaded byte is
+# still verified against the manifest hash before it is used, so trusting the
+# publisher's domain family adds no unverified content.
+$DownloadHosts = @('files.pythonhosted.org', 'huggingface.co')
+$DownloadHostSuffixes = @('.hf.co', '.huggingface.co')
 $RequiredPythonMajorMinor = '3.11'
 $RequestTimeoutSec = 60
 $MaxRedirects = 5
@@ -77,7 +83,12 @@ function Test-DownloadUri {
     if (-not [System.Uri]::TryCreate($Uri, [System.UriKind]::Absolute, [ref]$parsed)) { return $false }
     if ($parsed.Scheme -ne 'https' -or $parsed.Port -ne 443) { return $false }
     if (-not [string]::IsNullOrEmpty($parsed.UserInfo)) { return $false }
-    return ($DownloadHosts -contains $parsed.Host)
+    $targetHost = ([string]$parsed.Host).ToLower()
+    if ($DownloadHosts -contains $targetHost) { return $true }
+    foreach ($suffix in $DownloadHostSuffixes) {
+        if ($targetHost.EndsWith($suffix, [System.StringComparison]::Ordinal) -and $targetHost.Length -gt $suffix.Length) { return $true }
+    }
+    return $false
 }
 
 function ConvertTo-AbsoluteUri {
